@@ -46,13 +46,7 @@ jobs:
           check-latest: true
 
       - name: Run unit tests
-        env:
-          PKG: k8s.io/ingress-nginx
-          GOFLAGS: -buildvcs=false
-        run: |
-          sudo mkdir -p /etc/ingress-controller/geoip
-          sudo mkdir -p /etc/ingress-controller/ssl
-          ./test/test.sh
+        run: make test
 
   lint:
     name: golangci-lint
@@ -71,10 +65,7 @@ jobs:
           check-latest: true
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v9
-        with:
-          version: v2.3.0
-          only-new-issues: true
+        run: make golint-check
 
   build:
     name: Build binaries

@@ -54,4 +54,15 @@ jobs:
           done
 
       - name: Run pre-commit
-        run: pre-commit run --all-files --verbose
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            pre-commit run \
+              --from-ref "origin/${{ github.event.pull_request.base.ref }}" \
+              --to-ref HEAD \
+              --verbose
+          else
+            pre-commit run \
+              --from-ref "${{ github.event.before }}" \
+              --to-ref "${{ github.sha }}" \
+              --verbose
+          fi
