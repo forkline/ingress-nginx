@@ -1,5 +1,21 @@
 # Forkline Maintained Fork
 
+> **⚠️ Maintenance Mode Notice**
+>
+> This fork is maintained in **strict maintenance mode**. We do NOT develop new features or change existing behavior. Our sole purpose is to keep this mature, well-tested software functional and secure through controlled dependency updates.
+>
+> **How we maintain this project:**
+> - **Automated dependency updates**: Renovate handles NGINX, Go modules, Kubernetes clients, and security fixes
+> - **Human-in-the-loop**: Every update is validated with comprehensive testing and coverage checks
+> - **No regressions policy**: Test coverage must never decrease; all behavior preserved exactly
+> - **Critical coverage tracking**: Issue #4 implements coverage baseline to prevent regressions
+>
+> This project is maintained by Forkline using coding-agent orchestration. Updates are automatic but never unattended—we prioritize security, stability, and community needs.
+>
+> **For new deployments**: Consider [Gateway API](https://gateway-api.sigs.k8s.io/guides/) implementations instead. This fork serves existing ingress-nginx users who need continued maintenance.
+
+---
+
 > This fork exists because the upstream project was retired, while the software
 > itself remains practical to maintain: the codebase is mature, behavior is well
 > known, and most future work is concentrated in controlled update lanes such as
