@@ -3,13 +3,6 @@ name: Release images
 
 "on":
   push:
-    branches: [main]
-    paths:
-      - 'rootfs/**'
-      - 'images/**'
-      - 'NGINX_BASE'
-      - 'TAG'
-      - '.github/workflows/docker_images.yml'
     tags:
       - 'v*'
   workflow_dispatch:
