@@ -4,6 +4,7 @@
     'config:recommended',
   ],
   configMigration: true,
+  forkProcessing: 'enabled',
   dependencyDashboard: true,
   labels: ['area/dependency'],
   commitMessagePrefix: 'build(deps): ',
