@@ -67,7 +67,8 @@ jobs:
         run: |
           helm plugin install \
             https://github.com/helm-unittest/helm-unittest \
-            --version v1.0.3
+            --version v1.0.3 \
+            --verify=false
 
       - name: Lint chart
         run: |
