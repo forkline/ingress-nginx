@@ -1,7 +1,8 @@
+version: 2
 project_name: ingress-nginx
 release:
   github:
-    owner: kubernetes
+    owner: forkline
     name: ingress-nginx
 builds:
   - id: ingress-nginx
