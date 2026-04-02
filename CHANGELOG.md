@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.15.6](https://github.com/forkline/ingress-nginx/tree/v1.15.6) - 2026-04-03
+## [v1.15.7](https://github.com/forkline/ingress-nginx/tree/v1.15.7) - 2026-04-03
 
 ### Added
 
 - ci: Add automated release workflow with git-cliff ([bd1691f](https://github.com/forkline/ingress-nginx/commit/bd1691fd2fc09caadd16e8390636b86c6032c836))
+- ci: Integrate kubectl plugin build into release workflow ([1c4d1fe](https://github.com/forkline/ingress-nginx/commit/1c4d1fe3d505fa947fd4cdb8881088e5e72a21d8))
 
 ### Chore
 
