@@ -1,0 +1,66 @@
+[changelog]
+header = """
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project
+adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+"""
+body = """
+{% if version %}\
+    ## [{{ version }}](https://github.com/forkline/ingress-nginx/tree/{{ version }}) - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+    ## [unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | striptags | trim | upper_first }}
+    {% for commit in commits
+    | filter(attribute="scope")
+    | sort(attribute="scope") %}
+        - {{commit.scope}}: {{ commit.message | upper_first }} ([{{commit.id | truncate(length=7, end="")}}](https://github.com/forkline/ingress-nginx/commit/{{commit.id}}))
+        {%- if commit.breaking %}
+        {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
+        {%- endif -%}
+    {%- endfor -%}
+    {% for commit in commits %}
+        {%- if commit.scope %}
+        {%- else %}
+            - {{ commit.message | upper_first }} ([{{commit.id | truncate(length=7, end="")}}](https://github.com/forkline/ingress-nginx/commit/{{commit.id}}))
+            {%- if commit.breaking %}
+            {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+    {% raw %}\n{% endraw %}\
+{% endfor %}\n
+"""
+trim = true
+footer = ""
+
+[git]
+conventional_commits = true
+filter_unconventional = false
+split_commits = false
+commit_preprocessors = [
+    { pattern = "^release\\(release\\): prepare ", replace = "release: " },
+    { pattern = " \\(#\\d+\\).*", replace = "" },
+]
+commit_parsers = [
+    { message = "^feat", group = "<!-- 0 -->Added" },
+    { message = "^fix", group = "<!-- 1 -->Fixed" },
+    { message = "^docs", group = "<!-- 2 -->Documentation" },
+    { message = "^build", group = "Build" },
+    { message = "^refactor", group = "Refactor" },
+    { message = "^release", skip = true },
+    { message = "^style", group = "Styling" },
+    { message = "^test", group = "Testing" },
+    { message = "^chore", group = "Chore" },
+    { message = "^ci", group = "CI" },
+    { message = "^perf", group = "Performance" },
+]
+protect_breaking_commits = false
+filter_commits = false
+tag_pattern = "v[0-9]*"
+sort_commits = "oldest"
