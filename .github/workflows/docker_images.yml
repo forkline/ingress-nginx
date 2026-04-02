@@ -24,10 +24,13 @@ concurrency:
 
 env:
   IMAGE_REGISTRY: ghcr.io/forkline/ingress-nginx
+  IMAGE_PLATFORMS: linux/amd64
+  IMAGE_ARCHES: amd64
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -57,12 +60,18 @@ jobs:
 
       - name: Publish nginx base image
         working-directory: images/nginx
-        run: make REGISTRY=${{ env.IMAGE_REGISTRY }} push
+        run: |
+          make \
+            REGISTRY=${{ env.IMAGE_REGISTRY }} \
+            PLATFORMS=${{ env.IMAGE_PLATFORMS }} \
+            push
 
       - name: Publish controller images
         run: |
           NGINX_TAG=$(cat images/nginx/TAG)
           make \
+            PLATFORMS=${{ env.IMAGE_ARCHES }} \
+            BUILDX_PLATFORMS=${{ env.IMAGE_PLATFORMS }} \
             REGISTRY=${{ env.IMAGE_REGISTRY }} \
             BASE_IMAGE=${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_TAG} \
             TAG=${VERSION} \
@@ -72,6 +81,7 @@ jobs:
         working-directory: images
         run: |
           make \
+            PLATFORMS=${{ env.IMAGE_PLATFORMS }} \
             REGISTRY=${{ env.IMAGE_REGISTRY }} \
             NAME=kube-webhook-certgen \
             push
