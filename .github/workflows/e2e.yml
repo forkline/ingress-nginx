@@ -1,0 +1,208 @@
+---
+name: E2E
+
+"on":
+  push:
+    branches: [main]
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'rootfs/**'
+      - 'test/e2e/**'
+      - 'test/e2e-image/**'
+      - 'charts/**'
+      - 'NGINX_BASE'
+      - '.github/workflows/e2e.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'rootfs/**'
+      - 'test/e2e/**'
+      - 'test/e2e-image/**'
+      - 'charts/**'
+      - 'NGINX_BASE'
+      - '.github/workflows/e2e.yml'
+  workflow_dispatch:
+    inputs:
+      focus:
+        description: Optional ginkgo focus pattern
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build test images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Read Go version
+        run: echo "GOLANG_VERSION=$(cat GOLANG_VERSION)" >> "$GITHUB_ENV"
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+          check-latest: true
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Prepare kubectl
+        run: |
+          curl -LO https://dl.k8s.io/release/v1.35.3/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
+
+      - name: Build controller and e2e images
+        env:
+          TAG: 1.0.0-dev
+          ARCH: amd64
+          REGISTRY: ingress-controller
+        run: |
+          TAGNGINX=$(cat images/nginx/TAG)
+          make \
+            BASE_IMAGE=registry.k8s.io/ingress-nginx/nginx:${TAGNGINX} \
+            clean-image build image image-chroot
+          make -C test/e2e-image image
+          docker save \
+            nginx-ingress-controller:e2e \
+            ingress-controller/controller:1.0.0-dev \
+            ingress-controller/controller-chroot:1.0.0-dev \
+            | gzip > docker.tar.gz
+
+      - name: Upload image cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker.tar.gz
+          path: docker.tar.gz
+          retention-days: 1
+
+  chart-test:
+    name: Chart e2e
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download image cache
+        uses: actions/download-artifact@v4
+        with:
+          name: docker.tar.gz
+
+      - name: Load image cache
+        run: gzip --decompress --stdout docker.tar.gz | docker load
+
+      - name: Run chart tests
+        env:
+          K8S_VERSION: v1.35.1
+          SKIP_IMAGE_CREATION: true
+        run: |
+          sudo mkdir -pm 777 "${HOME}/.kube"
+          make kind-e2e-chart-tests
+
+  kubernetes:
+    name: Kubernetes
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download image cache
+        uses: actions/download-artifact@v4
+        with:
+          name: docker.tar.gz
+
+      - name: Load image cache
+        run: gzip --decompress --stdout docker.tar.gz | docker load
+
+      - name: Install kind
+        uses: helm/kind-action@v1.14.0
+        with:
+          version: v0.31.0
+          install_only: true
+
+      - name: Run e2e tests
+        env:
+          K8S_VERSION: v1.35.1
+          SKIP_CLUSTER_CREATION: false
+          SKIP_INGRESS_IMAGE_CREATION: true
+          SKIP_E2E_IMAGE_CREATION: true
+          FOCUS: ${{ inputs.focus }}
+        run: make kind-e2e-test
+
+      - name: Upload junit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-reports-kubernetes
+          path: test/junitreports/*.xml
+
+  kubernetes-chroot:
+    name: Kubernetes chroot
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download image cache
+        uses: actions/download-artifact@v4
+        with:
+          name: docker.tar.gz
+
+      - name: Load image cache
+        run: gzip --decompress --stdout docker.tar.gz | docker load
+
+      - name: Install kind
+        uses: helm/kind-action@v1.14.0
+        with:
+          version: v0.31.0
+          install_only: true
+
+      - name: Run chroot e2e tests
+        env:
+          K8S_VERSION: v1.35.1
+          IS_CHROOT: true
+          SKIP_CLUSTER_CREATION: false
+          SKIP_INGRESS_IMAGE_CREATION: true
+          SKIP_E2E_IMAGE_CREATION: true
+        run: make kind-e2e-test
+
+      - name: Upload junit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-reports-kubernetes-chroot
+          path: test/junitreports/*.xml
+
+  rerun-failed-jobs:
+    runs-on: ubuntu-latest
+    needs:
+      - kubernetes
+      - chart-test
+    if: failure() && github.run_attempt == 1
+    steps:
+      - name: Rerun failed jobs in this workflow
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run retry-workflow.yaml -F run_id=${{ github.run_id }}

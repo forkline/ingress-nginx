@@ -1,0 +1,25 @@
+---
+name: Retry workflow
+
+"on":
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: The workflow run ID to rerun
+        required: true
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  rerun:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rerun failed jobs
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run watch ${{ inputs.run_id }} > /dev/null 2>&1
+          gh run rerun ${{ inputs.run_id }} --failed

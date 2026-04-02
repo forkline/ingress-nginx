@@ -31,8 +31,8 @@ ARG COMMIT_SHA
 ARG BUILD_ID=UNSET
 
 LABEL org.opencontainers.image.title="NGINX Ingress Controller for Kubernetes"
-LABEL org.opencontainers.image.documentation="https://kubernetes.github.io/ingress-nginx/"
-LABEL org.opencontainers.image.source="https://github.com/kubernetes/ingress-nginx"
+LABEL org.opencontainers.image.documentation="https://forkline.github.io/ingress-nginx/"
+LABEL org.opencontainers.image.source="https://github.com/forkline/ingress-nginx"
 LABEL org.opencontainers.image.vendor="The Kubernetes Authors"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL org.opencontainers.image.version="${VERSION}"
@@ -57,7 +57,7 @@ RUN apk update \
      util-linux \
   && ln -s /usr/local/nginx/sbin/nginx /sbin/nginx \
   && adduser -S -D -H -u 101 -h /usr/local/nginx \
-    -s /sbin/nologin -G www-data -g www-data www-data 
+    -s /sbin/nologin -G www-data -g www-data www-data
 
 COPY --from=chroot /chroot /chroot
 
@@ -122,4 +122,3 @@ EXPOSE 80 443
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 CMD ["/nginx-ingress-controller"]
- 

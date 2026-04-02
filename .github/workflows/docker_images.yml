@@ -1,0 +1,71 @@
+---
+name: Release images
+
+"on":
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: docker-images-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE_REGISTRY: ghcr.io/forkline/ingress-nginx
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Derive image version
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          if [ "${VERSION}" = "main" ]; then
+            VERSION=latest
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=$(echo "${VERSION}" | sed -e 's/^v//')
+          fi
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Publish nginx base image
+        working-directory: images/nginx
+        run: make REGISTRY=${{ env.IMAGE_REGISTRY }} push
+
+      - name: Publish controller images
+        run: |
+          NGINX_TAG=$(cat images/nginx/TAG)
+          make \
+            REGISTRY=${{ env.IMAGE_REGISTRY }} \
+            BASE_IMAGE=${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_TAG} \
+            TAG=${VERSION} \
+            release
+
+      - name: Publish kube-webhook-certgen image
+        working-directory: images
+        run: |
+          make \
+            REGISTRY=${{ env.IMAGE_REGISTRY }} \
+            NAME=kube-webhook-certgen \
+            push

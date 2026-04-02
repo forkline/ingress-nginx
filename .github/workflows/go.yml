@@ -1,0 +1,120 @@
+---
+name: Go
+
+"on":
+  push:
+    branches: [main]
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'GOLANG_VERSION'
+      - '.golangci.yml'
+      - '.github/workflows/go.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'GOLANG_VERSION'
+      - '.golangci.yml'
+      - '.github/workflows/go.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: go-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Read Go version
+        run: echo "GOLANG_VERSION=$(cat GOLANG_VERSION)" >> "$GITHUB_ENV"
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+          check-latest: true
+
+      - name: Run unit tests
+        env:
+          PKG: k8s.io/ingress-nginx
+          GOFLAGS: -buildvcs=false
+        run: ./test/test.sh
+
+  lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Read Go version
+        run: echo "GOLANG_VERSION=$(cat GOLANG_VERSION)" >> "$GITHUB_ENV"
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+          check-latest: true
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.3.0
+          only-new-issues: true
+
+  build:
+    name: Build binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Read Go version
+        run: echo "GOLANG_VERSION=$(cat GOLANG_VERSION)" >> "$GITHUB_ENV"
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+          check-latest: true
+
+      - name: Build controller binaries
+        env:
+          PKG: k8s.io/ingress-nginx
+          ARCH: amd64
+          COMMIT_SHA: ${{ github.sha }}
+          REPO_INFO: https://github.com/${{ github.repository }}
+          TAG: ci
+        run: |
+          mkdir -p "rootfs/bin/${ARCH}"
+          ./build/build.sh
+
+  verify-docs:
+    name: Verify generated docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Read Go version
+        run: echo "GOLANG_VERSION=$(cat GOLANG_VERSION)" >> "$GITHUB_ENV"
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+          check-latest: true
+
+      - name: Verify annotation docs
+        run: ./hack/verify-annotation-docs.sh

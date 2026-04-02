@@ -1,0 +1,57 @@
+---
+name: Pre-commit
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pre-commit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Cache pre-commit hooks
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            pre-commit-
+
+      - name: Run commit-msg hooks for PR commits
+        if: github.event_name == 'pull_request'
+        run: |
+          BASE_REF=origin/${{ github.event.pull_request.base.ref }}
+          git --no-pager log --pretty=format:%H "${BASE_REF}..HEAD" | \
+            while read commit; do
+            git show --no-patch --format=%B "$commit" > .git/COMMIT_EDITMSG
+            pre-commit run \
+              --hook-stage commit-msg \
+              --commit-msg-filename .git/COMMIT_EDITMSG \
+              --verbose || exit 1
+            rm -f .git/COMMIT_EDITMSG
+          done
+
+      - name: Run pre-commit
+        run: pre-commit run --all-files --verbose

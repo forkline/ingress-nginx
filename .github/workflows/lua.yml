@@ -1,0 +1,39 @@
+---
+name: Lua
+
+"on":
+  push:
+    branches: [main]
+    paths:
+      - 'rootfs/etc/nginx/lua/**'
+      - '.luacheckrc'
+      - '.github/workflows/lua.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'rootfs/etc/nginx/lua/**'
+      - '.luacheckrc'
+      - '.github/workflows/lua.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lua-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lua-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Lint Lua
+        uses: lunarmodules/luacheck@v1
+        with:
+          args: >-
+            --codes --globals lua_ingress --globals configuration
+            --globals balancer --globals monitor --globals certificate
+            --globals tcp_udp_configuration --globals tcp_udp_balancer
+            --no-max-comment-line-length -q rootfs/etc/nginx/lua/

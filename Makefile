@@ -29,8 +29,8 @@ SHELL=/bin/bash -o pipefail -o errexit
 # Use the 0.0 tag for testing, it shouldn't clobber any release builds
 TAG ?= $(shell cat TAG)
 
-# The env below is called GO_VERSION and not GOLANG_VERSION because 
-# the gcb image we use to build already defines GOLANG_VERSION and is a 
+# The env below is called GO_VERSION and not GOLANG_VERSION because
+# the gcb image we use to build already defines GOLANG_VERSION and is a
 # really old version
 GO_VERSION ?= $(shell cat GOLANG_VERSION)
 
@@ -58,7 +58,7 @@ ifneq ($(PLATFORM),)
 	PLATFORM_FLAG="--platform"
 endif
 
-REGISTRY ?= us-central1-docker.pkg.dev/k8s-staging-images/ingress-nginx
+REGISTRY ?= ghcr.io/forkline/ingress-nginx
 
 BASE_IMAGE ?= $(shell cat NGINX_BASE)
 
