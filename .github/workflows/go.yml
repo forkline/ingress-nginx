@@ -49,7 +49,10 @@ jobs:
         env:
           PKG: k8s.io/ingress-nginx
           GOFLAGS: -buildvcs=false
-        run: ./test/test.sh
+        run: |
+          sudo mkdir -p /etc/ingress-controller/geoip
+          sudo mkdir -p /etc/ingress-controller/ssl
+          ./test/test.sh
 
   lint:
     name: golangci-lint
@@ -98,7 +101,7 @@ jobs:
           TAG: ci
         run: |
           mkdir -p "rootfs/bin/${ARCH}"
-          ./build/build.sh
+          bash ./build/build.sh
 
   verify-docs:
     name: Verify generated docs

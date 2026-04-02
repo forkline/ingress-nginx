@@ -1,13 +1,23 @@
-# Ingress NGINX Retirement
+# Forkline Maintained Fork
 
-## Retiring
+> This fork exists because the upstream project was retired, while the software
+> itself remains practical to maintain: the codebase is mature, behavior is well
+> known, and most future work is concentrated in controlled update lanes such as
+> NGINX, Go libraries, Kubernetes dependencies, and release automation.
+>
+> We maintain this project with our own coding-agent orchestration platform,
+> Forkline, the software factory. Much of the maintenance work is designed to be
+> automatic, but never unattended: we keep a human in the loop, listen to the
+> community, and prioritize fast bug fixes because we depend on this project
+> ourselves.
+
+## Upstream Retirement Context
 
 [What You Need to Know about Ingress NGINX Retirement](https://www.kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/):
 
-* Best-effort maintenance will continue until March 2026.
-* Afterward, there will be no further releases, no bugfixes, and no updates to resolve any security vulnerabilities that may be discovered.
-* Existing deployments of Ingress NGINX will not be broken.
-  * Existing project artifacts such as Helm charts and container images will remain available.
+* Best-effort maintenance continued until March 2026.
+* Upstream no longer provides releases, bugfixes, or security updates.
+* Existing deployments and historical artifacts remain important for operators and forks like this one.
 
 # Ingress NGINX Controller
 
