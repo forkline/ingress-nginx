@@ -29,5 +29,5 @@ if [ -z "${PKG}" ]; then
   exit 1
 fi
 
-go test -v \
+go test -v -coverprofile=coverage.out -covermode=atomic \
   $(go list "${PKG}/..." | grep -v vendor | grep -v '/test/e2e' | grep -v images | grep -v "docs/examples")

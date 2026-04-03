@@ -1,0 +1,30 @@
+codecov:
+  require_ci_to_pass: yes
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 0%
+        base: auto
+    patch:
+      default:
+        target: 80%
+        threshold: 0%
+
+ignore:
+  - "test/**/*"
+  - "images/**/*"
+  - "**/*_test.go"
+  - "docs/**/*"
+  - "vendor/**/*"
+  - "hack/**/*"
+  - "build/**/*"
+  - "rootfs/**/*"
+  - "**/zz_generated*.go"
+  - "**/generated.proto"

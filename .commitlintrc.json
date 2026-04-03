@@ -27,6 +27,7 @@
         "chart",
         "ci",
         "controller",
+        "coverage",
         "deps",
         "docs",
         "e2e",

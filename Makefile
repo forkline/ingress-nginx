@@ -286,3 +286,18 @@ release: builder clean
 build-docs:
 	pip install -r docs/requirements.txt
 	mkdocs build --config-file mkdocs.yml
+
+.PHONY: update-version
+update-version: ## Update version in all relevant files
+	@VERSION=$$(cat TAG | sed 's/^v//'); \
+	echo "Updating version to $$VERSION..."; \
+	sed -i -E "s/^(appVersion: ).*/\1$$VERSION/" charts/ingress-nginx/Chart.yaml; \
+	sed -i -E "s/^(version: ).*/\1$$VERSION/" charts/ingress-nginx/Chart.yaml; \
+	echo "Version updated to $$VERSION in TAG, Chart.yaml"
+
+.PHONY: update-changelog
+update-changelog: ## Update CHANGELOG with git-cliff
+	@VERSION=$$(cat TAG); \
+	PREV_TAG=$$(git tag --sort=-creatordate | head -1); \
+	echo "Updating CHANGELOG for $$VERSION (previous: $$PREV_TAG)..."; \
+	git-cliff --config cliff.toml --tag "$$VERSION" "$$PREV_TAG..HEAD" --unreleased --prepend CHANGELOG.md
