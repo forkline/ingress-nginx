@@ -138,3 +138,4 @@
 | UpstreamVhost | upstream-vhost | Low | location |
 | UsePortInRedirects | use-port-in-redirects | Low | location |
 | XForwardedPrefix | x-forwarded-prefix | Medium | location |
+
