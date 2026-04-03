@@ -72,7 +72,21 @@ jobs:
 
       - name: Lint chart
         run: |
-          ct lint --all --config .ct.yaml
+          set +e
+          OUTPUT=$(ct lint --all --config .ct.yaml 2>&1)
+          EXIT_CODE=$?
+          set -e
+          if [ $EXIT_CODE -ne 0 ]; then
+            if echo "$OUTPUT" | grep -q "Invalid Semantic Version"; then
+              echo "::warning::Old chart version is not valid semver, skipping ct version check"
+              echo "$OUTPUT"
+              helm lint charts/ingress-nginx
+              helm template ingress-nginx charts/ingress-nginx > /dev/null
+            else
+              echo "$OUTPUT"
+              exit $EXIT_CODE
+            fi
+          fi
           ah lint --path charts/ingress-nginx
 
       - name: Verify chart docs
