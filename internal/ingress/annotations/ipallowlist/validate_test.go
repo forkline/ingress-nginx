@@ -63,7 +63,7 @@ func TestSourceRangeEqual(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.name == "same pointer" {
 				sr := &SourceRange{CIDR: []string{"10.0.0.0/8"}}
-				assert.True(t, sr.Equal(sr))
+				assert.True(t, sr.Equal(sr)) //nolint:gocritic // intentional self-equality test
 				return
 			}
 			assert.Equal(t, tt.expect, tt.sr1.Equal(tt.sr2))

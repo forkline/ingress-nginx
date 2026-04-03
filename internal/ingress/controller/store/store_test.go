@@ -1651,10 +1651,10 @@ func TestWriteSSLSessionTicketKey(t *testing.T) {
 
 func TestCheckBadAnnotationValue(t *testing.T) {
 	tests := []struct {
-		name      string
-		anns      map[string]string
-		badwords  string
-		wantErr   bool
+		name     string
+		anns     map[string]string
+		badwords string
+		wantErr  bool
 	}{
 		{
 			name:     "empty annotations",

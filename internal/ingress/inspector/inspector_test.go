@@ -227,7 +227,7 @@ func TestDeepInspect(t *testing.T) {
 				t.Error("expected panic for nil ingress")
 			}
 		}()
-		DeepInspect((*networking.Ingress)(nil))
+		_ = DeepInspect((*networking.Ingress)(nil)) //nolint:errcheck // intentionally ignoring error to test panic
 	})
 
 	t.Run("service returns no error", func(t *testing.T) {
