@@ -18,9 +18,9 @@ jobs:
       - name: Get version from CHANGELOG
         id: get_version
         run: |
-          # Extract first version from CHANGELOG (vYYYY.MM.DD or vYYYY.MM.DD.N)
+          # Extract first version from CHANGELOG (vYYYY.MM.DD or vYYYY.MM.DD-N)
           VERSION=$(grep -oP \
-            '(?<=## \[v)[0-9]{4}\.[0-9]{2}\.[0-9]{2}(\.[0-9]+)?(?=\])' \
+            '(?<=## \[v)[0-9]{4}\.[0-9]{2}\.[0-9]{2}(-[0-9]+)?(?=\])' \
             CHANGELOG.md | head -1)
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "tag=v${VERSION}" >> $GITHUB_OUTPUT

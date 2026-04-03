@@ -1,7 +1,7 @@
 ---
 annotations:
   artifacthub.io/changes: |
-    - Switch to date-based versioning (v2026.04.03)
+    - Fix Helm chart semver compatibility (v2026.04.04)
   artifacthub.io/prerelease: "false"
 apiVersion: v2
 appVersion: 0.1.0

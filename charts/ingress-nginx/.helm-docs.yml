@@ -1,0 +1,4 @@
+templates:
+  badge: |
+    ![Version: {{ .Version }}](https://img.shields.io/badge/Version-{{ .Version | replace "." "_" }}-informational?style=flat-square)
+    ![AppVersion: {{ .AppVersion }}](https://img.shields.io/badge/AppVersion-{{ .AppVersion | replace "." "_" }}-informational?style=flat-square)

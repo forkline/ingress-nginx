@@ -302,5 +302,6 @@ update-version: ## Update version in all relevant files
 .PHONY: update-changelog
 update-changelog: ## Update CHANGELOG with git-cliff
 	@VERSION=$$(cat TAG); \
-	echo "Updating CHANGELOG for $$VERSION..."; \
-	git-cliff --config cliff.toml --tag "$$VERSION" --unreleased --prepend CHANGELOG.md
+	PREV_TAG=$$(git tag --sort=-creatordate | head -1); \
+	echo "Updating CHANGELOG for $$VERSION (previous: $$PREV_TAG)..."; \
+	git-cliff --config cliff.toml --tag "$$VERSION" "$$PREV_TAG..HEAD" --unreleased --prepend CHANGELOG.md
