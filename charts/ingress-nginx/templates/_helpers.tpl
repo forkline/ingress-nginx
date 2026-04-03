@@ -7,6 +7,20 @@ Expand the name of the chart.
 {{- end -}}
 
 {{/*
+Check if a semver version string is valid.
+This provides compatibility with Helm versions < 3.14 that don't have semverIsValid.
+*/}}
+{{- define "ingress-nginx.semverIsValid" -}}
+{{- $version := . -}}
+{{- if $version -}}
+  {{- $regex := "^v?([0-9]+)(\\.[0-9]+)?(\\.[0-9]+)?(-[a-zA-Z0-9.]+)?(\\+[a-zA-Z0-9.]+)?$" -}}
+  {{- regexMatch $regex $version -}}
+{{- else -}}
+  {{- false -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "ingress-nginx.chart" -}}
