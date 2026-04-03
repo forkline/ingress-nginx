@@ -1,10 +1,7 @@
 version: 2
 project_name: ingress-nginx
 release:
-  disable_validation: true
-  github:
-    owner: forkline
-    name: ingress-nginx
+
 builds:
   - id: ingress-nginx
     goos:
