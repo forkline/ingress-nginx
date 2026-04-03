@@ -72,7 +72,7 @@ jobs:
 
       - name: Lint chart
         run: |
-          ct lint --config .ct.yaml
+          ct lint --all --config .ct.yaml
           ah lint --path charts/ingress-nginx
 
       - name: Verify chart docs

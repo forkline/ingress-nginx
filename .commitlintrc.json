@@ -25,6 +25,7 @@
       "always",
       [
         "chart",
+        "changelog",
         "ci",
         "controller",
         "deps",
