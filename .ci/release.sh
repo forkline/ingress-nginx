@@ -38,6 +38,9 @@ make update-version
 
 make update-changelog
 
+echo "Running helm-docs to update chart README..."
+helm-docs --chart-search-root charts
+
 git add .
 git commit -m "release: prepare $NEW_VERSION"
 
