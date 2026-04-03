@@ -2930,3 +2930,151 @@ func TestLocationConfigForLua(t *testing.T) {
 		})
 	}
 }
+
+func TestBuildAuthSignURLLocation(t *testing.T) {
+	tests := []struct {
+		name        string
+		location    string
+		authSignURL string
+	}{
+		{
+			name:        "basic case",
+			location:    "/test",
+			authSignURL: "http://auth.example.com/auth",
+		},
+		{
+			name:        "empty location",
+			location:    "",
+			authSignURL: "http://auth.example.com/auth",
+		},
+		{
+			name:        "empty authSignURL",
+			location:    "/test",
+			authSignURL: "",
+		},
+		{
+			name:        "both empty",
+			location:    "",
+			authSignURL: "",
+		},
+		{
+			name:        "complex path",
+			location:    "/api/v1/users",
+			authSignURL: "http://auth.example.com/oauth2/auth?redirect=/callback",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildAuthSignURLLocation(tt.location, tt.authSignURL)
+			assert.True(t, strings.HasPrefix(result, "@"))
+			assert.Len(t, result, 41) // @ + 40 hex chars (sha1)
+		})
+	}
+}
+
+func TestBuildAuthUpstreamLuaHeaders(t *testing.T) {
+	tests := []struct {
+		name    string
+		headers []string
+		expect  string
+	}{
+		{
+			name:    "empty headers",
+			headers: []string{},
+			expect:  "",
+		},
+		{
+			name:    "nil headers",
+			headers: nil,
+			expect:  "",
+		},
+		{
+			name:    "single header",
+			headers: []string{"X-Auth-Request-User"},
+			expect:  "X-Auth-Request-User",
+		},
+		{
+			name:    "multiple headers",
+			headers: []string{"X-Auth-Request-User", "X-Auth-Request-Email", "X-Auth-Request-Groups"},
+			expect:  "X-Auth-Request-User,X-Auth-Request-Email,X-Auth-Request-Groups",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildAuthUpstreamLuaHeaders(tt.headers)
+			assert.Equal(t, tt.expect, result)
+		})
+	}
+}
+
+func TestIngressInformationEqual(t *testing.T) {
+	tests := []struct {
+		name   string
+		i1     *ingressInformation
+		i2     *ingressInformation
+		expect bool
+	}{
+		{
+			name: "identical",
+			i1: &ingressInformation{
+				Namespace:   "default",
+				Rule:        "test-ingress",
+				Service:     "test-svc",
+				ServicePort: "80",
+				Annotations: map[string]string{"key": "value"},
+			},
+			i2: &ingressInformation{
+				Namespace:   "default",
+				Rule:        "test-ingress",
+				Service:     "test-svc",
+				ServicePort: "80",
+				Annotations: map[string]string{"key": "value"},
+			},
+			expect: true,
+		},
+		{
+			name:   "different namespace",
+			i1:     &ingressInformation{Namespace: "ns1"},
+			i2:     &ingressInformation{Namespace: "ns2"},
+			expect: false,
+		},
+		{
+			name:   "different rule",
+			i1:     &ingressInformation{Rule: "rule1"},
+			i2:     &ingressInformation{Rule: "rule2"},
+			expect: false,
+		},
+		{
+			name:   "different service",
+			i1:     &ingressInformation{Service: "svc1"},
+			i2:     &ingressInformation{Service: "svc2"},
+			expect: false,
+		},
+		{
+			name:   "different serviceport",
+			i1:     &ingressInformation{ServicePort: "80"},
+			i2:     &ingressInformation{ServicePort: "443"},
+			expect: false,
+		},
+		{
+			name:   "different annotations",
+			i1:     &ingressInformation{Annotations: map[string]string{"a": "1"}},
+			i2:     &ingressInformation{Annotations: map[string]string{"a": "2"}},
+			expect: false,
+		},
+		{
+			name:   "same annotations",
+			i1:     &ingressInformation{Annotations: map[string]string{"a": "1"}},
+			i2:     &ingressInformation{Annotations: map[string]string{"a": "1"}},
+			expect: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expect, tt.i1.Equal(tt.i2))
+		})
+	}
+}
