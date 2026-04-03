@@ -11,13 +11,13 @@ CURRENT_VERSION=$(cat TAG)
 BASE_VERSION="v$(date +%Y.%m.%d)"
 
 if git rev-parse "$BASE_VERSION" >/dev/null 2>&1; then
-    HIGHEST_SUFFIX=$(git tag -l "${BASE_VERSION}.*" \
-        | sed "s/^${BASE_VERSION}\.//" \
+    HIGHEST_SUFFIX=$(git tag -l "${BASE_VERSION}-*" \
+        | sed "s/^${BASE_VERSION}-//" \
         | sort -n | tail -1)
     if [ -z "$HIGHEST_SUFFIX" ]; then
-        NEW_VERSION="${BASE_VERSION}.1"
+        NEW_VERSION="${BASE_VERSION}-1"
     else
-        NEW_VERSION="${BASE_VERSION}.$((HIGHEST_SUFFIX + 1))"
+        NEW_VERSION="${BASE_VERSION}-$((HIGHEST_SUFFIX + 1))"
     fi
 else
     NEW_VERSION="$BASE_VERSION"

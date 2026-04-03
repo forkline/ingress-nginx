@@ -50,6 +50,68 @@ jobs:
       - name: Run unit tests
         run: make test
 
+      - name: Generate coverage summary
+        run: |
+          echo "## Coverage Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          go tool cover -func=coverage.out >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Generate per-package coverage report
+        run: |
+          GS="$GITHUB_STEP_SUMMARY"
+          echo "## Per-Package Coverage (Critical Update Lanes)" >> "$GS"
+          echo "" >> "$GS"
+          echo "| Package | Coverage |" >> "$GS"
+          echo "|---------|----------|" >> "$GS"
+          ANN="k8s.io/ingress-nginx/internal/ingress/annotations"
+          CTRL="k8s.io/ingress-nginx/internal/ingress/controller"
+          for pkg in \
+            "k8s.io/ingress-nginx/internal/nginx" \
+            "${CTRL}" \
+            "${CTRL}/template" \
+            "${CTRL}/store" \
+            "${CTRL}/process" \
+            "${CTRL}/config" \
+            "${CTRL}/ingressclass" \
+            "${ANN}" \
+            "${ANN}/parser" \
+            "${ANN}/auth" \
+            "${ANN}/authreq" \
+            "${ANN}/proxy" \
+            "${ANN}/proxyssl" \
+            "${ANN}/sslcipher" \
+            "${ANN}/cors" \
+            "${ANN}/modsecurity" \
+            "${ANN}/rewrite" \
+            "${ANN}/redirect" \
+            "${ANN}/canary" \
+            "${ANN}/ratelimit" \
+            "${ANN}/sessionaffinity" \
+            "${ANN}/loadbalancing" \
+            "${ANN}/ipallowlist" \
+            "${ANN}/ipdenylist" \
+            "${ANN}/mirror" \
+            "${ANN}/connection" \
+            "${ANN}/opentelemetry" \
+            "${ANN}/fastcgi" \
+            "${ANN}/authtls" \
+            "${ANN}/customheaders" \
+            "k8s.io/ingress-nginx/internal/k8s" \
+            "k8s.io/ingress-nginx/internal/admission/controller"; do
+            COV=$(
+              go tool cover -func=coverage.out 2>/dev/null \
+                | grep "^${pkg}/" | awk '{print $NF}' \
+                | sed 's/%//' \
+                | awk '{s+=$1;n++} END {
+                    if(n>0) printf "%.1f%%", s/n
+                    else print "N/A"
+                  }'
+            )
+            echo "| \`${pkg}\` | ${COV} |" >> "$GS"
+          done
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
@@ -57,6 +119,13 @@ jobs:
           flags: unittests
           fail_ci_if_error: false
           verbose: true
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.out
+          retention-days: 30
 
   lint:
     name: golangci-lint
@@ -138,3 +207,98 @@ jobs:
 
       - name: Verify annotation docs
         run: ./hack/verify-annotation-docs.sh
+
+  coverage-check:
+    name: Coverage threshold
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Read Go version
+        run: echo "GOLANG_VERSION=$(cat GOLANG_VERSION)" >> "$GITHUB_ENV"
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+          check-latest: true
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+
+      - name: Compare coverage with base branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          GS="$GITHUB_STEP_SUMMARY"
+          echo "## Coverage Threshold Check" >> "$GS"
+          echo "" >> "$GS"
+
+          PR_COVERAGE=$(
+            go tool cover -func=coverage.out | tail -1 | awk '{print $NF}'
+          )
+          echo "PR total coverage: ${PR_COVERAGE}" >> "$GS"
+
+          git fetch origin \
+            "${{ github.base_ref }}" --depth=1 2>/dev/null || true
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+
+          if git cat-file -t "${BASE_SHA}" >/dev/null 2>&1; then
+            git stash
+            git checkout "${BASE_SHA}" \
+              -- test/test.sh go.mod go.sum 2>/dev/null || true
+            PKG=k8s.io/ingress-nginx go test \
+              -coverprofile=base_coverage.out \
+              -covermode=atomic \
+              $(go list "${PKG}/..." \
+                | grep -v vendor \
+                | grep -v '/test/e2e' \
+                | grep -v images \
+                | grep -v "docs/examples") \
+              2>/dev/null || true
+            git stash pop 2>/dev/null || true
+
+            if [ -f base_coverage.out ]; then
+              BASE_COVERAGE=$(
+                go tool cover -func=base_coverage.out \
+                  | tail -1 | awk '{print $NF}'
+              )
+              echo "Base total coverage: ${BASE_COVERAGE}" >> "$GS"
+
+              PR_PCT=$(echo "${PR_COVERAGE}" | sed 's/%//')
+              BASE_PCT=$(echo "${BASE_COVERAGE}" | sed 's/%//')
+
+              echo "" >> "$GS"
+              DIFF=$(echo "${PR_PCT} - ${BASE_PCT}" \
+                | bc 2>/dev/null || echo "0")
+              echo "Coverage diff: ${DIFF}%" >> "$GS"
+
+              COVERAGE_DECREASED=$(echo "${PR_PCT} < ${BASE_PCT}" \
+                | bc -l 2>/dev/null || echo "0")
+              if (( COVERAGE_DECREASED )); then
+                echo "" >> "$GS"
+                echo ":x: **FAIL**: Coverage decreased" \
+                  "from ${BASE_COVERAGE} to ${PR_COVERAGE}" >> "$GS"
+                echo "Coverage must never decrease." \
+                  "Add tests for changed code paths." >> "$GS"
+                exit 1
+              else
+                echo ":white_check_mark: **PASS**:" \
+                  "Coverage maintained or improved" >> "$GS"
+              fi
+            else
+              echo "Could not generate base coverage" \
+                "- skipping threshold check" >> "$GS"
+            fi
+          else
+            echo "Base commit not available" \
+              "- skipping threshold check" >> "$GS"
+          fi
