@@ -20,14 +20,15 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	api "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func buildIngress() *networking.Ingress {
 	return &networking.Ingress{
-		ObjectMeta: meta_v1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "foo",
 			Namespace: api.NamespaceDefault,
 		},
@@ -251,4 +252,159 @@ func TestStringToURL(t *testing.T) {
 			t.Errorf("%v: expected \"%v\" but \"%v\" was returned", test.title, test.parsed, i)
 		}
 	}
+}
+
+func TestAnnotationsReferencesConfigmap(t *testing.T) {
+	tests := []struct {
+		name   string
+		ing    *networking.Ingress
+		expect bool
+	}{
+		{
+			name:   "nil ingress",
+			ing:    nil,
+			expect: false,
+		},
+		{
+			name: "no annotations",
+			ing: &networking.Ingress{
+				ObjectMeta: v1.ObjectMeta{},
+			},
+			expect: false,
+		},
+		{
+			name: "non configmap annotation",
+			ing: &networking.Ingress{
+				ObjectMeta: v1.ObjectMeta{
+					Annotations: map[string]string{
+						"nginx.ingress.kubernetes.io/rewrite-target": "/new",
+					},
+				},
+			},
+			expect: false,
+		},
+		{
+			name: "auth-proxy-set-header annotation",
+			ing: &networking.Ingress{
+				ObjectMeta: v1.ObjectMeta{
+					Annotations: map[string]string{
+						"auth-proxy-set-header": "configmap",
+					},
+				},
+			},
+			expect: true,
+		},
+		{
+			name: "fastcgi-params-configmap annotation",
+			ing: &networking.Ingress{
+				ObjectMeta: v1.ObjectMeta{
+					Annotations: map[string]string{
+						"fastcgi-params-configmap": "configmap",
+					},
+				},
+			},
+			expect: true,
+		},
+		{
+			name: "mixed annotations with configmap",
+			ing: &networking.Ingress{
+				ObjectMeta: v1.ObjectMeta{
+					Annotations: map[string]string{
+						"nginx.ingress.kubernetes.io/rewrite-target": "/new",
+						"auth-proxy-set-header":                      "configmap",
+					},
+				},
+			},
+			expect: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := AnnotationsReferencesConfigmap(tt.ing)
+			assert.Equal(t, tt.expect, result)
+		})
+	}
+}
+
+func TestNormalizeString(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  string
+		expect string
+	}{
+		{
+			name:   "no trimming needed",
+			input:  "hello world",
+			expect: "hello world",
+		},
+		{
+			name:   "trims spaces on each line",
+			input:  "  hello  \n  world  ",
+			expect: "hello\nworld",
+		},
+		{
+			name:   "single line with spaces",
+			input:  "  trimmed  ",
+			expect: "trimmed",
+		},
+		{
+			name:   "empty string",
+			input:  "",
+			expect: "",
+		},
+		{
+			name:   "multiple empty lines",
+			input:  "\n\n\n",
+			expect: "\n\n\n",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := normalizeString(tt.input)
+			assert.Equal(t, tt.expect, result)
+		})
+	}
+}
+
+func TestTrimAnnotationPrefix(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  string
+		expect string
+	}{
+		{
+			name:   "full prefix",
+			input:  "nginx.ingress.kubernetes.io/rewrite-target",
+			expect: "rewrite-target",
+		},
+		{
+			name:   "no prefix",
+			input:  "some-annotation",
+			expect: "some-annotation",
+		},
+		{
+			name:   "partial prefix",
+			input:  "nginx.ingress.kubernetes.io",
+			expect: "nginx.ingress.kubernetes.io",
+		},
+		{
+			name:   "empty string",
+			input:  "",
+			expect: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := TrimAnnotationPrefix(tt.input)
+			assert.Equal(t, tt.expect, result)
+		})
+	}
+}
+
+func TestGetAnnotationWithPrefix(t *testing.T) {
+	result := GetAnnotationWithPrefix("rewrite-target")
+	assert.Equal(t, "nginx.ingress.kubernetes.io/rewrite-target", result)
 }

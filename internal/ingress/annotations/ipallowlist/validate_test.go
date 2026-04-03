@@ -161,5 +161,5 @@ func TestGetDocumentation(t *testing.T) {
 	p := NewParser(&resolver.Mock{})
 	fields := p.GetDocumentation()
 	assert.NotNil(t, fields)
-	assert.Contains(t, fields, "whitelist-source-range")
+	assert.Contains(t, fields, "allowlist-source-range")
 }
