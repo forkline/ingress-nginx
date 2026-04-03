@@ -1,10 +1,10 @@
 ---
 annotations:
   artifacthub.io/changes: |
-    - Fix Helm chart semver compatibility (v2026.4.3)
+    - Switch to date-based versioning (v2026.04.03)
   artifacthub.io/prerelease: "false"
 apiVersion: v2
-appVersion: 2026.4.3-1
+appVersion: 2026.04.03
 description: >-
   Ingress controller for Kubernetes using NGINX as a reverse proxy and load
   balancer
@@ -23,4 +23,4 @@ maintainers:
 name: ingress-nginx
 sources:
   - https://github.com/forkline/ingress-nginx
-version: 2026.4.3-1
+version: 4.15.6
