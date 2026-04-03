@@ -53,16 +53,19 @@ Replace the current split between `ci.yaml` and `golangci-lint.yml` with a singl
 Go-focused workflow that:
 
 1. Detects code changes and skips docs-only pull requests.
-2. Runs unit tests.
-3. Runs `golangci-lint`.
-4. Verifies generated docs and manifests.
-5. Builds controller artifacts.
-6. Publishes a concise summary to the job summary.
+2. Runs unit tests with coverage tracking (see Issue #4).
+3. Uploads coverage to Codecov for regression prevention.
+4. Runs `golangci-lint`.
+5. Verifies generated docs and manifests.
+6. Builds controller artifacts.
+7. Publishes a concise summary to the job summary.
 
 Implementation notes:
 
 - Keep current `make test`, `make verify-docs`, and build targets as the first
   migration step.
+- Coverage tracking is critical for maintenance mode (see `.github/codecov.yml`).
+- Coverage must never decrease from baseline to prevent regressions.
 - Preserve path filtering from `.github/workflows/ci.yaml` while reducing the
   number of workflows a contributor has to understand.
 - Add `concurrency` groups so superseded pull request runs are canceled.
