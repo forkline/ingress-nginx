@@ -29,10 +29,7 @@ Get the application URL by running these commands:
 
 An example Ingress that makes use of the controller:
 
-{{- $isV1 := true }}
-{{- if and .Chart.AppVersion (eq (include "ingress-nginx.semverIsValid" .Chart.AppVersion) "true") }}
-  {{- $isV1 = semverCompare ">=1" .Chart.AppVersion }}
-{{- end }}
+{{- $isV1 := semverCompare ">=1" .Chart.AppVersion}}
   apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:

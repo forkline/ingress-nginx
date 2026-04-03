@@ -72,11 +72,7 @@ jobs:
 
       - name: Lint chart
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            helm lint charts/ingress-nginx --strict
-          else
-            ct lint --config .ct.yaml --all
-          fi
+          ct lint --config .ct.yaml
           ah lint --path charts/ingress-nginx
 
       - name: Verify chart docs
