@@ -290,9 +290,13 @@ build-docs:
 .PHONY: update-version
 update-version: ## Update version in all relevant files
 	@VERSION=$$(cat TAG | sed 's/^v//'); \
+	HELM_VERSION=$$(echo "$$VERSION" | sed -E 's/([0-9]{4})\.([0-9]{2})\.([0-9]{2})(\.[0-9]+)?/0.\1\2\3\4/'); \
+	APP_VERSION=$$(echo "$$VERSION" | sed -E 's/([0-9]{4})\.([0-9]{2})\.([0-9]{2})(\.[0-9]+)?/1.\1\2\3\4/'); \
 	echo "Updating version to $$VERSION..."; \
-	sed -i -E "s/^(appVersion: ).*/\1$$VERSION/" charts/ingress-nginx/Chart.yaml; \
-	sed -i -E "s/^(version: ).*/\1$$VERSION/" charts/ingress-nginx/Chart.yaml; \
+	echo "Helm chart version: $$HELM_VERSION"; \
+	echo "App version: $$APP_VERSION"; \
+	sed -i -E "s/^(appVersion: ).*/\1$$APP_VERSION/" charts/ingress-nginx/Chart.yaml; \
+	sed -i -E "s/^(version: ).*/\1$$HELM_VERSION/" charts/ingress-nginx/Chart.yaml; \
 	echo "Version updated to $$VERSION in TAG, Chart.yaml"
 
 .PHONY: update-changelog
