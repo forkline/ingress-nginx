@@ -27,6 +27,7 @@
         "chart",
         "changelog",
         "ci",
+        "lint",
         "controller",
         "coverage",
         "deps",
