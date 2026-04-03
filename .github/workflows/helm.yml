@@ -45,7 +45,7 @@ jobs:
         uses: azure/setup-helm@v5.0.0
 
       - name: Set up Helm Chart Testing
-        uses: helm/chart-testing-action@v2.7.0
+        uses: helm/chart-testing-action@v2.8.0
 
       - name: Set up Artifact Hub CLI
         run: |
