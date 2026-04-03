@@ -19,6 +19,7 @@ package ratelimit
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	api "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -246,5 +247,175 @@ func TestAnnotationCIDR(t *testing.T) {
 	}
 	if len(rateLimit.Allowlist) != 1 {
 		t.Errorf("expected 1 cidrs in limit by ip but %v was returned", len(rateLimit.Allowlist))
+	}
+}
+
+func TestRateLimitConfigEqual(t *testing.T) {
+	tests := []struct {
+		name   string
+		c1     *Config
+		c2     *Config
+		expect bool
+	}{
+		{
+			"both nil",
+			nil,
+			nil,
+			true,
+		},
+		{
+			"one nil",
+			&Config{},
+			nil,
+			false,
+		},
+		{
+			"equal configs",
+			&Config{
+				Connections:    Zone{Name: "z1", Limit: 5, Burst: 25, SharedSize: 5},
+				RPS:            Zone{Name: "z2", Limit: 100, Burst: 500, SharedSize: 5},
+				RPM:            Zone{Name: "z3", Limit: 10, Burst: 50, SharedSize: 5},
+				LimitRate:      10,
+				LimitRateAfter: 100,
+				Name:           "test",
+				ID:             "abc",
+				Allowlist:      []string{"10.0.0.0/8"},
+			},
+			&Config{
+				Connections:    Zone{Name: "z1", Limit: 5, Burst: 25, SharedSize: 5},
+				RPS:            Zone{Name: "z2", Limit: 100, Burst: 500, SharedSize: 5},
+				RPM:            Zone{Name: "z3", Limit: 10, Burst: 50, SharedSize: 5},
+				LimitRate:      10,
+				LimitRateAfter: 100,
+				Name:           "test",
+				ID:             "abc",
+				Allowlist:      []string{"10.0.0.0/8"},
+			},
+			true,
+		},
+		{
+			"different Connections zone",
+			&Config{Connections: Zone{Name: "a"}},
+			&Config{Connections: Zone{Name: "b"}},
+			false,
+		},
+		{
+			"different RPS zone",
+			&Config{RPS: Zone{Name: "a"}},
+			&Config{RPS: Zone{Name: "b"}},
+			false,
+		},
+		{
+			"different RPM zone",
+			&Config{RPM: Zone{Name: "a"}},
+			&Config{RPM: Zone{Name: "b"}},
+			false,
+		},
+		{
+			"different LimitRate",
+			&Config{LimitRate: 1},
+			&Config{LimitRate: 2},
+			false,
+		},
+		{
+			"different LimitRateAfter",
+			&Config{LimitRateAfter: 1},
+			&Config{LimitRateAfter: 2},
+			false,
+		},
+		{
+			"different ID",
+			&Config{ID: "a"},
+			&Config{ID: "b"},
+			false,
+		},
+		{
+			"different Name",
+			&Config{Name: "a"},
+			&Config{Name: "b"},
+			false,
+		},
+		{
+			"different Allowlist length",
+			&Config{Allowlist: []string{"1.1.1.1"}},
+			&Config{Allowlist: []string{"1.1.1.1", "2.2.2.2"}},
+			false,
+		},
+		{
+			"different Allowlist values",
+			&Config{Allowlist: []string{"1.1.1.1"}},
+			&Config{Allowlist: []string{"2.2.2.2"}},
+			false,
+		},
+		{
+			"same Allowlist different order",
+			&Config{Allowlist: []string{"1.1.1.1", "2.2.2.2"}},
+			&Config{Allowlist: []string{"2.2.2.2", "1.1.1.1"}},
+			true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expect, tt.c1.Equal(tt.c2))
+		})
+	}
+}
+
+func TestZoneEqual(t *testing.T) {
+	tests := []struct {
+		name   string
+		z1     *Zone
+		z2     *Zone
+		expect bool
+	}{
+		{
+			"both nil",
+			nil,
+			nil,
+			true,
+		},
+		{
+			"one nil",
+			&Zone{},
+			nil,
+			false,
+		},
+		{
+			"equal zones",
+			&Zone{Name: "z", Limit: 5, Burst: 25, SharedSize: 5},
+			&Zone{Name: "z", Limit: 5, Burst: 25, SharedSize: 5},
+			true,
+		},
+		{
+			"different Name",
+			&Zone{Name: "a"},
+			&Zone{Name: "b"},
+			false,
+		},
+		{
+			"different Limit",
+			&Zone{Limit: 1},
+			&Zone{Limit: 2},
+			false,
+		},
+		{
+			"different Burst",
+			&Zone{Burst: 1},
+			&Zone{Burst: 2},
+			false,
+		},
+		{
+			"different SharedSize",
+			&Zone{SharedSize: 1},
+			&Zone{SharedSize: 2},
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expect, tt.z1.Equal(tt.z2))
+		})
 	}
 }

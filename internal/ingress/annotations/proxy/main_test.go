@@ -19,6 +19,7 @@ package proxy
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	api "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -376,5 +377,163 @@ func TestProxyWithBusyBuffersSizeAnnotation(t *testing.T) {
 	}
 	if p.BusyBuffersSize != "4k" {
 		t.Errorf("expected 4k as BusyBuffersSize but returned %v", p.BusyBuffersSize)
+	}
+}
+
+func TestProxyConfigEqual(t *testing.T) {
+	tests := []struct {
+		name   string
+		c1     *Config
+		c2     *Config
+		expect bool
+	}{
+		{
+			"both nil",
+			nil,
+			nil,
+			true,
+		},
+		{
+			"one nil",
+			&Config{},
+			nil,
+			false,
+		},
+		{
+			"equal configs",
+			&Config{
+				BodySize: "1k", ConnectTimeout: 5, SendTimeout: 10, ReadTimeout: 15,
+				BuffersNumber: 4, BufferSize: "8k", BusyBuffersSize: "16k",
+				CookieDomain: "off", CookiePath: "off",
+				NextUpstream: "error", NextUpstreamTimeout: 0, NextUpstreamTries: 3,
+				ProxyRedirectFrom: "off", ProxyRedirectTo: "off",
+				RequestBuffering: "on", ProxyBuffering: "off",
+				ProxyHTTPVersion: "1.1", ProxyMaxTempFileSize: "1024m",
+			},
+			&Config{
+				BodySize: "1k", ConnectTimeout: 5, SendTimeout: 10, ReadTimeout: 15,
+				BuffersNumber: 4, BufferSize: "8k", BusyBuffersSize: "16k",
+				CookieDomain: "off", CookiePath: "off",
+				NextUpstream: "error", NextUpstreamTimeout: 0, NextUpstreamTries: 3,
+				ProxyRedirectFrom: "off", ProxyRedirectTo: "off",
+				RequestBuffering: "on", ProxyBuffering: "off",
+				ProxyHTTPVersion: "1.1", ProxyMaxTempFileSize: "1024m",
+			},
+			true,
+		},
+		{
+			"different BodySize",
+			&Config{BodySize: "1k"},
+			&Config{BodySize: "2k"},
+			false,
+		},
+		{
+			"different ConnectTimeout",
+			&Config{ConnectTimeout: 1},
+			&Config{ConnectTimeout: 2},
+			false,
+		},
+		{
+			"different SendTimeout",
+			&Config{SendTimeout: 1},
+			&Config{SendTimeout: 2},
+			false,
+		},
+		{
+			"different ReadTimeout",
+			&Config{ReadTimeout: 1},
+			&Config{ReadTimeout: 2},
+			false,
+		},
+		{
+			"different BuffersNumber",
+			&Config{BuffersNumber: 1},
+			&Config{BuffersNumber: 2},
+			false,
+		},
+		{
+			"different BufferSize",
+			&Config{BufferSize: "4k"},
+			&Config{BufferSize: "8k"},
+			false,
+		},
+		{
+			"different BusyBuffersSize",
+			&Config{BusyBuffersSize: "4k"},
+			&Config{BusyBuffersSize: "8k"},
+			false,
+		},
+		{
+			"different CookieDomain",
+			&Config{CookieDomain: "a"},
+			&Config{CookieDomain: "b"},
+			false,
+		},
+		{
+			"different CookiePath",
+			&Config{CookiePath: "a"},
+			&Config{CookiePath: "b"},
+			false,
+		},
+		{
+			"different NextUpstream",
+			&Config{NextUpstream: "error"},
+			&Config{NextUpstream: "timeout"},
+			false,
+		},
+		{
+			"different NextUpstreamTimeout",
+			&Config{NextUpstreamTimeout: 1},
+			&Config{NextUpstreamTimeout: 2},
+			false,
+		},
+		{
+			"different NextUpstreamTries",
+			&Config{NextUpstreamTries: 1},
+			&Config{NextUpstreamTries: 2},
+			false,
+		},
+		{
+			"different RequestBuffering",
+			&Config{RequestBuffering: "on"},
+			&Config{RequestBuffering: "off"},
+			false,
+		},
+		{
+			"different ProxyRedirectFrom",
+			&Config{ProxyRedirectFrom: "a"},
+			&Config{ProxyRedirectFrom: "b"},
+			false,
+		},
+		{
+			"different ProxyRedirectTo",
+			&Config{ProxyRedirectTo: "a"},
+			&Config{ProxyRedirectTo: "b"},
+			false,
+		},
+		{
+			"different ProxyBuffering",
+			&Config{ProxyBuffering: "on"},
+			&Config{ProxyBuffering: "off"},
+			false,
+		},
+		{
+			"different ProxyHTTPVersion",
+			&Config{ProxyHTTPVersion: "1.0"},
+			&Config{ProxyHTTPVersion: "1.1"},
+			false,
+		},
+		{
+			"different ProxyMaxTempFileSize",
+			&Config{ProxyMaxTempFileSize: "128k"},
+			&Config{ProxyMaxTempFileSize: "256k"},
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expect, tt.c1.Equal(tt.c2))
+		})
 	}
 }

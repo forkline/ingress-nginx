@@ -20,8 +20,12 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	apiv1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/version"
+	fakediscovery "k8s.io/client-go/discovery/fake"
 	testclient "k8s.io/client-go/kubernetes/fake"
 )
 
@@ -381,5 +385,332 @@ func TestGetIngressPod(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected a PodInfo but returned error: %v", err)
 		return
+	}
+}
+
+func TestSetDefaultNGINXPathType(t *testing.T) {
+	prefixType := networkingv1.PathTypePrefix
+	exactType := networkingv1.PathTypeExact
+	implSpecificType := networkingv1.PathTypeImplementationSpecific
+
+	tests := []struct {
+		name          string
+		ingress       *networkingv1.Ingress
+		expectedTypes []networkingv1.PathType
+	}{
+		{
+			name: "nil PathType should default to Prefix",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{
+					Rules: []networkingv1.IngressRule{
+						{
+							IngressRuleValue: networkingv1.IngressRuleValue{
+								HTTP: &networkingv1.HTTPIngressRuleValue{
+									Paths: []networkingv1.HTTPIngressPath{
+										{
+											Path:     "/",
+											PathType: nil,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedTypes: []networkingv1.PathType{prefixType},
+		},
+		{
+			name: "ImplementationSpecific PathType should be changed to Prefix",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{
+					Rules: []networkingv1.IngressRule{
+						{
+							IngressRuleValue: networkingv1.IngressRuleValue{
+								HTTP: &networkingv1.HTTPIngressRuleValue{
+									Paths: []networkingv1.HTTPIngressPath{
+										{
+											Path:     "/",
+											PathType: &implSpecificType,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedTypes: []networkingv1.PathType{prefixType},
+		},
+		{
+			name: "Exact PathType should remain unchanged",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{
+					Rules: []networkingv1.IngressRule{
+						{
+							IngressRuleValue: networkingv1.IngressRuleValue{
+								HTTP: &networkingv1.HTTPIngressRuleValue{
+									Paths: []networkingv1.HTTPIngressPath{
+										{
+											Path:     "/exact",
+											PathType: &exactType,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedTypes: []networkingv1.PathType{exactType},
+		},
+		{
+			name: "Prefix PathType should remain unchanged",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{
+					Rules: []networkingv1.IngressRule{
+						{
+							IngressRuleValue: networkingv1.IngressRuleValue{
+								HTTP: &networkingv1.HTTPIngressRuleValue{
+									Paths: []networkingv1.HTTPIngressPath{
+										{
+											Path:     "/prefix",
+											PathType: &prefixType,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedTypes: []networkingv1.PathType{prefixType},
+		},
+		{
+			name: "multiple paths with mixed PathTypes",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{
+					Rules: []networkingv1.IngressRule{
+						{
+							IngressRuleValue: networkingv1.IngressRuleValue{
+								HTTP: &networkingv1.HTTPIngressRuleValue{
+									Paths: []networkingv1.HTTPIngressPath{
+										{
+											Path:     "/nil",
+											PathType: nil,
+										},
+										{
+											Path:     "/exact",
+											PathType: &exactType,
+										},
+										{
+											Path:     "/impl",
+											PathType: &implSpecificType,
+										},
+										{
+											Path:     "/prefix",
+											PathType: &prefixType,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedTypes: []networkingv1.PathType{prefixType, exactType, prefixType, prefixType},
+		},
+		{
+			name: "multiple rules with mixed HTTP and nil HTTP",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{
+					Rules: []networkingv1.IngressRule{
+						{
+							Host: "host1.example.com",
+							IngressRuleValue: networkingv1.IngressRuleValue{
+								HTTP: &networkingv1.HTTPIngressRuleValue{
+									Paths: []networkingv1.HTTPIngressPath{
+										{
+											Path:     "/",
+											PathType: nil,
+										},
+									},
+								},
+							},
+						},
+						{
+							Host:             "host2.example.com",
+							IngressRuleValue: networkingv1.IngressRuleValue{},
+						},
+						{
+							Host: "host3.example.com",
+							IngressRuleValue: networkingv1.IngressRuleValue{
+								HTTP: &networkingv1.HTTPIngressRuleValue{
+									Paths: []networkingv1.HTTPIngressPath{
+										{
+											Path:     "/api",
+											PathType: nil,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedTypes: []networkingv1.PathType{prefixType, prefixType},
+		},
+		{
+			name: "empty rules should not panic",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{
+					Rules: []networkingv1.IngressRule{},
+				},
+			},
+			expectedTypes: nil,
+		},
+		{
+			name: "rule with HTTP but empty paths should not panic",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{
+					Rules: []networkingv1.IngressRule{
+						{
+							IngressRuleValue: networkingv1.IngressRuleValue{
+								HTTP: &networkingv1.HTTPIngressRuleValue{
+									Paths: []networkingv1.HTTPIngressPath{},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedTypes: nil,
+		},
+		{
+			name: "nil rules should not panic",
+			ingress: &networkingv1.Ingress{
+				Spec: networkingv1.IngressSpec{},
+			},
+			expectedTypes: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetDefaultNGINXPathType(tt.ingress)
+
+			var gotTypes []networkingv1.PathType
+			for _, rule := range tt.ingress.Spec.Rules {
+				if rule.HTTP == nil {
+					continue
+				}
+				for _, path := range rule.HTTP.Paths {
+					if path.PathType != nil {
+						gotTypes = append(gotTypes, *path.PathType)
+					}
+				}
+			}
+
+			assert.Equal(t, tt.expectedTypes, gotTypes)
+		})
+	}
+}
+
+func TestNetworkingIngressAvailable(t *testing.T) {
+	tests := []struct {
+		name          string
+		serverVersion *version.Info
+		expected      bool
+	}{
+		{
+			name: "kubernetes v1.22.0 supports networking v1",
+			serverVersion: &version.Info{
+				Major:      "1",
+				Minor:      "22",
+				GitVersion: "v1.22.0",
+			},
+			expected: true,
+		},
+		{
+			name: "kubernetes v1.19.0 supports networking v1",
+			serverVersion: &version.Info{
+				Major:      "1",
+				Minor:      "19",
+				GitVersion: "v1.19.0",
+			},
+			expected: true,
+		},
+		{
+			name: "kubernetes v1.18.0 does not support networking v1",
+			serverVersion: &version.Info{
+				Major:      "1",
+				Minor:      "18",
+				GitVersion: "v1.18.0",
+			},
+			expected: false,
+		},
+		{
+			name: "kubernetes v1.21.3 supports networking v1",
+			serverVersion: &version.Info{
+				Major:      "1",
+				Minor:      "21",
+				GitVersion: "v1.21.3",
+			},
+			expected: true,
+		},
+		{
+			name: "kubernetes v1.30.0 supports networking v1",
+			serverVersion: &version.Info{
+				Major:      "1",
+				Minor:      "30",
+				GitVersion: "v1.30.0",
+			},
+			expected: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := testclient.NewSimpleClientset()
+			client.Discovery().(*fakediscovery.FakeDiscovery).FakedServerVersion = tt.serverVersion
+
+			result := NetworkingIngressAvailable(client)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestMetaNamespaceKey(t *testing.T) {
+	tests := []struct {
+		name     string
+		obj      interface{}
+		expected string
+	}{
+		{
+			name: "namespaced object returns namespace/name",
+			obj: &apiv1.Pod{
+				ObjectMeta: metav1.ObjectMeta{
+					Namespace: "default",
+					Name:      "test-pod",
+				},
+			},
+			expected: "default/test-pod",
+		},
+		{
+			name: "non-namespaced object returns just name",
+			obj: &apiv1.Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test-node",
+				},
+			},
+			expected: "test-node",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			key := MetaNamespaceKey(tt.obj)
+			assert.Equal(t, tt.expected, key)
+		})
 	}
 }

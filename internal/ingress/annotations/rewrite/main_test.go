@@ -19,6 +19,7 @@ package rewrite
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	api "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -270,5 +271,69 @@ func TestUseRegex(t *testing.T) {
 	}
 	if !redirect.UseRegex {
 		t.Errorf("Unexpected value got in UseRegex")
+	}
+}
+
+func TestRewriteConfigEqual(t *testing.T) {
+	tests := []struct {
+		name   string
+		c1     *Config
+		c2     *Config
+		expect bool
+	}{
+		{
+			"both nil",
+			nil,
+			nil,
+			true,
+		},
+		{
+			"one nil",
+			&Config{},
+			nil,
+			false,
+		},
+		{
+			"equal configs",
+			&Config{Target: "/demo", SSLRedirect: true, ForceSSLRedirect: false, PreserveTrailingSlash: true, AppRoot: "/app", UseRegex: true},
+			&Config{Target: "/demo", SSLRedirect: true, ForceSSLRedirect: false, PreserveTrailingSlash: true, AppRoot: "/app", UseRegex: true},
+			true,
+		},
+		{
+			"different Target",
+			&Config{Target: "/a"},
+			&Config{Target: "/b"},
+			false,
+		},
+		{
+			"different SSLRedirect",
+			&Config{SSLRedirect: true},
+			&Config{SSLRedirect: false},
+			false,
+		},
+		{
+			"different ForceSSLRedirect",
+			&Config{ForceSSLRedirect: true},
+			&Config{ForceSSLRedirect: false},
+			false,
+		},
+		{
+			"different AppRoot",
+			&Config{AppRoot: "/a"},
+			&Config{AppRoot: "/b"},
+			false,
+		},
+		{
+			"different UseRegex",
+			&Config{UseRegex: true},
+			&Config{UseRegex: false},
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expect, tt.c1.Equal(tt.c2))
+		})
 	}
 }

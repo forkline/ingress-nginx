@@ -30,11 +30,14 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pmezard/go-difflib/difflib"
+	"github.com/stretchr/testify/assert"
 	apiv1 "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	"k8s.io/ingress-nginx/internal/ingress/annotations/auth"
 	"k8s.io/ingress-nginx/internal/ingress/annotations/authreq"
+	"k8s.io/ingress-nginx/internal/ingress/annotations/mirror"
 	"k8s.io/ingress-nginx/internal/ingress/annotations/modsecurity"
 	"k8s.io/ingress-nginx/internal/ingress/annotations/opentelemetry"
 	"k8s.io/ingress-nginx/internal/ingress/annotations/ratelimit"
@@ -2086,5 +2089,844 @@ func TestCleanConf(t *testing.T) {
 			t.Error("failed to get diff for cleanConf", err)
 		}
 		t.Errorf("cleanConf result don't match with expected: %s", diff)
+	}
+}
+
+func TestBuildHTTPListener(t *testing.T) {
+	tests := []struct {
+		name     string
+		tc       config.TemplateConfig
+		hostname string
+		expected string
+	}{
+		{
+			name: "default listener with underscore hostname",
+			tc: config.TemplateConfig{
+				Cfg:           config.Configuration{},
+				IsIPV6Enabled: false,
+				BacklogSize:   511,
+				ListenPorts:   &config.ListenPorts{HTTP: 80},
+			},
+			hostname: "_",
+			expected: "listen 80 default_server backlog=511 ;",
+		},
+		{
+			name: "default listener with ipv6 enabled",
+			tc: config.TemplateConfig{
+				Cfg:           config.Configuration{},
+				IsIPV6Enabled: true,
+				BacklogSize:   511,
+				ListenPorts:   &config.ListenPorts{HTTP: 80},
+			},
+			hostname: "_",
+			expected: "listen 80 default_server backlog=511 ;\nlisten [::]:80 default_server backlog=511 ;",
+		},
+		{
+			name: "custom http port",
+			tc: config.TemplateConfig{
+				Cfg:           config.Configuration{},
+				IsIPV6Enabled: false,
+				BacklogSize:   511,
+				ListenPorts:   &config.ListenPorts{HTTP: 8080},
+			},
+			hostname: "_",
+			expected: "listen 8080 default_server backlog=511 ;",
+		},
+		{
+			name: "proxy protocol enabled",
+			tc: config.TemplateConfig{
+				Cfg:           config.Configuration{UseProxyProtocol: true},
+				IsIPV6Enabled: false,
+				BacklogSize:   511,
+				ListenPorts:   &config.ListenPorts{HTTP: 80},
+			},
+			hostname: "_",
+			expected: "listen 80 proxy_protocol default_server backlog=511 ;",
+		},
+		{
+			name: "reuse port enabled",
+			tc: config.TemplateConfig{
+				Cfg:           config.Configuration{ReusePort: true},
+				IsIPV6Enabled: false,
+				BacklogSize:   511,
+				ListenPorts:   &config.ListenPorts{HTTP: 80},
+			},
+			hostname: "_",
+			expected: "listen 80 default_server reuseport backlog=511 ;",
+		},
+		{
+			name: "specific hostname does not get default_server",
+			tc: config.TemplateConfig{
+				Cfg:           config.Configuration{},
+				IsIPV6Enabled: false,
+				BacklogSize:   511,
+				ListenPorts:   &config.ListenPorts{HTTP: 80},
+			},
+			hostname: "example.com",
+			expected: "listen 80  ;",
+		},
+		{
+			name: "bind address ipv4",
+			tc: config.TemplateConfig{
+				Cfg:           config.Configuration{BindAddressIpv4: []string{"1.2.3.4"}},
+				IsIPV6Enabled: false,
+				BacklogSize:   511,
+				ListenPorts:   &config.ListenPorts{HTTP: 80},
+			},
+			hostname: "_",
+			expected: "listen 1.2.3.4:80 default_server backlog=511 ;",
+		},
+		{
+			name: "bind address ipv4 and ipv6",
+			tc: config.TemplateConfig{
+				Cfg:           config.Configuration{BindAddressIpv4: []string{"1.2.3.4"}, BindAddressIpv6: []string{"[::1]"}},
+				IsIPV6Enabled: true,
+				BacklogSize:   511,
+				ListenPorts:   &config.ListenPorts{HTTP: 80},
+			},
+			hostname: "_",
+			expected: "listen 1.2.3.4:80 default_server backlog=511 ;\nlisten [::1]:80 default_server backlog=511 ;",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildHTTPListener(tt.tc, tt.hostname)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestBuildHTTPSListener(t *testing.T) {
+	tests := []struct {
+		name     string
+		tc       config.TemplateConfig
+		hostname string
+		expected string
+	}{
+		{
+			name: "default https listener",
+			tc: config.TemplateConfig{
+				Cfg:                     config.Configuration{},
+				IsIPV6Enabled:           false,
+				IsSSLPassthroughEnabled: false,
+				BacklogSize:             511,
+				ListenPorts:             &config.ListenPorts{HTTPS: 443},
+			},
+			hostname: "_",
+			expected: "listen 443 default_server backlog=511 ssl;",
+		},
+		{
+			name: "https listener with ssl passthrough",
+			tc: config.TemplateConfig{
+				Cfg:                     config.Configuration{},
+				IsIPV6Enabled:           false,
+				IsSSLPassthroughEnabled: true,
+				BacklogSize:             511,
+				ListenPorts:             &config.ListenPorts{SSLProxy: 442, HTTPS: 443},
+			},
+			hostname: "_",
+			expected: "listen 442 proxy_protocol default_server backlog=511 ssl;",
+		},
+		{
+			name: "https listener with ssl passthrough and proxy protocol already in co",
+			tc: config.TemplateConfig{
+				Cfg:                     config.Configuration{UseProxyProtocol: true},
+				IsIPV6Enabled:           false,
+				IsSSLPassthroughEnabled: true,
+				BacklogSize:             511,
+				ListenPorts:             &config.ListenPorts{SSLProxy: 442, HTTPS: 443},
+			},
+			hostname: "_",
+			expected: "listen 442 proxy_protocol default_server backlog=511 ssl;",
+		},
+		{
+			name: "https listener with ipv6",
+			tc: config.TemplateConfig{
+				Cfg:                     config.Configuration{},
+				IsIPV6Enabled:           true,
+				IsSSLPassthroughEnabled: false,
+				BacklogSize:             511,
+				ListenPorts:             &config.ListenPorts{HTTPS: 443},
+			},
+			hostname: "_",
+			expected: "listen 443 default_server backlog=511 ssl;\nlisten [::]:443 default_server backlog=511 ssl;",
+		},
+		{
+			name: "https listener specific hostname",
+			tc: config.TemplateConfig{
+				Cfg:                     config.Configuration{},
+				IsIPV6Enabled:           false,
+				IsSSLPassthroughEnabled: false,
+				BacklogSize:             511,
+				ListenPorts:             &config.ListenPorts{HTTPS: 443},
+			},
+			hostname: "example.com",
+			expected: "listen 443  ssl;",
+		},
+		{
+			name: "https listener with custom port",
+			tc: config.TemplateConfig{
+				Cfg:                     config.Configuration{},
+				IsIPV6Enabled:           false,
+				IsSSLPassthroughEnabled: false,
+				BacklogSize:             511,
+				ListenPorts:             &config.ListenPorts{HTTPS: 8443},
+			},
+			hostname: "_",
+			expected: "listen 8443 default_server backlog=511 ssl;",
+		},
+		{
+			name: "https listener with bind address",
+			tc: config.TemplateConfig{
+				Cfg:                     config.Configuration{BindAddressIpv4: []string{"1.2.3.4"}},
+				IsIPV6Enabled:           false,
+				IsSSLPassthroughEnabled: false,
+				BacklogSize:             511,
+				ListenPorts:             &config.ListenPorts{HTTPS: 443},
+			},
+			hostname: "_",
+			expected: "listen 1.2.3.4:443 default_server backlog=511 ssl;",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildHTTPSListener(tt.tc, tt.hostname)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestCommonListenOptions(t *testing.T) {
+	tests := []struct {
+		name     string
+		tc       config.TemplateConfig
+		hostname string
+		expected string
+	}{
+		{
+			name: "default server options with proxy protocol and reuse port",
+			tc: config.TemplateConfig{
+				Cfg:         config.Configuration{UseProxyProtocol: true, ReusePort: true},
+				BacklogSize: 511,
+			},
+			hostname: "_",
+			expected: "proxy_protocol default_server reuseport backlog=511",
+		},
+		{
+			name: "default server options without proxy protocol",
+			tc: config.TemplateConfig{
+				Cfg:         config.Configuration{ReusePort: true},
+				BacklogSize: 511,
+			},
+			hostname: "_",
+			expected: "default_server reuseport backlog=511",
+		},
+		{
+			name: "non-default server with proxy protocol",
+			tc: config.TemplateConfig{
+				Cfg:         config.Configuration{UseProxyProtocol: true},
+				BacklogSize: 511,
+			},
+			hostname: "example.com",
+			expected: "proxy_protocol",
+		},
+		{
+			name: "non-default server without proxy protocol",
+			tc: config.TemplateConfig{
+				Cfg:         config.Configuration{},
+				BacklogSize: 511,
+			},
+			hostname: "example.com",
+			expected: "",
+		},
+		{
+			name: "default server without proxy protocol or reuse port",
+			tc: config.TemplateConfig{
+				Cfg:         config.Configuration{},
+				BacklogSize: 511,
+			},
+			hostname: "_",
+			expected: "default_server backlog=511",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := commonListenOptions(&tt.tc, tt.hostname)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestHTTPListener(t *testing.T) {
+	tests := []struct {
+		name      string
+		addresses []string
+		co        string
+		tc        *config.TemplateConfig
+		expected  []string
+	}{
+		{
+			name:      "empty address uses default port",
+			addresses: []string{""},
+			co:        "default_server backlog=511",
+			tc:        &config.TemplateConfig{ListenPorts: &config.ListenPorts{HTTP: 80}},
+			expected:  []string{"listen 80 default_server backlog=511 ;"},
+		},
+		{
+			name:      "ipv4 address with port",
+			addresses: []string{"1.2.3.4"},
+			co:        "default_server backlog=511",
+			tc:        &config.TemplateConfig{ListenPorts: &config.ListenPorts{HTTP: 80}},
+			expected:  []string{"listen 1.2.3.4:80 default_server backlog=511 ;"},
+		},
+		{
+			name:      "multiple addresses",
+			addresses: []string{"1.2.3.4", "5.6.7.8"},
+			co:        "default_server backlog=511",
+			tc:        &config.TemplateConfig{ListenPorts: &config.ListenPorts{HTTP: 80}},
+			expected: []string{
+				"listen 1.2.3.4:80 default_server backlog=511 ;",
+				"listen 5.6.7.8:80 default_server backlog=511 ;",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := httpListener(tt.addresses, tt.co, tt.tc)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestHTTPSListener(t *testing.T) {
+	tests := []struct {
+		name      string
+		addresses []string
+		co        string
+		tc        *config.TemplateConfig
+		expected  []string
+	}{
+		{
+			name:      "empty address non-ssl-passthrough",
+			addresses: []string{""},
+			co:        "default_server backlog=511",
+			tc:        &config.TemplateConfig{IsSSLPassthroughEnabled: false, ListenPorts: &config.ListenPorts{HTTPS: 443}},
+			expected:  []string{"listen 443 default_server backlog=511 ssl;"},
+		},
+		{
+			name:      "empty address ssl passthrough",
+			addresses: []string{""},
+			co:        "default_server backlog=511",
+			tc:        &config.TemplateConfig{IsSSLPassthroughEnabled: true, ListenPorts: &config.ListenPorts{SSLProxy: 442, HTTPS: 443}},
+			expected:  []string{"listen 442 proxy_protocol default_server backlog=511 ssl;"},
+		},
+		{
+			name:      "ipv4 address ssl passthrough",
+			addresses: []string{"1.2.3.4"},
+			co:        "default_server backlog=511",
+			tc:        &config.TemplateConfig{IsSSLPassthroughEnabled: true, ListenPorts: &config.ListenPorts{SSLProxy: 442, HTTPS: 443}},
+			expected:  []string{"listen 1.2.3.4:442 proxy_protocol default_server backlog=511 ssl;"},
+		},
+		{
+			name:      "ssl passthrough with proxy protocol already in co",
+			addresses: []string{""},
+			co:        "proxy_protocol default_server backlog=511",
+			tc:        &config.TemplateConfig{IsSSLPassthroughEnabled: true, ListenPorts: &config.ListenPorts{SSLProxy: 442, HTTPS: 443}},
+			expected:  []string{"listen 442 proxy_protocol default_server backlog=511 ssl;"},
+		},
+		{
+			name:      "ipv4 address non-ssl-passthrough",
+			addresses: []string{"1.2.3.4"},
+			co:        "default_server backlog=511",
+			tc:        &config.TemplateConfig{IsSSLPassthroughEnabled: false, ListenPorts: &config.ListenPorts{HTTPS: 443}},
+			expected:  []string{"listen 1.2.3.4:443 default_server backlog=511 ssl;"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := httpsListener(tt.addresses, tt.co, tt.tc)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestBuildMirrorLocations(t *testing.T) {
+	tests := []struct {
+		name      string
+		locations []*ingress.Location
+		expected  string
+	}{
+		{
+			name:      "no mirrors",
+			locations: []*ingress.Location{},
+			expected:  "",
+		},
+		{
+			name: "location without mirror config",
+			locations: []*ingress.Location{
+				{Path: "/", Mirror: mirror.Config{}},
+			},
+			expected: "",
+		},
+		{
+			name: "single mirror location",
+			locations: []*ingress.Location{
+				{
+					Path: "/api",
+					Mirror: mirror.Config{
+						Source: "/api",
+						Target: "http://mirror-svc:8080/api",
+						Host:   "mirror.example.com",
+					},
+				},
+			},
+			expected: `location = "/api" {
+internal;
+proxy_set_header Host "mirror.example.com";
+proxy_pass "http://mirror-svc:8080/api";
+}
+
+`,
+		},
+		{
+			name: "duplicate mirror sources are deduplicated",
+			locations: []*ingress.Location{
+				{
+					Path: "/api",
+					Mirror: mirror.Config{
+						Source: "/api",
+						Target: "http://mirror-svc:8080/api",
+						Host:   "mirror.example.com",
+					},
+				},
+				{
+					Path: "/api/v2",
+					Mirror: mirror.Config{
+						Source: "/api",
+						Target: "http://other-svc:8080/api",
+						Host:   "other.example.com",
+					},
+				},
+			},
+			expected: `location = "/api" {
+internal;
+proxy_set_header Host "mirror.example.com";
+proxy_pass "http://mirror-svc:8080/api";
+}
+
+`,
+		},
+		{
+			name: "mirror with missing fields is skipped",
+			locations: []*ingress.Location{
+				{
+					Path: "/skip",
+					Mirror: mirror.Config{
+						Source: "/skip",
+						Target: "",
+						Host:   "",
+					},
+				},
+				{
+					Path: "/valid",
+					Mirror: mirror.Config{
+						Source: "/valid",
+						Target: "http://mirror:80/valid",
+						Host:   "mirror.host",
+					},
+				},
+			},
+			expected: `location = "/valid" {
+internal;
+proxy_set_header Host "mirror.host";
+proxy_pass "http://mirror:80/valid";
+}
+
+`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildMirrorLocations(tt.locations)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestBuildCorsOriginRegex(t *testing.T) {
+	tests := []struct {
+		name        string
+		corsOrigins []string
+		expected    string
+	}{
+		{
+			name:        "single wildcard",
+			corsOrigins: []string{"*"},
+			expected:    "set $http_origin *;\nset $cors 'true';",
+		},
+		{
+			name:        "single origin",
+			corsOrigins: []string{"https://example.com"},
+			expected:    "if ($http_origin ~* ((https://example\\.com))$ ) { set $cors 'true'; }",
+		},
+		{
+			name:        "multiple origins",
+			corsOrigins: []string{"https://example.com", "https://other.com"},
+			expected:    "if ($http_origin ~* ((https://example\\.com)|(https://other\\.com))$ ) { set $cors 'true'; }",
+		},
+		{
+			name:        "origin with wildcard subdomain",
+			corsOrigins: []string{"https://*.example.com"},
+			expected:    "if ($http_origin ~* ((https://[A-Za-z0-9\\-]+\\.example\\.com))$ ) { set $cors 'true'; }",
+		},
+		{
+			name:        "origin with spaces",
+			corsOrigins: []string{" https://example.com ", "https://other.com"},
+			expected:    "if ($http_origin ~* ((https://example\\.com)|(https://other\\.com))$ ) { set $cors 'true'; }",
+		},
+		{
+			name:        "empty origin in list",
+			corsOrigins: []string{"https://example.com", ""},
+			expected:    "if ($http_origin ~* ((https://example\\.com)|)$ ) { set $cors 'true'; }",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildCorsOriginRegex(tt.corsOrigins)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestBuildOriginRegex(t *testing.T) {
+	tests := []struct {
+		name     string
+		origin   string
+		expected string
+	}{
+		{
+			name:     "simple origin",
+			origin:   "https://example.com",
+			expected: "(https://example\\.com)",
+		},
+		{
+			name:     "wildcard subdomain",
+			origin:   "https://*.example.com",
+			expected: "(https://[A-Za-z0-9\\-]+\\.example\\.com)",
+		},
+		{
+			name:     "origin with port",
+			origin:   "https://example.com:8080",
+			expected: "(https://example\\.com:8080)",
+		},
+		{
+			name:     "origin with special regex chars",
+			origin:   "https://example.com/path?query=1&other=2",
+			expected: "(https://example\\.com/path\\?query=1&other=2)",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildOriginRegex(tt.origin)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestShouldLoadAuthDigestModule(t *testing.T) {
+	tests := []struct {
+		name     string
+		servers  interface{}
+		expected bool
+	}{
+		{
+			name:     "invalid type",
+			servers:  &ingress.Ingress{},
+			expected: false,
+		},
+		{
+			name:     "empty servers",
+			servers:  []*ingress.Server{},
+			expected: false,
+		},
+		{
+			name: "server with no auth",
+			servers: []*ingress.Server{
+				{
+					Locations: []*ingress.Location{
+						{Path: "/"},
+					},
+				},
+			},
+			expected: false,
+		},
+		{
+			name: "server with basic auth",
+			servers: []*ingress.Server{
+				{
+					Locations: []*ingress.Location{
+						{
+							Path: "/",
+							BasicDigestAuth: auth.Config{
+								Secured: true,
+								Type:    "basic",
+							},
+						},
+					},
+				},
+			},
+			expected: false,
+		},
+		{
+			name: "server with digest auth",
+			servers: []*ingress.Server{
+				{
+					Locations: []*ingress.Location{
+						{
+							Path: "/",
+							BasicDigestAuth: auth.Config{
+								Secured: true,
+								Type:    "digest",
+							},
+						},
+					},
+				},
+			},
+			expected: true,
+		},
+		{
+			name: "digest auth not secured",
+			servers: []*ingress.Server{
+				{
+					Locations: []*ingress.Location{
+						{
+							Path: "/",
+							BasicDigestAuth: auth.Config{
+								Secured: false,
+								Type:    "digest",
+							},
+						},
+					},
+				},
+			},
+			expected: false,
+		},
+		{
+			name: "multiple servers with digest in second",
+			servers: []*ingress.Server{
+				{
+					Locations: []*ingress.Location{
+						{
+							Path: "/",
+							BasicDigestAuth: auth.Config{
+								Secured: true,
+								Type:    "basic",
+							},
+						},
+					},
+				},
+				{
+					Locations: []*ingress.Location{
+						{
+							Path: "/admin",
+							BasicDigestAuth: auth.Config{
+								Secured: true,
+								Type:    "digest",
+							},
+						},
+					},
+				},
+			},
+			expected: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := shouldLoadAuthDigestModule(tt.servers)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestBuildModSecurityForLocation(t *testing.T) {
+	tests := []struct {
+		name     string
+		cfg      config.Configuration
+		location *ingress.Location
+		expected string
+	}{
+		{
+			name:     "modsecurity not enabled",
+			cfg:      config.Configuration{},
+			location: &ingress.Location{},
+			expected: "",
+		},
+		{
+			name: "modsecurity disabled in location annotation",
+			cfg:  config.Configuration{EnableModsecurity: true},
+			location: &ingress.Location{
+				ModSecurity: modsecurity.Config{
+					Enable:    false,
+					EnableSet: true,
+				},
+			},
+			expected: "modsecurity off;",
+		},
+		{
+			name: "modsecurity globally enabled, no location annotation",
+			cfg:  config.Configuration{EnableModsecurity: true},
+			location: &ingress.Location{
+				ModSecurity: modsecurity.Config{},
+			},
+			expected: "",
+		},
+		{
+			name: "modsecurity globally enabled with snippet",
+			cfg:  config.Configuration{EnableModsecurity: true},
+			location: &ingress.Location{
+				ModSecurity: modsecurity.Config{
+					Snippet: "SecRuleEngine On",
+				},
+			},
+			expected: "modsecurity_rules '\nSecRuleEngine On\n';\n",
+		},
+		{
+			name: "modsecurity globally enabled with transaction id",
+			cfg:  config.Configuration{EnableModsecurity: true},
+			location: &ingress.Location{
+				ModSecurity: modsecurity.Config{
+					TransactionID: "tx-123",
+				},
+			},
+			expected: "modsecurity_transaction_id \"tx-123\";\n",
+		},
+		{
+			name: "modsecurity enabled per location without global",
+			cfg:  config.Configuration{},
+			location: &ingress.Location{
+				ModSecurity: modsecurity.Config{
+					Enable:    true,
+					EnableSet: true,
+				},
+			},
+			expected: "modsecurity on;\nmodsecurity_rules_file /etc/nginx/modsecurity/modsecurity.conf;\n",
+		},
+		{
+			name: "modsecurity enabled per location with owasp",
+			cfg:  config.Configuration{},
+			location: &ingress.Location{
+				ModSecurity: modsecurity.Config{
+					Enable:     true,
+					EnableSet:  true,
+					OWASPRules: true,
+				},
+			},
+			expected: "modsecurity on;\nmodsecurity_rules_file /etc/nginx/modsecurity/modsecurity.conf;\nmodsecurity_rules_file /etc/nginx/owasp-modsecurity-crs/nginx-modsecurity.conf;\n",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildModSecurityForLocation(tt.cfg, tt.location)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestLocationConfigForLua(t *testing.T) {
+	tests := []struct {
+		name     string
+		loc      interface{}
+		all      interface{}
+		expected string
+	}{
+		{
+			name:     "invalid location type",
+			loc:      "not-a-location",
+			all:      config.TemplateConfig{},
+			expected: "{}",
+		},
+		{
+			name:     "invalid all type",
+			loc:      &ingress.Location{},
+			all:      "not-a-config",
+			expected: "{}",
+		},
+		{
+			name: "default values",
+			loc: &ingress.Location{
+				Rewrite: rewrite.Config{},
+			},
+			all: config.TemplateConfig{
+				Cfg: config.Configuration{},
+			},
+			expected: "\n\t    set $force_ssl_redirect \"false\";\n\t    set $ssl_redirect \"false\";\n\t    set $force_no_ssl_redirect \"false\";\n\t    set $preserve_trailing_slash \"false\";\n\t    set $use_port_in_redirects \"false\";\n\t",
+		},
+		{
+			name: "force ssl redirect enabled",
+			loc: &ingress.Location{
+				Rewrite: rewrite.Config{
+					ForceSSLRedirect: true,
+				},
+			},
+			all: config.TemplateConfig{
+				Cfg: config.Configuration{},
+			},
+			expected: "\n\t    set $force_ssl_redirect \"true\";\n\t    set $ssl_redirect \"false\";\n\t    set $force_no_ssl_redirect \"false\";\n\t    set $preserve_trailing_slash \"false\";\n\t    set $use_port_in_redirects \"false\";\n\t",
+		},
+		{
+			name: "ssl redirect and use port in redirects",
+			loc: &ingress.Location{
+				Rewrite: rewrite.Config{
+					SSLRedirect: true,
+				},
+				UsePortInRedirects: true,
+			},
+			all: config.TemplateConfig{
+				Cfg: config.Configuration{},
+			},
+			expected: "\n\t    set $force_ssl_redirect \"false\";\n\t    set $ssl_redirect \"true\";\n\t    set $force_no_ssl_redirect \"false\";\n\t    set $preserve_trailing_slash \"false\";\n\t    set $use_port_in_redirects \"true\";\n\t",
+		},
+		{
+			name: "preserve trailing slash",
+			loc: &ingress.Location{
+				Rewrite: rewrite.Config{
+					PreserveTrailingSlash: true,
+				},
+			},
+			all: config.TemplateConfig{
+				Cfg: config.Configuration{},
+			},
+			expected: "\n\t    set $force_ssl_redirect \"false\";\n\t    set $ssl_redirect \"false\";\n\t    set $force_no_ssl_redirect \"false\";\n\t    set $preserve_trailing_slash \"true\";\n\t    set $use_port_in_redirects \"false\";\n\t",
+		},
+		{
+			name: "no tls redirect locations match",
+			loc: &ingress.Location{
+				Path:    "/.well-known/acme-challenge",
+				Rewrite: rewrite.Config{},
+			},
+			all: config.TemplateConfig{
+				Cfg: config.Configuration{
+					NoTLSRedirectLocations: "/.well-known/acme-challenge",
+				},
+			},
+			expected: "\n\t    set $force_ssl_redirect \"false\";\n\t    set $ssl_redirect \"false\";\n\t    set $force_no_ssl_redirect \"true\";\n\t    set $preserve_trailing_slash \"false\";\n\t    set $use_port_in_redirects \"false\";\n\t",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := locationConfigForLua(tt.loc, tt.all)
+			assert.Equal(t, tt.expected, result)
+		})
 	}
 }

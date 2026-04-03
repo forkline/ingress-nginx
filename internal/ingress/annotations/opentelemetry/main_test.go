@@ -19,6 +19,7 @@ package opentelemetry
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	api "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -196,4 +197,25 @@ func TestIngressAnnotationOpentelemetryUnset(t *testing.T) {
 	if !ok {
 		t.Errorf("expected a Config type")
 	}
+}
+
+func TestOpenTelemetryConfigEqual(t *testing.T) {
+	c1 := &Config{Enabled: true, Set: true, TrustEnabled: false, TrustSet: false, OperationName: "op1"}
+	c2 := &Config{Enabled: true, Set: true, TrustEnabled: false, TrustSet: false, OperationName: "op1"}
+	assert.True(t, c1.Equal(c2))
+
+	c2 = &Config{Enabled: false, Set: true, TrustEnabled: false, TrustSet: false, OperationName: "op1"}
+	assert.False(t, c1.Equal(c2))
+
+	c2 = &Config{Enabled: true, Set: false, TrustEnabled: false, TrustSet: false, OperationName: "op1"}
+	assert.False(t, c1.Equal(c2))
+
+	c2 = &Config{Enabled: true, Set: true, TrustEnabled: true, TrustSet: false, OperationName: "op1"}
+	assert.False(t, c1.Equal(c2))
+
+	c2 = &Config{Enabled: true, Set: true, TrustEnabled: false, TrustSet: true, OperationName: "op1"}
+	assert.False(t, c1.Equal(c2))
+
+	c2 = &Config{Enabled: true, Set: true, TrustEnabled: false, TrustSet: false, OperationName: "op2"}
+	assert.False(t, c1.Equal(c2))
 }
