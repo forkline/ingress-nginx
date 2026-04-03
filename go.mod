@@ -11,7 +11,7 @@ require (
 	github.com/google/go-github/v48 v48.2.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kylelemons/godebug v1.1.0
-	github.com/magefile/mage v1.16.1
+	github.com/magefile/mage v1.17.1
 	github.com/mitchellh/go-ps v1.0.0
 	github.com/mitchellh/hashstructure/v2 v2.0.2
 	github.com/mitchellh/mapstructure v1.5.0
@@ -32,7 +32,7 @@ require (
 	go.yaml.in/yaml/v3 v3.0.4
 	golang.org/x/crypto v0.49.0
 	golang.org/x/oauth2 v0.36.0
-	google.golang.org/grpc v1.79.3
+	google.golang.org/grpc v1.80.0
 	gopkg.in/go-playground/pool.v3 v3.1.1
 	gopkg.in/mcuadros/go-syslog.v2 v2.3.0
 	helm.sh/helm/v4 v4.1.3
@@ -45,7 +45,7 @@ require (
 	k8s.io/code-generator v0.35.3
 	k8s.io/component-base v0.35.3
 	k8s.io/klog/v2 v2.140.0
-	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
+	k8s.io/utils v0.0.0-20260319190234-28399d86e0b5
 	pault.ag/go/sniff v0.0.0-20200207005214-cf7e4d167732
 	sigs.k8s.io/controller-runtime v0.23.3
 	sigs.k8s.io/mdtoc v1.4.0
