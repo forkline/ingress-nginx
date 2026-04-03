@@ -182,4 +182,3 @@ index fcc51533..d1eebf47 100644
 +
  int ngx_tcp_nopush(ngx_socket_t s);
  int ngx_tcp_push(ngx_socket_t s);
-

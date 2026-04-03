@@ -627,4 +627,3 @@ index 25433d6..6df11df 100644
 +    unsigned                           proxy_protocol:2;
      unsigned                           half_closed:1;
  } ngx_stream_upstream_t;
-
