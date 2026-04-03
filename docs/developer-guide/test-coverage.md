@@ -218,6 +218,95 @@ Phase 4 and 5 of Issue #4 will add:
 3. **Coverage trend alerts**: Notifications for coverage erosion
 4. **Renovate-specific checks**: Lane-specific coverage validation
 
+## Phase 2: CI Integration
+
+The `.github/workflows/go.yml` workflow includes:
+
+### Coverage Summary in Job Output
+- Overall coverage percentage displayed in GitHub Actions job summary
+- Per-package coverage table for all critical update lanes
+- Coverage artifact uploaded for cross-job access and historical tracking
+
+### Coverage Check Job (PRs Only)
+A dedicated `coverage-check` job runs on pull requests to:
+1. Download the coverage artifact from the test job
+2. Generate base branch coverage for comparison
+3. Compare PR coverage against base branch
+4. Fail the PR if coverage decreased (0% threshold enforcement)
+
+The coverage check appears as a required status check on pull requests.
+
+## Phase 3: Threshold Enforcement
+
+### Coverage Decrease Detection
+- On every PR, the `coverage-check` job compares total coverage
+- If PR coverage is lower than base branch coverage, CI fails
+- The GitHub Step Summary shows the exact diff
+
+### Codecov Enforcement
+The `.github/codecov.yml` enforces:
+- **Project threshold**: 0% decrease from baseline (auto target)
+- **Patch threshold**: 80% for new code
+- **Per-package thresholds**: Each critical lane has its own 0% decrease rule
+
+## Phase 4: Per-Package Coverage Tracking
+
+Critical update lanes are tracked independently in Codecov:
+
+| Lane | Path | Purpose |
+|------|------|---------|
+| nginx | `internal/nginx/` | NGINX template generation |
+| controller | `internal/ingress/controller/` | Core controller logic |
+| annotations | `internal/ingress/annotations/` | Annotation handlers |
+| k8s | `internal/k8s/` | Kubernetes API client |
+| admission | `internal/admission/` | Admission webhook |
+
+Each lane has its own `auto` target with 0% threshold, meaning coverage
+must never decrease in any individual lane.
+
+### GitHub Actions Per-Package Report
+The `test` job in `go.yml` generates a per-package coverage table in the
+GitHub Step Summary for all tracked lanes, including sub-packages:
+- `internal/ingress/controller/template`
+- `internal/ingress/controller/store`
+- `internal/ingress/controller/process`
+- `internal/ingress/controller/config`
+- `internal/ingress/controller/ingressclass`
+- All individual annotation packages (`auth`, `authreq`, `proxy`, etc.)
+
+### Renovate PR Validation
+When Renovate creates a dependency update PR:
+
+1. **NGINX base image update**: Check `nginx` and `controller` lanes
+2. **Go module update**: Check affected packages in the per-package report
+3. **Kubernetes module update**: Check `k8s`, `controller`, and `annotations` lanes
+4. **Security fix**: Check all lanes for unexpected changes
+
+## Phase 5: E2E Coverage Integration
+
+E2E tests run against a real Kubernetes cluster (kind) and validate
+behavioral correctness. Since they execute in-cluster, Go cover profiles
+are not directly applicable. Instead:
+
+### E2E Test Result Reporting
+- Junit XML reports are collected from each E2E job
+- Test/failure counts are parsed and displayed in GitHub Step Summary
+- Reports are uploaded as artifacts for historical tracking
+
+### E2E Test Scenarios Covered
+- Ingress creation/update/deletion
+- SSL/TLS certificate handling
+- Annotation application and validation
+- NGINX configuration reload
+- Chroot image behavior
+- Helm chart installation
+
+### E2E Workflow Coverage
+The `e2e.yml` workflow reports on:
+- `kubernetes` job: Standard controller E2E tests
+- `kubernetes-chroot` job: Chroot controller E2E tests
+- `chart-test` job: Helm chart installation smoke tests
+
 ## Questions?
 
 - Open an issue for coverage-related problems

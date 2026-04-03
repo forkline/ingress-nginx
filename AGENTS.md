@@ -138,7 +138,7 @@ This document provides essential context for AI coding agents and contributors w
 - **No long-lived branches** except `main`
 
 ### Versioning Strategy
-**Date-based versioning** (`vYYYY.MM.DD` or `vYYYY.MM.DD.N` for multiple releases per day)
+**Date-based versioning** (`vYYYY.MM.DD` or `vYYYY.MM.DD-N` for multiple releases per day, using semver pre-release notation for Helm compatibility)
 
 **Why date-based instead of semantic versioning?**
 - We don't add features (no MINOR version meaning)
