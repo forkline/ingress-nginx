@@ -4,8 +4,7 @@ header = """
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project
-adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 """
 body = """
@@ -16,24 +15,11 @@ body = """
 {% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
-    {% for commit in commits
-    | filter(attribute="scope")
-    | sort(attribute="scope") %}
-        - {{commit.scope}}: {{ commit.message | upper_first }} ([{{commit.id | truncate(length=7, end="")}}](https://github.com/forkline/ingress-nginx/commit/{{commit.id}}))
-        {%- if commit.breaking %}
-        {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
-        {%- endif -%}
-    {%- endfor -%}
     {% for commit in commits %}
-        {%- if commit.scope %}
-        {%- else %}
-            - {{ commit.message | upper_first }} ([{{commit.id | truncate(length=7, end="")}}](https://github.com/forkline/ingress-nginx/commit/{{commit.id}}))
-            {%- if commit.breaking %}
-            {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
-            {%- endif -%}
-        {%- endif -%}
-    {%- endfor -%}
-    {% raw %}\n{% endraw %}\
+        - {{ commit.message | upper_first }}\
+            {% if commit.scope %} ({{ commit.scope }}){% endif %}\
+            ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/forkline/ingress-nginx/commit/{{ commit.id }}))
+    {% endfor %}
 {% endfor %}\n
 """
 trim = true
@@ -44,8 +30,10 @@ conventional_commits = true
 filter_unconventional = false
 split_commits = false
 commit_preprocessors = [
-    { pattern = "^release\\(release\\): prepare ", replace = "release: " },
-    { pattern = " \\(#\\d+\\).*", replace = "" },
+    { pattern = "^release\\(release\\): prepare ", replace = "release: prepare" },
+    { pattern = "^release: prepare v[0-9]+.*", skip = true },
+    { pattern = " \\(#\\d+\\)$", replace = "" },
+    { pattern = "(?s)\\n\\n.*", replace = "" },
 ]
 commit_parsers = [
     { message = "^feat", group = "<!-- 0 -->Added" },
@@ -56,11 +44,10 @@ commit_parsers = [
     { message = "^release", skip = true },
     { message = "^style", group = "Styling" },
     { message = "^test", group = "Testing" },
-    { message = "^chore", group = "Chore" },
-    { message = "^ci", group = "CI" },
+    { message = "^chore", group = "<!-- 3 -->Chore" },
+    { message = "^ci", group = "<!-- 4 -->CI" },
     { message = "^perf", group = "Performance" },
 ]
 protect_breaking_commits = false
 filter_commits = false
-tag_pattern = "v[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}(\\.[0-9]+)?"
 sort_commits = "oldest"

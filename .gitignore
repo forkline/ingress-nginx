@@ -40,6 +40,7 @@ gover.coverprofile
 
 e2e-tests
 coverage.txt
+coverage.out
 test/e2e/e2e\.test
 .env
 .gocache/
