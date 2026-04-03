@@ -2,7 +2,7 @@
 
 [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Ingress controller for Kubernetes using NGINX as a reverse proxy and load balancer
 
-![Version: 4.15.5](https://img.shields.io/badge/Version-4.15.5-informational?style=flat-square) ![AppVersion: 2026.04.03](https://img.shields.io/badge/AppVersion-2026.04.03-informational?style=flat-square)
+![Version: 2026.04.03.2](https://img.shields.io/badge/Version-2026.04.03.2-informational?style=flat-square) ![AppVersion: 2026.04.03](https://img.shields.io/badge/AppVersion-2026.04.03-informational?style=flat-square)
 
 To use, add `ingressClassName: nginx` spec field or the `kubernetes.io/ingress.class: nginx` annotation to your Ingress resources.
 
