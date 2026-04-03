@@ -13,6 +13,7 @@
         "docs",
         "feat",
         "fix",
+        "merge",
         "refactor",
         "release",
         "revert",
@@ -46,7 +47,7 @@
       "always"
     ],
     "footer-leading-blank": [
-      2,
+      1,
       "always"
     ]
   }
