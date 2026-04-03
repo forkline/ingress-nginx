@@ -84,20 +84,35 @@ jobs:
       - name: Get Changelog Entry
         if: startsWith(github.ref, 'refs/tags/')
         id: changelog_reader
-        uses: mindsers/changelog-reader-action@v2
-        with:
-          version: v${{ env.VERSION }}
-          path: ./CHANGELOG.md
+        run: |
+          VERSION=v${{ env.VERSION }}
+          echo "Extracting changelog for ${VERSION}"
+
+          START_LINE=$(grep -n "## \[${VERSION}\]" CHANGELOG.md | cut -d: -f1)
+          if [ -z "$START_LINE" ]; then
+            echo "No changelog entry found for ${VERSION}"
+            echo "changes=Release ${VERSION}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          NEXT_VERSION_LINE=$(tail -n +$((START_LINE + 1)) CHANGELOG.md \
+            | grep -n "## \[" | head -1 | cut -d: -f1)
+          if [ -z "$NEXT_VERSION_LINE" ]; then
+            END_LINE=$(wc -l < CHANGELOG.md)
+          else
+            END_LINE=$((START_LINE + NEXT_VERSION_LINE - 1))
+          fi
+
+          CHANGES=$(sed -n "${START_LINE},${END_LINE}p" CHANGELOG.md)
+          echo "changes<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body: ${{ steps.changelog_reader.outputs.changes }}
-          prerelease: >-
-            ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
-          draft: >-
-            ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
