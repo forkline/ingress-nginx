@@ -23,4 +23,4 @@ maintainers:
 name: ingress-nginx
 sources:
   - https://github.com/forkline/ingress-nginx
-version: 2026.04.04.0
+version: 2026.4.4
