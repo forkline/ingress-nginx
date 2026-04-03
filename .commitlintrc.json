@@ -30,6 +30,7 @@
         "deps",
         "docs",
         "e2e",
+        "helm",
         "image",
         "lua",
         "release",
