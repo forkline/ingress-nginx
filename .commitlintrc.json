@@ -21,11 +21,12 @@
         "test"
       ]
     ],
-    "scope-enum": [
+"scope-enum": [
       2,
       "always",
       [
         "chart",
+        "changelog",
         "ci",
         "controller",
         "coverage",
