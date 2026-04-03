@@ -92,24 +92,31 @@ jobs:
           if [ -z "$START_LINE" ]; then
             echo "No changelog entry found for ${VERSION}"
             echo "Release ${VERSION}" > /tmp/changelog.txt
-            exit 0
-          fi
-
-          NEXT_VERSION_LINE=$(tail -n +$((START_LINE + 1)) CHANGELOG.md \
-            | grep -n "## \[" | head -1 | cut -d: -f1)
-          if [ -z "$NEXT_VERSION_LINE" ]; then
-            END_LINE=$(wc -l < CHANGELOG.md)
           else
-            END_LINE=$((START_LINE + NEXT_VERSION_LINE - 1))
+            NEXT_VERSION_LINE=$(tail -n +$((START_LINE + 1)) CHANGELOG.md \
+              | grep -n "## \[" | head -1 | cut -d: -f1)
+            if [ -z "$NEXT_VERSION_LINE" ]; then
+              END_LINE=$(wc -l < CHANGELOG.md)
+            else
+              END_LINE=$((START_LINE + NEXT_VERSION_LINE - 1))
+            fi
+            sed -n "${START_LINE},${END_LINE}p" \
+              CHANGELOG.md > /tmp/changelog.txt
           fi
 
-          sed -n "${START_LINE},${END_LINE}p" CHANGELOG.md > /tmp/changelog.txt
+      - name: Generate Release Notes
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          PREV_TAG=$(git tag --sort=-creatordate \
+            | grep -v "^v${VERSION}$" | head -1 || true)
+          .ci/generate-release-notes.sh \
+            "v${VERSION}" "$PREV_TAG" /tmp/changelog.txt
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          body_path: /tmp/changelog.txt
+          body_path: /tmp/release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
