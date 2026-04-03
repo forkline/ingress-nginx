@@ -32,6 +32,7 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 
+	"k8s.io/ingress-nginx/internal/ingress/controller/config"
 	"k8s.io/ingress-nginx/internal/nginx"
 	"k8s.io/ingress-nginx/pkg/apis/ingress"
 )
@@ -256,6 +257,71 @@ func TestConfigureCertificates(t *testing.T) {
 	err = configureCertificates(servers)
 	if err != nil {
 		t.Errorf("unexpected error posting dynamic certificate configuration: %v", err)
+	}
+}
+
+func TestCreateOpentelemetryCfg(t *testing.T) {
+	tests := []struct {
+		name   string
+		cfg    *config.Configuration
+		expect string
+	}{
+		{
+			name: "default configuration",
+			cfg: &config.Configuration{
+				OpentelemetryConfig:     filepath.Join(os.TempDir(), "otel-test-1.toml"),
+				OtlpCollectorHost:       "localhost",
+				OtlpCollectorPort:       "4317",
+				OtelMaxQueueSize:        2048,
+				OtelScheduleDelayMillis: 5000,
+				OtelMaxExportBatchSize:  512,
+				OtelServiceName:         "nginx",
+				OtelSampler:             "AlwaysOn",
+				OtelSamplerRatio:        0.01,
+				OtelSamplerParentBased:  true,
+			},
+			expect: "AlwaysOn",
+		},
+		{
+			name: "custom sampler",
+			cfg: &config.Configuration{
+				OpentelemetryConfig:     filepath.Join(os.TempDir(), "otel-test-2.toml"),
+				OtlpCollectorHost:       "otel-collector.monitoring",
+				OtlpCollectorPort:       "4318",
+				OtelMaxQueueSize:        4096,
+				OtelScheduleDelayMillis: 10000,
+				OtelMaxExportBatchSize:  1024,
+				OtelServiceName:         "my-nginx",
+				OtelSampler:             "TraceIdRatioBased",
+				OtelSamplerRatio:        0.5,
+				OtelSamplerParentBased:  false,
+			},
+			expect: "TraceIdRatioBased",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			defer os.Remove(tt.cfg.OpentelemetryConfig)
+
+			err := createOpentelemetryCfg(tt.cfg)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+
+			content, err := os.ReadFile(tt.cfg.OpentelemetryConfig)
+			if err != nil {
+				t.Fatalf("unexpected error reading config: %v", err)
+			}
+
+			if !strings.Contains(string(content), fmt.Sprintf(`name = "%s"`, tt.expect)) {
+				t.Errorf("expected sampler name %q in config, got:\n%s", tt.expect, string(content))
+			}
+
+			if !strings.Contains(string(content), fmt.Sprintf(`host = "%s"`, tt.cfg.OtlpCollectorHost)) {
+				t.Errorf("expected host %q in config, got:\n%s", tt.cfg.OtlpCollectorHost, string(content))
+			}
+		})
 	}
 }
 
