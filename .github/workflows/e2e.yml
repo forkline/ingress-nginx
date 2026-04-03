@@ -155,6 +155,28 @@ jobs:
           name: e2e-test-reports-kubernetes
           path: test/junitreports/*.xml
 
+      - name: Generate E2E test summary
+        if: always()
+        run: |
+          echo "## E2E Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          GS="$GITHUB_STEP_SUMMARY"
+          if [ -d "test/junitreports" ] && \
+            ls test/junitreports/*.xml 1>/dev/null 2>&1; then
+            REPORT_COUNT=$(ls test/junitreports/*.xml 2>/dev/null | wc -l)
+            echo "Found ${REPORT_COUNT} test report(s)" >> "$GS"
+            for report in test/junitreports/*.xml; do
+              echo "### $(basename ${report})" >> "$GS"
+              TESTS=$(grep -c '<testcase' "${report}" 2>/dev/null \
+                || echo "0")
+              FAILURES=$(grep -c '<failure' "${report}" 2>/dev/null \
+                || echo "0")
+              echo "- Tests: ${TESTS}, Failures: ${FAILURES}" >> "$GS"
+            done
+          else
+            echo "No junit reports found" >> "$GS"
+          fi
+
   kubernetes-chroot:
     name: Kubernetes chroot
     runs-on: ubuntu-latest
@@ -193,6 +215,28 @@ jobs:
         with:
           name: e2e-test-reports-kubernetes-chroot
           path: test/junitreports/*.xml
+
+      - name: Generate E2E test summary
+        if: always()
+        run: |
+          echo "## E2E Chroot Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          GS="$GITHUB_STEP_SUMMARY"
+          if [ -d "test/junitreports" ] && \
+            ls test/junitreports/*.xml 1>/dev/null 2>&1; then
+            REPORT_COUNT=$(ls test/junitreports/*.xml 2>/dev/null | wc -l)
+            echo "Found ${REPORT_COUNT} test report(s)" >> "$GS"
+            for report in test/junitreports/*.xml; do
+              echo "### $(basename ${report})" >> "$GS"
+              TESTS=$(grep -c '<testcase' "${report}" 2>/dev/null \
+                || echo "0")
+              FAILURES=$(grep -c '<failure' "${report}" 2>/dev/null \
+                || echo "0")
+              echo "- Tests: ${TESTS}, Failures: ${FAILURES}" >> "$GS"
+            done
+          else
+            echo "No junit reports found" >> "$GS"
+          fi
 
   rerun-failed-jobs:
     runs-on: ubuntu-latest

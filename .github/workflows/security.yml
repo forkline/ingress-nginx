@@ -21,6 +21,7 @@ jobs:
     name: Dependency review
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    continue-on-error: true
     permissions:
       contents: read
     steps:
@@ -29,7 +30,6 @@ jobs:
 
       - name: Review dependencies
         uses: actions/dependency-review-action@v4
-        continue-on-error: true
 
   govulncheck:
     name: govulncheck

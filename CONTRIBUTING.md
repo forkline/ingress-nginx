@@ -34,6 +34,34 @@ Recommended local checks before opening a pull request:
 2. `make test`
 3. `make verify-docs`
 
+## Test Coverage Requirements
+
+This repository enforces strict test coverage policies to prevent regressions:
+
+**Coverage Rules:**
+- Coverage must **never decrease** from baseline
+- All PRs must pass coverage checks
+- New code must have at least 80% coverage
+- Renovate dependency updates are automatically validated for coverage
+
+**Why Coverage Matters:**
+- This repository is in maintenance mode - we preserve existing behavior
+- Dependency updates can silently introduce regressions
+- Coverage provides a safety net for detecting unintended changes
+- Ensures critical code paths remain tested across updates
+
+**Checking Coverage Locally:**
+```bash
+make test  # Generates coverage.out file
+go tool cover -html=coverage.out -o coverage.html  # View HTML report
+go tool cover -func=coverage.out  # View summary
+```
+
+**Coverage Targets:**
+- Overall project: Baseline maintenance (no decrease allowed)
+- New code (patch): 80% minimum
+- Critical areas: `internal/nginx/`, `internal/ingress/controller/`, `internal/k8s/`
+
 All changes must be code reviewed. Coding conventions and standards are explained in the official [developer docs](https://github.com/kubernetes/community/tree/master/contributors/devel). Expect reviewers to request that you avoid common [go style mistakes](https://github.com/golang/go/wiki/CodeReviewComments) in your PRs.
 
 Note that the fork is maintained conservatively. Priority is given to security

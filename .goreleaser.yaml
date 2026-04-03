@@ -1,9 +1,5 @@
 version: 2
 project_name: ingress-nginx
-release:
-  github:
-    owner: forkline
-    name: ingress-nginx
 builds:
   - id: ingress-nginx
     goos:
@@ -22,9 +18,11 @@ builds:
       -s -w
       -X k8s.io/ingress-nginx/version.COMMIT={{ .Commit }}
       -X k8s.io/ingress-nginx/version.RELEASE={{ .Tag }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
 archives:
   - id: ingress-nginx
     builds:
     - ingress-nginx
-    name_template: "kubectl-{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    name_template: >-
+      kubectl-{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}
     format: tar.gz
