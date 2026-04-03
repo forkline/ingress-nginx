@@ -19,7 +19,7 @@ package utils
 import (
 	"fmt"
 
-	"github.com/google/go-github/v48/github"
+	"github.com/google/go-github/v84/github"
 )
 
 // ControllerImage - struct with info about controllers
