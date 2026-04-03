@@ -1,4 +1,4 @@
-FROM squidfunk/mkdocs-material:9.6.16
+FROM squidfunk/mkdocs-material:9.7.6
 
 COPY action.sh /action.sh
 
