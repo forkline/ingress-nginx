@@ -35,3 +35,8 @@ repos:
       - id: commitlint
         stages: [commit-msg]
         additional_dependencies: ['@commitlint/config-conventional']
+  - repo: https://github.com/norwoodj/helm-docs
+    rev: v1.14.0
+    hooks:
+      - id: helm-docs
+        args: ['--chart-search-root=charts']
