@@ -21,12 +21,15 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"testing"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
 
@@ -138,4 +141,53 @@ func createConfigMap(clientSet kubernetes.Interface, ns string, t *testing.T) st
 	}
 
 	return cm.Name
+}
+
+func TestCheckServiceErrorClassification(t *testing.T) {
+	tests := []struct {
+		name      string
+		err       error
+		expectMsg string
+	}{
+		{
+			name:      "unauthorized error",
+			err:       errors.NewUnauthorized("test"),
+			expectMsg: "restrictive Authorization mode",
+		},
+		{
+			name:      "forbidden error",
+			err:       errors.NewForbidden(schema.GroupResource{Resource: "services"}, "test", nil),
+			expectMsg: "restrictive Authorization mode",
+		},
+		{
+			name:      "not found error",
+			err:       errors.NewNotFound(schema.GroupResource{Resource: "services"}, "missing"),
+			expectMsg: "no service with name",
+		},
+		{
+			name:      "generic error",
+			err:       fmt.Errorf("generic error"),
+			expectMsg: "unexpected error searching service",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ns := "default"
+			name := "test-svc"
+
+			var result error
+			if errors.IsUnauthorized(tt.err) || errors.IsForbidden(tt.err) {
+				result = fmt.Errorf("✖ the cluster seems to be running with a restrictive Authorization mode and the Ingress controller does not have the required permissions to operate normally")
+			} else if errors.IsNotFound(tt.err) {
+				result = fmt.Errorf("no service with name %v found in namespace %v: %v", name, ns, tt.err)
+			} else {
+				result = fmt.Errorf("unexpected error searching service with name %v in namespace %v: %v", name, ns, tt.err)
+			}
+
+			if !strings.Contains(result.Error(), tt.expectMsg) {
+				t.Errorf("expected error containing %q, got %q", tt.expectMsg, result.Error())
+			}
+		})
+	}
 }
