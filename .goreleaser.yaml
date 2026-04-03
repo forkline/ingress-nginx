@@ -1,7 +1,5 @@
 version: 2
 project_name: ingress-nginx
-release:
-
 builds:
   - id: ingress-nginx
     goos:
