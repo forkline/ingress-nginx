@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"testing"
 
+	corev1 "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 )
 
@@ -210,4 +211,51 @@ func TestValidatePathType(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestDeepInspect(t *testing.T) {
+	t.Run("valid ingress returns no error", func(t *testing.T) {
+		err := DeepInspect(validIngress)
+		if err != nil {
+			t.Errorf("expected no error for valid ingress, got %v", err)
+		}
+	})
+
+	t.Run("nil ingress panics (InspectIngress does not handle nil)", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("expected panic for nil ingress")
+			}
+		}()
+		DeepInspect((*networking.Ingress)(nil))
+	})
+
+	t.Run("service returns no error", func(t *testing.T) {
+		svc := &corev1.Service{}
+		err := DeepInspect(svc)
+		if err != nil {
+			t.Errorf("expected no error for service, got %v", err)
+		}
+	})
+
+	t.Run("nil service returns no error", func(t *testing.T) {
+		err := DeepInspect((*corev1.Service)(nil))
+		if err != nil {
+			t.Errorf("expected no error for nil service, got %v", err)
+		}
+	})
+
+	t.Run("unknown type returns no error", func(t *testing.T) {
+		err := DeepInspect("some string")
+		if err != nil {
+			t.Errorf("expected no error for unknown type, got %v", err)
+		}
+	})
+
+	t.Run("nil interface returns no error", func(t *testing.T) {
+		err := DeepInspect(nil)
+		if err != nil {
+			t.Errorf("expected no error for nil interface, got %v", err)
+		}
+	})
 }

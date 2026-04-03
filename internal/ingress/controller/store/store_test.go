@@ -1648,3 +1648,66 @@ func TestWriteSSLSessionTicketKey(t *testing.T) {
 		}
 	}
 }
+
+func TestCheckBadAnnotationValue(t *testing.T) {
+	tests := []struct {
+		name      string
+		anns      map[string]string
+		badwords  string
+		wantErr   bool
+	}{
+		{
+			name:     "empty annotations",
+			anns:     map[string]string{},
+			badwords: "exec",
+			wantErr:  false,
+		},
+		{
+			name: "non-prefixed annotation ignored",
+			anns: map[string]string{
+				"some-annotation": "exec",
+			},
+			badwords: "exec",
+			wantErr:  false,
+		},
+		{
+			name: "prefixed annotation without bad word",
+			anns: map[string]string{
+				"nginx.ingress.kubernetes.io/configuration-snippet": "safe value",
+			},
+			badwords: "exec",
+			wantErr:  false,
+		},
+		{
+			name: "prefixed annotation with bad word",
+			anns: map[string]string{
+				"nginx.ingress.kubernetes.io/configuration-snippet": "exec some command",
+			},
+			badwords: "exec",
+			wantErr:  true,
+		},
+		{
+			name: "multiple bad words",
+			anns: map[string]string{
+				"nginx.ingress.kubernetes.io/configuration-snippet": "rm -rf /",
+			},
+			badwords: "exec,rm",
+			wantErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := checkBadAnnotationValue(tt.anns, tt.badwords)
+			if tt.wantErr {
+				if err == nil {
+					t.Error("expected error but got nil")
+				}
+			} else {
+				if err != nil {
+					t.Errorf("expected no error but got %v", err)
+				}
+			}
+		})
+	}
+}
