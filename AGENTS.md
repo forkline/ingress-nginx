@@ -134,11 +134,11 @@ This document provides essential context for AI coding agents and contributors w
 
 ### Branch Model
 - **Single branch**: `main` only (no develop, no release branches)
-- **Release tags**: Date-based tags (e.g., `v2026.04.03`) on `main`
+- **Release tags**: Date-based tags (e.g., `v2026.4.3`) on `main`
 - **No long-lived branches** except `main`
 
 ### Versioning Strategy
-**Date-based versioning** (`vYYYY.MM.DD` or `vYYYY.MM.DD-N` for multiple releases per day, using semver pre-release notation for Helm compatibility)
+**Date-based versioning** (`vYYYY.M.D` or `vYYYY.M.D-N` for multiple releases per day, using semver pre-release notation for Helm compatibility)
 
 **Why date-based instead of semantic versioning?**
 - We don't add features (no MINOR version meaning)
@@ -149,7 +149,7 @@ This document provides essential context for AI coding agents and contributors w
 
 ### Release Process
 1. Update CHANGELOG.md with new date-based version
-2. Auto-tag workflow creates tag `vYYYY.MM.DD` on CHANGELOG update
+2. Auto-tag workflow creates tag `vYYYY.M.D` on CHANGELOG update
 3. GitHub Actions build and publish:
    - Container images to `ghcr.io/forkline/ingress-nginx/controller`
    - Helm charts to `ghcr.io/forkline/helm-charts/ingress-nginx`

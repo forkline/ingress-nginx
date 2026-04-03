@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAdmissionCounters(t *testing.T) {
@@ -117,6 +118,77 @@ func TestAdmissionCounters(t *testing.T) {
 			}
 
 			reg.Unregister(am)
+		})
+	}
+}
+
+func TestByteFormat(t *testing.T) {
+	tests := []struct {
+		name   string
+		bytes  int64
+		expect string
+	}{
+		{
+			name:   "zero bytes",
+			bytes:  0,
+			expect: "0 B",
+		},
+		{
+			name:   "bytes under 1k",
+			bytes:  512,
+			expect: "512 B",
+		},
+		{
+			name:   "exactly 1k",
+			bytes:  1000,
+			expect: "1.0 kB",
+		},
+		{
+			name:   "1.5k",
+			bytes:  1500,
+			expect: "1.5 kB",
+		},
+		{
+			name:   "1 megabyte",
+			bytes:  1000000,
+			expect: "1.0 MB",
+		},
+		{
+			name:   "1.5 megabytes",
+			bytes:  1500000,
+			expect: "1.5 MB",
+		},
+		{
+			name:   "1 gigabyte",
+			bytes:  1000000000,
+			expect: "1.0 GB",
+		},
+		{
+			name:   "1 terabyte",
+			bytes:  1000000000000,
+			expect: "1.0 TB",
+		},
+		{
+			name:   "1 petabyte",
+			bytes:  1000000000000000,
+			expect: "1.0 PB",
+		},
+		{
+			name:   "1 exabyte",
+			bytes:  1000000000000000000,
+			expect: "1.0 EB",
+		},
+		{
+			name:   "999 bytes",
+			bytes:  999,
+			expect: "999 B",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := ByteFormat(tt.bytes)
+			assert.Equal(t, tt.expect, result)
 		})
 	}
 }

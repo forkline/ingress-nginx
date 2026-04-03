@@ -1,0 +1,53 @@
+suite: Controller > ConfigMap > UDP
+templates:
+  - controller-configmap-udp.yaml
+
+tests:
+  - it: should not create a ConfigMap if `udp` is empty
+    set:
+      udp: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create a ConfigMap if `udp` has entries
+    set:
+      udp:
+        "53": "kube-system/kube-dns:53"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-ingress-nginx-udp
+      - equal:
+          path: data.53
+          value: kube-system/kube-dns:53
+
+  - it: should create a ConfigMap with multiple UDP entries
+    set:
+      udp:
+        "53": "kube-system/kube-dns:53"
+        "5353": "default/mdns-svc:5353"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data.53
+          value: kube-system/kube-dns:53
+      - equal:
+          path: data.5353
+          value: default/mdns-svc:5353
+
+  - it: should create a ConfigMap with annotations if `controller.udp.annotations` is set
+    set:
+      udp:
+        "53": "kube-system/kube-dns:53"
+      controller.udp.annotations:
+        example.com/annotation: value
+    asserts:
+      - equal:
+          path: metadata.annotations["example.com/annotation"]
+          value: value

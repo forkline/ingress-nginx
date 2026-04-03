@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	networking "k8s.io/api/networking/v1"
 
 	"k8s.io/ingress-nginx/internal/ingress/annotations/parser"
@@ -210,5 +211,63 @@ func TestParseAnnotations(t *testing.T) {
 	_, err = NewParser(&resolver.Mock{}).Parse(ing)
 	if err != nil {
 		t.Errorf("unexpected error parsing ingress with relative-redirects")
+	}
+}
+
+func TestRedirectConfigEqual(t *testing.T) {
+	tests := []struct {
+		name   string
+		c1     *Config
+		c2     *Config
+		expect bool
+	}{
+		{
+			"both nil",
+			nil,
+			nil,
+			true,
+		},
+		{
+			"one nil",
+			&Config{},
+			nil,
+			false,
+		},
+		{
+			"equal configs",
+			&Config{URL: "http://example.com", Code: 301, FromToWWW: true, Relative: false},
+			&Config{URL: "http://example.com", Code: 301, FromToWWW: true, Relative: false},
+			true,
+		},
+		{
+			"different URL",
+			&Config{URL: "http://a.com"},
+			&Config{URL: "http://b.com"},
+			false,
+		},
+		{
+			"different Code",
+			&Config{Code: 301},
+			&Config{Code: 302},
+			false,
+		},
+		{
+			"different FromToWWW",
+			&Config{FromToWWW: true},
+			&Config{FromToWWW: false},
+			false,
+		},
+		{
+			"different Relative",
+			&Config{Relative: true},
+			&Config{Relative: false},
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expect, tt.c1.Equal(tt.c2))
+		})
 	}
 }

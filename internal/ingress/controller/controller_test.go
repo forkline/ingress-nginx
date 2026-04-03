@@ -2813,3 +2813,21 @@ func newDynamicNginxController(t *testing.T, setConfigMap func(string) *corev1.C
 		metricCollector: metric.DummyCollector{},
 	}
 }
+
+func TestDefaultEndpoint(t *testing.T) {
+	n := &NGINXController{
+		cfg: &Configuration{
+			ListenPorts: &ngx_config.ListenPorts{
+				Default: 8181,
+			},
+		},
+	}
+
+	ep := n.DefaultEndpoint()
+	if ep.Address != "127.0.0.1" {
+		t.Errorf("expected address 127.0.0.1, got %s", ep.Address)
+	}
+	if ep.Port != "8181" {
+		t.Errorf("expected port 8181, got %s", ep.Port)
+	}
+}

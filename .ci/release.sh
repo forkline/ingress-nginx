@@ -8,7 +8,7 @@ if ! [ "$(git rev-list --count origin/main..HEAD)" -eq 0 ]; then
 fi
 
 CURRENT_VERSION=$(cat TAG)
-BASE_VERSION="v$(date +%Y.%m.%d)"
+BASE_VERSION="v$(date +%-Y.%-m.%-d)"
 
 if git rev-parse "$BASE_VERSION" >/dev/null 2>&1; then
     HIGHEST_SUFFIX=$(git tag -l "${BASE_VERSION}-*" \

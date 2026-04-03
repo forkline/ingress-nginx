@@ -1,0 +1,53 @@
+suite: Controller > ConfigMap > TCP
+templates:
+  - controller-configmap-tcp.yaml
+
+tests:
+  - it: should not create a ConfigMap if `tcp` is empty
+    set:
+      tcp: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create a ConfigMap if `tcp` has entries
+    set:
+      tcp:
+        "8080": "default/example-tcp-svc:9000"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-ingress-nginx-tcp
+      - equal:
+          path: data.8080
+          value: default/example-tcp-svc:9000
+
+  - it: should create a ConfigMap with multiple TCP entries
+    set:
+      tcp:
+        "8080": "default/example-tcp-svc:9000"
+        "9090": "default/another-tcp-svc:8080"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data.8080
+          value: default/example-tcp-svc:9000
+      - equal:
+          path: data.9090
+          value: default/another-tcp-svc:8080
+
+  - it: should create a ConfigMap with annotations if `controller.tcp.annotations` is set
+    set:
+      tcp:
+        "8080": "default/example-tcp-svc:9000"
+      controller.tcp.annotations:
+        example.com/annotation: value
+    asserts:
+      - equal:
+          path: metadata.annotations["example.com/annotation"]
+          value: value

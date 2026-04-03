@@ -20,6 +20,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	api "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -152,5 +153,122 @@ func TestAnnotations(t *testing.T) {
 		if canaryConfig.Cookie != test.canaryCookie {
 			t.Errorf("%v: expected \"%v\", but \"%v\" was returned", test.title, test.canaryCookie, canaryConfig.Cookie)
 		}
+	}
+}
+
+func TestCanaryWeightTotal(t *testing.T) {
+	ing := buildIngress()
+
+	data := map[string]string{}
+	ing.SetAnnotations(data)
+
+	tests := []struct {
+		name     string
+		total    string
+		enabled  bool
+		expected int
+	}{
+		{"default when not set", "", true, 100},
+		{"explicit total of 100", "100", true, 100},
+		{"explicit total of 1000", "1000", true, 1000},
+		{"explicit total of 1", "1", true, 1},
+		{"invalid total defaults to 100", "abc", true, 100},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data[parser.GetAnnotationWithPrefix("canary")] = strconv.FormatBool(tt.enabled)
+			data[parser.GetAnnotationWithPrefix("canary-weight")] = "10"
+			if tt.total != "" {
+				data[parser.GetAnnotationWithPrefix("canary-weight-total")] = tt.total
+			} else {
+				delete(data, parser.GetAnnotationWithPrefix("canary-weight-total"))
+			}
+
+			i, err := NewParser(&resolver.Mock{}).Parse(ing)
+			assert.NoError(t, err)
+
+			cfg, ok := i.(*Config)
+			assert.True(t, ok)
+			assert.Equal(t, tt.expected, cfg.WeightTotal)
+		})
+	}
+}
+
+func TestCanaryByHeaderValue(t *testing.T) {
+	ing := buildIngress()
+
+	data := map[string]string{}
+	ing.SetAnnotations(data)
+
+	tests := []struct {
+		name        string
+		headerValue string
+		expected    string
+	}{
+		{"not set", "", ""},
+		{"exact match value", "exact-value", "exact-value"},
+		{"always", "always", "always"},
+		{"never", "never", "never"},
+		{"value with numbers", "v2", "v2"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data[parser.GetAnnotationWithPrefix("canary")] = "true"
+			data[parser.GetAnnotationWithPrefix("canary-weight")] = "0"
+			data[parser.GetAnnotationWithPrefix("canary-by-header")] = "X-Canary"
+			if tt.headerValue != "" {
+				data[parser.GetAnnotationWithPrefix("canary-by-header-value")] = tt.headerValue
+			} else {
+				delete(data, parser.GetAnnotationWithPrefix("canary-by-header-value"))
+			}
+
+			i, err := NewParser(&resolver.Mock{}).Parse(ing)
+			assert.NoError(t, err)
+
+			cfg, ok := i.(*Config)
+			assert.True(t, ok)
+			assert.Equal(t, tt.expected, cfg.HeaderValue)
+		})
+	}
+}
+
+func TestCanaryByHeaderPattern(t *testing.T) {
+	ing := buildIngress()
+
+	data := map[string]string{}
+	ing.SetAnnotations(data)
+
+	tests := []struct {
+		name          string
+		headerPattern string
+		expected      string
+	}{
+		{"not set", "", ""},
+		{"simple regex", "a.*", "a.*"},
+		{"alternation pattern", "foo|bar", "foo|bar"},
+		{"character class", "[a-z]+", "[a-z]+"},
+		{"dollar sign is valid regex char", "$upstream", "$upstream"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data[parser.GetAnnotationWithPrefix("canary")] = "true"
+			data[parser.GetAnnotationWithPrefix("canary-weight")] = "0"
+			data[parser.GetAnnotationWithPrefix("canary-by-header")] = "X-Canary"
+			if tt.headerPattern != "" {
+				data[parser.GetAnnotationWithPrefix("canary-by-header-pattern")] = tt.headerPattern
+			} else {
+				delete(data, parser.GetAnnotationWithPrefix("canary-by-header-pattern"))
+			}
+
+			i, err := NewParser(&resolver.Mock{}).Parse(ing)
+			assert.NoError(t, err)
+
+			cfg, ok := i.(*Config)
+			assert.True(t, ok)
+			assert.Equal(t, tt.expected, cfg.HeaderPattern)
+		})
 	}
 }

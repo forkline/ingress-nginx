@@ -20,6 +20,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	api "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -406,5 +407,308 @@ func TestProxySetHeaders(t *testing.T) {
 		if !reflect.DeepEqual(u.ProxySetHeaders, test.headers) {
 			t.Errorf("%v: expected \"%v\" but \"%v\" was returned", test.title, test.headers, u.ProxySetHeaders)
 		}
+	}
+}
+
+func TestValidCacheDuration(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected bool
+	}{
+		{"valid single status and duration", "200 5m", true},
+		{"valid multiple statuses and duration", "200 202 401 5m", true},
+		{"valid duration only", "5m", true},
+		{"valid compound duration", "200 1h 30m", true},
+		{"valid milliseconds", "200 500ms", true},
+		{"valid seconds", "200 30s", true},
+		{"valid hours", "200 2h", true},
+		{"valid days", "200 1d", true},
+		{"valid weeks", "200 1w", true},
+		{"valid months", "200 1M", true},
+		{"valid years", "200 1y", true},
+		{"only status code", "200", false},
+		{"empty string", "", false},
+		{"code after duration", "5m 200", false},
+		{"invalid duration unit", "200 5x", false},
+		{"non-standard status code passes", "99 5m", true},
+		{"four digit code ignores code validates duration", "2000 5m", true},
+		{"random text", "something", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, ValidCacheDuration(tt.input))
+		})
+	}
+}
+
+func TestParseStringToCacheDurationsExtended(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected []string
+		expErr   bool
+	}{
+		{"whitespace only", "   ", []string{DefaultCacheDuration}, false},
+		{"single valid duration", "10m", []string{"10m"}, false},
+		{"multiple codes one duration", "200 202 10m", []string{"200 202 10m"}, false},
+		{"comma separated valid", "200 5m, 401 10m", []string{"200 5m", "401 10m"}, false},
+		{"trailing comma valid", "200 5m,", []string{"200 5m"}, false},
+		{"leading comma valid", ",200 5m", []string{"200 5m"}, false},
+		{"invalid duration returns default", "badvalue", []string{DefaultCacheDuration}, true},
+		{"code only returns error", "200", []string{DefaultCacheDuration}, true},
+		{"compound duration valid", "200 1h 30m", []string{"200 1h 30m"}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dur, err := ParseStringToCacheDurations(tt.input)
+			if tt.expErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+			assert.Equal(t, tt.expected, dur)
+		})
+	}
+}
+
+func TestValidMethod(t *testing.T) {
+	tests := []struct {
+		name   string
+		method string
+		valid  bool
+	}{
+		{"GET", "GET", true},
+		{"HEAD", "HEAD", true},
+		{"POST", "POST", true},
+		{"PUT", "PUT", true},
+		{"PATCH", "PATCH", true},
+		{"DELETE", "DELETE", true},
+		{"CONNECT", "CONNECT", true},
+		{"OPTIONS", "OPTIONS", true},
+		{"TRACE", "TRACE", true},
+		{"lowercase get", "get", false},
+		{"empty string", "", false},
+		{"invalid method", "INVALID", false},
+		{"method with space", "GE T", false},
+		{"mixed case", "Get", false},
+		{"partial match", "GETMORE", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.valid, ValidMethod(tt.method))
+		})
+	}
+}
+
+func TestValidHeader(t *testing.T) {
+	tests := []struct {
+		name   string
+		header string
+		valid  bool
+	}{
+		{"simple header", "X-Custom-Header", true},
+		{"with digits", "X-Header123", true},
+		{"with underscore", "X_Custom_Header", true},
+		{"single char", "A", true},
+		{"all digits", "123", true},
+		{"empty string", "", false},
+		{"with space", "X Header", false},
+		{"with colon", "X:Header", false},
+		{"with at sign", "X@Header", false},
+		{"with hash", "X#Header", false},
+		{"with slash", "X/Header", false},
+		{"with dot", "X.Header", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.valid, ValidHeader(tt.header))
+		})
+	}
+}
+
+func TestAuthreqConfigEqual(t *testing.T) {
+	tests := []struct {
+		name   string
+		e1     *Config
+		e2     *Config
+		expect bool
+	}{
+		{
+			"both nil",
+			nil,
+			nil,
+			true,
+		},
+		{
+			"one nil",
+			&Config{},
+			nil,
+			false,
+		},
+		{
+			"same identity",
+			nil,
+			nil,
+			true,
+		},
+		{
+			"equal configs",
+			&Config{
+				URL:                    "http://foo.com",
+				Host:                   "foo.com",
+				SigninURL:              "http://foo.com/signin",
+				SigninURLRedirectParam: "rd",
+				Method:                 "GET",
+				ResponseHeaders:        []string{"X-Auth", "X-User"},
+				RequestRedirect:        "http://redirect.com",
+				AuthSnippet:            "snippet",
+				AuthCacheKey:           "$uri",
+				AuthCacheDuration:      []string{"200 5m"},
+				KeepaliveConnections:   5,
+				KeepaliveShareVars:     true,
+				KeepaliveRequests:      1000,
+				KeepaliveTimeout:       60,
+				ProxySetHeaders:        map[string]string{"X-Header": "value"},
+				AlwaysSetCookie:        true,
+			},
+			&Config{
+				URL:                    "http://foo.com",
+				Host:                   "foo.com",
+				SigninURL:              "http://foo.com/signin",
+				SigninURLRedirectParam: "rd",
+				Method:                 "GET",
+				ResponseHeaders:        []string{"X-User", "X-Auth"},
+				RequestRedirect:        "http://redirect.com",
+				AuthSnippet:            "snippet",
+				AuthCacheKey:           "$uri",
+				AuthCacheDuration:      []string{"200 5m"},
+				KeepaliveConnections:   5,
+				KeepaliveShareVars:     true,
+				KeepaliveRequests:      1000,
+				KeepaliveTimeout:       60,
+				ProxySetHeaders:        map[string]string{"X-Header": "value"},
+				AlwaysSetCookie:        true,
+			},
+			true,
+		},
+		{
+			"different URL",
+			&Config{URL: "http://a.com"},
+			&Config{URL: "http://b.com"},
+			false,
+		},
+		{
+			"different Host",
+			&Config{Host: "a.com"},
+			&Config{Host: "b.com"},
+			false,
+		},
+		{
+			"different SigninURL",
+			&Config{SigninURL: "http://a.com"},
+			&Config{SigninURL: "http://b.com"},
+			false,
+		},
+		{
+			"different SigninURLRedirectParam",
+			&Config{SigninURLRedirectParam: "a"},
+			&Config{SigninURLRedirectParam: "b"},
+			false,
+		},
+		{
+			"different Method",
+			&Config{Method: "GET"},
+			&Config{Method: "POST"},
+			false,
+		},
+		{
+			"different ResponseHeaders",
+			&Config{ResponseHeaders: []string{"X-A"}},
+			&Config{ResponseHeaders: []string{"X-B"}},
+			false,
+		},
+		{
+			"different RequestRedirect",
+			&Config{RequestRedirect: "http://a.com"},
+			&Config{RequestRedirect: "http://b.com"},
+			false,
+		},
+		{
+			"different AuthSnippet",
+			&Config{AuthSnippet: "a"},
+			&Config{AuthSnippet: "b"},
+			false,
+		},
+		{
+			"different AuthCacheKey",
+			&Config{AuthCacheKey: "a"},
+			&Config{AuthCacheKey: "b"},
+			false,
+		},
+		{
+			"different KeepaliveConnections",
+			&Config{KeepaliveConnections: 1},
+			&Config{KeepaliveConnections: 2},
+			false,
+		},
+		{
+			"different KeepaliveShareVars",
+			&Config{KeepaliveShareVars: true},
+			&Config{KeepaliveShareVars: false},
+			false,
+		},
+		{
+			"different KeepaliveRequests",
+			&Config{KeepaliveRequests: 1},
+			&Config{KeepaliveRequests: 2},
+			false,
+		},
+		{
+			"different KeepaliveTimeout",
+			&Config{KeepaliveTimeout: 1},
+			&Config{KeepaliveTimeout: 2},
+			false,
+		},
+		{
+			"different AlwaysSetCookie",
+			&Config{AlwaysSetCookie: true},
+			&Config{AlwaysSetCookie: false},
+			false,
+		},
+		{
+			"different ProxySetHeaders",
+			&Config{ProxySetHeaders: map[string]string{"a": "1"}},
+			&Config{ProxySetHeaders: map[string]string{"b": "1"}},
+			false,
+		},
+		{
+			"different AuthCacheDuration",
+			&Config{AuthCacheDuration: []string{"200 5m"}},
+			&Config{AuthCacheDuration: []string{"200 10m"}},
+			false,
+		},
+		{
+			"response headers order independent",
+			&Config{ResponseHeaders: []string{"X-A", "X-B"}},
+			&Config{ResponseHeaders: []string{"X-B", "X-A"}},
+			true,
+		},
+		{
+			"cache duration order independent",
+			&Config{AuthCacheDuration: []string{"200 5m", "401 10m"}},
+			&Config{AuthCacheDuration: []string{"401 10m", "200 5m"}},
+			true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expect, tt.e1.Equal(tt.e2))
+		})
 	}
 }

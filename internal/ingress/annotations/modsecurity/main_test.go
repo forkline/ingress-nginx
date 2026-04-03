@@ -19,6 +19,7 @@ package modsecurity
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	api "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -80,5 +81,69 @@ func TestParse(t *testing.T) {
 		if !config.Equal(&testCases[i].expected) {
 			t.Errorf("expected %v but returned %v, annotations: %s", testCase.expected, result, testCase.annotations)
 		}
+	}
+}
+
+func TestModsecurityConfigEqual(t *testing.T) {
+	tests := []struct {
+		name   string
+		c1     *Config
+		c2     *Config
+		expect bool
+	}{
+		{
+			"both nil",
+			nil,
+			nil,
+			true,
+		},
+		{
+			"one nil",
+			&Config{},
+			nil,
+			false,
+		},
+		{
+			"equal configs",
+			&Config{Enable: true, EnableSet: true, OWASPRules: false, TransactionID: "txn1", Snippet: "SecRuleEngine On"},
+			&Config{Enable: true, EnableSet: true, OWASPRules: false, TransactionID: "txn1", Snippet: "SecRuleEngine On"},
+			true,
+		},
+		{
+			"different Enable",
+			&Config{Enable: true},
+			&Config{Enable: false},
+			false,
+		},
+		{
+			"different EnableSet",
+			&Config{EnableSet: true},
+			&Config{EnableSet: false},
+			false,
+		},
+		{
+			"different OWASPRules",
+			&Config{OWASPRules: true},
+			&Config{OWASPRules: false},
+			false,
+		},
+		{
+			"different TransactionID",
+			&Config{TransactionID: "a"},
+			&Config{TransactionID: "b"},
+			false,
+		},
+		{
+			"different Snippet",
+			&Config{Snippet: "a"},
+			&Config{Snippet: "b"},
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expect, tt.c1.Equal(tt.c2))
+		})
 	}
 }

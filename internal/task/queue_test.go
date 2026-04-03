@@ -157,3 +157,53 @@ func TestSkipEnqueue(t *testing.T) {
 	// shutdown queue before exit
 	q.Shutdown()
 }
+
+func TestGetDummyObject(t *testing.T) {
+	obj := GetDummyObject("test-name")
+	if obj.Name != "test-name" {
+		t.Errorf("expected name 'test-name' but got '%s'", obj.Name)
+	}
+}
+
+func TestDefaultKeyFunc(t *testing.T) {
+	q := NewTaskQueue(mockSynFn)
+	stopCh := make(chan struct{})
+	go q.Run(5*time.Second, stopCh)
+
+	obj := GetDummyObject("default/test-name")
+
+	key, err := q.defaultKeyFunc(obj)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if key == "" {
+		t.Error("expected non-empty key")
+	}
+
+	q.Shutdown()
+}
+
+func TestDefaultKeyFuncError(t *testing.T) {
+	q := NewTaskQueue(mockSynFn)
+	stopCh := make(chan struct{})
+	go q.Run(5*time.Second, stopCh)
+
+	_, err := q.defaultKeyFunc(nil)
+	if err == nil {
+		t.Error("expected error for nil object")
+	}
+
+	q.Shutdown()
+}
+
+func TestIsClosed(t *testing.T) {
+	ch := make(chan bool)
+	if isClosed(ch) {
+		t.Error("expected open channel to return false")
+	}
+
+	close(ch)
+	if !isClosed(ch) {
+		t.Error("expected closed channel to return true")
+	}
+}

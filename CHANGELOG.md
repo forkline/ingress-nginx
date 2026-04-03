@@ -4,11 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [v2026.04.03](https://github.com/forkline/ingress-nginx/tree/v2026.04.03) - 2026-04-03
+## [v2026.4.3-1](https://github.com/forkline/ingress-nginx/tree/v2026.4.3-1) - 2026-04-03
+
+## [v2026.4.3](https://github.com/forkline/ingress-nginx/tree/v2026.4.3) - 2026-04-03
 
 ### Added
 
-- **Date-based versioning** — Switched from semantic versioning (`v1.15.x`) to date-based versioning (`vYYYY.MM.DD` or `vYYYY.MM.DD-N` for multiple daily releases). Since this project is in maintenance mode (no new features, no breaking changes), date versions more honestly communicate when the software was last maintained for security updates.
+- **Date-based versioning** — Switched from semantic versioning (`v1.15.x`) to date-based versioning (`vYYYY.M.D` or `vYYYY.M.D-N` for multiple daily releases). Since this project is in maintenance mode (no new features, no breaking changes), date versions more honestly communicate when the software was last maintained for security updates.
 - **Release automation** — Added `.ci/release.sh` script and Makefile targets (`make update-version`, `make update-changelog`) to streamline the release process.
 - **GPG-signed auto-tagging** — Added `.github/workflows/auto-tag.yml` that automatically creates a signed git tag when a release commit is pushed to main.
 
@@ -29,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Prior releases (v1.15.x)
 
-Releases prior to `v2026.04.03` used semantic versioning and are listed below for historical reference.
+Releases prior to `v2026.4.3` used semantic versioning and are listed below for historical reference.
 
 <details>
 <summary>Click to expand historical changelog</summary>

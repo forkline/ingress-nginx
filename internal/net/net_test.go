@@ -58,3 +58,9 @@ func TestIsPortAvailable(t *testing.T) {
 		t.Fatalf("expected port %v to not be available", p)
 	}
 }
+
+func TestIsIPV6Nil(t *testing.T) {
+	if IsIPV6(nil) {
+		t.Fatal("expected nil IP to return false")
+	}
+}
