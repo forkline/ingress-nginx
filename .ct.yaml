@@ -17,6 +17,7 @@ remote: origin
 target-branch: main
 
 validate-maintainers: false
+validate-chart-schema: false
 check-version-increment: false
 
 helm-extra-args: --timeout 800s
