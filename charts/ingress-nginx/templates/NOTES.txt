@@ -19,7 +19,7 @@ Get the application URL by running these commands:
   echo "Visit https://${NODE_IP}:${HTTPS_NODE_PORT} to access your application via HTTPS."
 {{- else if contains "LoadBalancer" .Values.controller.service.type }}
 It may take a few minutes for the load balancer IP to be available.
-You can watch the status by running 'kubectl get service --namespace {{ include "ingress-nginx.namespace" . }} {{ include "ingress-nginx.controller.fullname" . }} --output wide --watch'
+You can watch the status by running 'kubectl get service --namespace {{ include "ingress-nginx.namespace" . }} {{ include "ingress-nginx.controller.fullname" . }} --output jsonpath="{.status.loadBalancer.ingress[0].ip}" --watch'
 {{- else if contains "ClusterIP"  .Values.controller.service.type }}
 Get the application URL by running these commands:
   export POD_NAME="$(kubectl get pods --namespace {{ include "ingress-nginx.namespace" . }} --selector app.kubernetes.io/name={{ include "ingress-nginx.name" . }},app.kubernetes.io/instance={{ .Release.Name }},app.kubernetes.io/component=controller --output jsonpath="{.items[0].metadata.name}")"
@@ -29,20 +29,13 @@ Get the application URL by running these commands:
 
 An example Ingress that makes use of the controller:
 
-{{- $isV1 := semverCompare ">=1" .Chart.AppVersion}}
   apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
     name: example
     namespace: foo
-    {{- if eq $isV1 false }}
-    annotations:
-      kubernetes.io/ingress.class: {{ .Values.controller.ingressClass }}
-    {{- end }}
   spec:
-    {{- if $isV1 }}
     ingressClassName: {{ .Values.controller.ingressClassResource.name }}
-    {{- end }}
     rules:
       - host: www.example.com
         http:
@@ -54,7 +47,7 @@ An example Ingress that makes use of the controller:
                   port:
                     number: 80
               path: /
-    # This section is only required if TLS is to be enabled for the Ingress
+    # This section is only required if TLS is be enabled for the Ingress
     tls:
       - hosts:
         - www.example.com
