@@ -12,6 +12,31 @@ coverage:
         target: auto
         threshold: 0%
         base: auto
+      nginx:
+        target: auto
+        threshold: 0%
+        paths:
+          - "internal/nginx/"
+      controller:
+        target: auto
+        threshold: 0%
+        paths:
+          - "internal/ingress/controller/"
+      annotations:
+        target: auto
+        threshold: 0%
+        paths:
+          - "internal/ingress/annotations/"
+      k8s:
+        target: auto
+        threshold: 0%
+        paths:
+          - "internal/k8s/"
+      admission:
+        target: auto
+        threshold: 0%
+        paths:
+          - "internal/admission/"
     patch:
       default:
         target: 80%
@@ -28,3 +53,4 @@ ignore:
   - "rootfs/**/*"
   - "**/zz_generated*.go"
   - "**/generated.proto"
+  - "cmd/plugin/**/*"

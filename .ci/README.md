@@ -8,11 +8,11 @@ The release process is fully automated using git-cliff for changelog generation 
 
 ## Date-based Versioning
 
-This project uses **date-based versioning** (format: `vYYYY.MM.DD` or `vYYYY.MM.DD.N` for multiple releases per day).
+This project uses **date-based versioning** (format: `vYYYY.MM.DD` or `vYYYY.MM.DD-N` for multiple releases per day, using semver pre-release notation for Helm compatibility).
 
 Examples:
 - `v2026.04.03` - First release on April 3, 2026
-- `v2026.04.03.1` - Second release on April 3, 2026
+- `v2026.04.03-1` - Second release on April 3, 2026 (semver pre-release)
 
 ### Why Date-based Versioning?
 
@@ -120,12 +120,12 @@ If you see "Tag already exists":
 
 ### Wrong Version Format
 
-Version must match: `vYYYY.MM.DD` or `vYYYY.MM.DD.N`
+Version must match: `vYYYY.MM.DD` or `vYYYY.MM.DD-N`
 
 Valid examples:
 - `v2026.04.03`
 - `v2026.12.31`
-- `v2026.04.03.1`
+- `v2026.04.03-1`
 
 Invalid examples:
 - `v1.15.8` (semantic versioning)
