@@ -2,10 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project
-adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [v1.15.7](https://github.com/forkline/ingress-nginx/tree/v1.15.7) - 2026-04-03
+**Note**: This project uses date-based versioning (e.g., `v2026.04.03`) instead of semantic versioning, since we maintain existing functionality without adding features or making breaking changes. Date versions clearly show when the software was last maintained for security.
+
+## [v2026.04.03](https://github.com/forkline/ingress-nginx/tree/v2026.04.03) - 2026-04-03
 
 ### Added
 

@@ -10,6 +10,8 @@
 > - **No regressions policy**: Test coverage must never decrease; all behavior preserved exactly
 > - **Critical coverage tracking**: Issue #4 implements coverage baseline to prevent regressions
 >
+> **Date-based Versioning**: We use date-based versions (e.g., `v2026.04.03`) instead of semantic versioning. Since we don't add features or make breaking changes, semantic versioning is meaningless here. Date versions clearly show when the software was last maintained, helping you identify recent security updates and dependency patches.
+>
 > This project is maintained by Forkline using coding-agent orchestration. Updates are automatic but never unattended—we prioritize security, stability, and community needs.
 >
 > **For new deployments**: Consider [Gateway API](https://gateway-api.sigs.k8s.io/guides/) implementations instead. This fork serves existing ingress-nginx users who need continued maintenance.

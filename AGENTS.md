@@ -134,15 +134,27 @@ This document provides essential context for AI coding agents and contributors w
 
 ### Branch Model
 - **Single branch**: `main` only (no develop, no release branches)
-- **Release tags**: Simple `vX.Y.Z` tags on `main`
+- **Release tags**: Date-based tags (e.g., `v2026.04.03`) on `main`
 - **No long-lived branches** except `main`
 
+### Versioning Strategy
+**Date-based versioning** (`vYYYY.MM.DD` or `vYYYY.MM.DD.N` for multiple releases per day)
+
+**Why date-based instead of semantic versioning?**
+- We don't add features (no MINOR version meaning)
+- We don't make breaking changes (no MAJOR version meaning)
+- Only dependency updates and bug fixes (PATCH-only)
+- Date versions answer: "When was this last maintained for security?"
+- More honest about the nature of maintenance-only software
+
 ### Release Process
-1. Tag `main` with `vX.Y.Z`
-2. GitHub Actions build and publish:
+1. Update CHANGELOG.md with new date-based version
+2. Auto-tag workflow creates tag `vYYYY.MM.DD` on CHANGELOG update
+3. GitHub Actions build and publish:
    - Container images to `ghcr.io/forkline/ingress-nginx/controller`
    - Helm charts to `ghcr.io/forkline/helm-charts/ingress-nginx`
-3. No manual release steps (fully automated)
+   - kubectl plugin binaries to GitHub release
+4. No manual release steps (fully automated)
 
 ### Pull Request Requirements
 **All PRs must**:
