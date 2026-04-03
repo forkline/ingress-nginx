@@ -28,6 +28,7 @@
         "changelog",
         "ci",
         "controller",
+        "coverage",
         "deps",
         "docs",
         "e2e",
