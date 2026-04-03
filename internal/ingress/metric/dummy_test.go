@@ -14,7 +14,7 @@ func TestNewDummyCollector(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func TestDummyCollectorNoPanic(t *testing.T) { //nolint:revive // t is needed for test framework
+func TestDummyCollectorNoPanic(_ *testing.T) {
 	c := NewDummyCollector()
 
 	c.ConfigSuccess(123, true)

@@ -49,19 +49,16 @@ func TestSourceRangeEqual(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.name == "both nil" {
-				var sr1, sr2 *SourceRange
-				assert.True(t, sr1.Equal(sr2))
-				return
-			}
-			if tt.name == "same pointer" {
-				sr := &SourceRange{CIDR: []string{"10.0.0.0/8"}}
-				assert.True(t, sr.Equal(sr)) //nolint:gocritic // intentional self-equality test
-				return
-			}
 			assert.Equal(t, tt.expect, tt.sr1.Equal(tt.sr2))
 		})
 	}
+
+	var sr1, sr2 *SourceRange
+	assert.True(t, sr1.Equal(sr2), "both nil source ranges should be equal")
+
+	sr := &SourceRange{CIDR: []string{"10.0.0.0/8"}}
+	srCopy := &SourceRange{CIDR: []string{"10.0.0.0/8"}}
+	assert.True(t, sr.Equal(srCopy), "source range should equal identical copy")
 }
 
 func TestValidate(t *testing.T) {

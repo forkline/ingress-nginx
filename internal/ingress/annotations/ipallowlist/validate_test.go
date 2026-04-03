@@ -51,24 +51,17 @@ func TestSourceRangeEqual(t *testing.T) {
 			sr2:    &SourceRange{CIDR: []string{"10.0.0.0/8", "172.16.0.0/12"}},
 			expect: false,
 		},
-		{
-			name:   "same pointer",
-			sr1:    nil,
-			sr2:    nil,
-			expect: true,
-		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.name == "same pointer" {
-				sr := &SourceRange{CIDR: []string{"10.0.0.0/8"}}
-				assert.True(t, sr.Equal(sr)) //nolint:gocritic // intentional self-equality test
-				return
-			}
 			assert.Equal(t, tt.expect, tt.sr1.Equal(tt.sr2))
 		})
 	}
+
+	sr := &SourceRange{CIDR: []string{"10.0.0.0/8"}}
+	srCopy := &SourceRange{CIDR: []string{"10.0.0.0/8"}}
+	assert.True(t, sr.Equal(srCopy), "source range should equal identical copy")
 }
 
 func TestStringElementsMatch(t *testing.T) {
