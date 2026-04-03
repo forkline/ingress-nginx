@@ -42,7 +42,7 @@ var sslCipherAnnotations = parser.Annotation{
 			Validator: parser.ValidateBool,
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `The following annotation will set the ssl_prefer_server_ciphers directive at the server level. 
+			Documentation: `The following annotation will set the ssl_prefer_server_ciphers directive at the server level.
 			This configuration specifies that server ciphers should be preferred over client ciphers when using the TLS protocols.`,
 		},
 		sslCipherAnnotation: {

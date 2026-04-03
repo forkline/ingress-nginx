@@ -1,5 +1,5 @@
 local busted_runner
-do 
+do
   -- avoid warning during test runs caused by
   -- https://github.com/openresty/lua-nginx-module/blob/2524330e59f0a385a9c77d4d1b957476dce7cb33/src/ngx_http_lua_util.c#L810
 

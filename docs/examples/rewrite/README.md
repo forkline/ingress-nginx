@@ -56,7 +56,7 @@ spec:
         backend:
           service:
             name: http-svc
-            port: 
+            port:
               number: 80
 ' | kubectl create -f -
 ```
@@ -92,7 +92,7 @@ spec:
         backend:
           service:
             name: http-svc
-            port: 
+            port:
               number: 80
 " | kubectl create -f -
 ```

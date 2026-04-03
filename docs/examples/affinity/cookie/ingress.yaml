@@ -19,5 +19,5 @@ spec:
         backend:
           service:
             name: http-svc
-            port: 
+            port:
               number: 80

@@ -4,8 +4,8 @@ index 09d2459..de92724 100644
 +++ b/src/stream/ngx_stream.h
 @@ -303,4 +303,7 @@ typedef ngx_int_t (*ngx_stream_filter_pt)(ngx_stream_session_t *s,
  extern ngx_stream_filter_pt  ngx_stream_top_filter;
- 
- 
+
+
 +#define HAS_NGX_STREAM_PROXY_GET_NEXT_UPSTREAM_TRIES_PATCH 1
 +
 +
@@ -15,7 +15,7 @@ index 0afde1c..3254ce1 100644
 --- a/src/stream/ngx_stream_proxy_module.c
 +++ b/src/stream/ngx_stream_proxy_module.c
 @@ -2156,3 +2156,14 @@ ngx_stream_proxy_bind(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
- 
+
      return NGX_CONF_OK;
  }
 +

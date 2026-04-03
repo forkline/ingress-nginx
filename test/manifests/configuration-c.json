@@ -21,7 +21,7 @@
 				"name": "kubernetes-dashboard-m3qc0",
 				"uid": "b9511631-5176-11e7-b3db-080027494b5d",
 				"resourceVersion": "3700964"
-			}			
+			}
 		}],
 		"SessionAffinity": {
 			"name": "",

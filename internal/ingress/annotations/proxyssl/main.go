@@ -61,8 +61,8 @@ var proxySSLAnnotation = parser.Annotation{
 			Validator: parser.ValidateRegex(parser.BasicCharsRegex, true),
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskMedium,
-			Documentation: `This annotation specifies a Secret with the certificate tls.crt, key tls.key in PEM format used for authentication to a proxied HTTPS server. 
-			It should also contain trusted CA certificates ca.crt in PEM format used to verify the certificate of the proxied HTTPS server. 
+			Documentation: `This annotation specifies a Secret with the certificate tls.crt, key tls.key in PEM format used for authentication to a proxied HTTPS server.
+			It should also contain trusted CA certificates ca.crt in PEM format used to verify the certificate of the proxied HTTPS server.
 			This annotation expects the Secret name in the form "namespace/secretName"
 			Just secrets on the same namespace of the ingress can be used.`,
 		},
@@ -70,7 +70,7 @@ var proxySSLAnnotation = parser.Annotation{
 			Validator: parser.ValidateRegex(proxySSLCiphersRegex, true),
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskMedium,
-			Documentation: `This annotation Specifies the enabled ciphers for requests to a proxied HTTPS server. 
+			Documentation: `This annotation Specifies the enabled ciphers for requests to a proxied HTTPS server.
 			The ciphers are specified in the format understood by the OpenSSL library.`,
 		},
 		proxySSLProtocolsAnnotation: {
@@ -83,7 +83,7 @@ var proxySSLAnnotation = parser.Annotation{
 			Validator: parser.ValidateServerName,
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskHigh,
-			Documentation: `This annotation allows to set proxy_ssl_name. This allows overriding the server name used to verify the certificate of the proxied HTTPS server. 
+			Documentation: `This annotation allows to set proxy_ssl_name. This allows overriding the server name used to verify the certificate of the proxied HTTPS server.
 			This value is also passed through SNI when a connection is established to the proxied HTTPS server.`,
 		},
 		proxySSLVerifyAnnotation: {
