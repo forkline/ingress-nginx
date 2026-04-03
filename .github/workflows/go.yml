@@ -50,6 +50,14 @@ jobs:
       - name: Run unit tests
         run: make test
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.out
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
+
   lint:
     name: golangci-lint
     runs-on: ubuntu-latest
