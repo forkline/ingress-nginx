@@ -1711,3 +1711,67 @@ func TestCheckBadAnnotationValue(t *testing.T) {
 		})
 	}
 }
+
+func TestFilterIngresses(t *testing.T) {
+	ing1 := &ingress.Ingress{
+		Ingress: networking.Ingress{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "ing1",
+				Namespace: "default",
+			},
+		},
+	}
+	ing2 := &ingress.Ingress{
+		Ingress: networking.Ingress{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "ing2",
+				Namespace: "default",
+			},
+		},
+	}
+
+	filterAll := func(_ *ingress.Ingress) bool { return false }
+	filterNone := func(_ *ingress.Ingress) bool { return true }
+	filterByName := func(ing *ingress.Ingress) bool { return ing.Name == "ing1" }
+
+	tests := []struct {
+		name       string
+		ingresses  []*ingress.Ingress
+		filterFunc IngressFilterFunc
+		expectLen  int
+	}{
+		{
+			name:       "empty list",
+			ingresses:  []*ingress.Ingress{},
+			filterFunc: filterAll,
+			expectLen:  0,
+		},
+		{
+			name:       "filter all",
+			ingresses:  []*ingress.Ingress{ing1, ing2},
+			filterFunc: filterAll,
+			expectLen:  2,
+		},
+		{
+			name:       "filter none",
+			ingresses:  []*ingress.Ingress{ing1, ing2},
+			filterFunc: filterNone,
+			expectLen:  0,
+		},
+		{
+			name:       "filter by name",
+			ingresses:  []*ingress.Ingress{ing1, ing2},
+			filterFunc: filterByName,
+			expectLen:  1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := FilterIngresses(tt.ingresses, tt.filterFunc)
+			if len(result) != tt.expectLen {
+				t.Errorf("expected %d ingresses but got %d", tt.expectLen, len(result))
+			}
+		})
+	}
+}
