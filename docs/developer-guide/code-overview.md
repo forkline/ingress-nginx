@@ -5,7 +5,7 @@ This document provides an overview of Ingress NGINX code.
 
 ## Core Golang code
 
-This part of the code is responsible for the main logic of Ingress NGINX. It contains all the logics that parses [Ingress Objects](https://kubernetes.io/docs/concepts/services-networking/ingress/), 
+This part of the code is responsible for the main logic of Ingress NGINX. It contains all the logics that parses [Ingress Objects](https://kubernetes.io/docs/concepts/services-networking/ingress/),
 [annotations](https://kubernetes.io/docs/reference/glossary/?fundamental=true#term-annotation), watches Endpoints and turn them into usable nginx.conf configuration.
 
 
@@ -16,9 +16,9 @@ Ingress-nginx has an internal model of the ingresses, secrets and endpoints in a
 1. One copy is the currently running configuration model
 2. Second copy is the one generated in response to some changes in the cluster
 
-The sync logic diffs the two models and if there's a change it tries to converge the running configuration to the new one. 
+The sync logic diffs the two models and if there's a change it tries to converge the running configuration to the new one.
 
-There are static and dynamic configuration changes. 
+There are static and dynamic configuration changes.
 
 All endpoints and certificate changes are handled dynamically by posting the payload to an internal NGINX endpoint that is handled by Lua.
 
@@ -140,7 +140,7 @@ There are other images inside this directory.
 
 ### Ingress Controller Image
 
-The image used to build the final ingress controller, used in deploy scripts and Helm charts. 
+The image used to build the final ingress controller, used in deploy scripts and Helm charts.
 
 This is NGINX with some Lua enhancement. We do dynamic certificate, endpoints handling, canary traffic split, custom load balancing etc at this component. One can also add new functionalities using Lua plugin system.
 
@@ -157,7 +157,6 @@ The directory containing Lua scripts is [rootfs/etc/nginx/lua](https://github.co
 
 #### Nginx Go template file
 
-One of the functions of Ingress NGINX is to turn [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) objects into nginx.conf file. 
+One of the functions of Ingress NGINX is to turn [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) objects into nginx.conf file.
 
 To do so, the final step is to apply those configurations in [nginx.tmpl](https://github.com/kubernetes/ingress-nginx/tree/main/rootfs/etc/nginx/template) turning it into a final nginx.conf file.
-

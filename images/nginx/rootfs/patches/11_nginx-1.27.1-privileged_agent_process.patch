@@ -3,20 +3,20 @@ index 60f8fe7..4bd244b 100644
 --- a/src/core/nginx.c
 +++ b/src/core/nginx.c
 @@ -981,6 +981,7 @@ ngx_core_module_create_conf(ngx_cycle_t *cycle)
- 
+
      ccf->daemon = NGX_CONF_UNSET;
      ccf->master = NGX_CONF_UNSET;
 +    ccf->privileged_agent = NGX_CONF_UNSET;
      ccf->timer_resolution = NGX_CONF_UNSET_MSEC;
- 
+
      ccf->worker_processes = NGX_CONF_UNSET;
 @@ -1009,6 +1010,7 @@ ngx_core_module_init_conf(ngx_cycle_t *cycle, void *conf)
- 
+
      ngx_conf_init_value(ccf->daemon, 1);
      ngx_conf_init_value(ccf->master, 1);
 +    ngx_conf_init_value(ccf->privileged_agent, 0);
      ngx_conf_init_msec_value(ccf->timer_resolution, 0);
- 
+
      ngx_conf_init_value(ccf->worker_processes, 1);
 diff --git a/src/core/ngx_cycle.h b/src/core/ngx_cycle.h
 index c51b7ff..3261f90 100644
@@ -24,22 +24,22 @@ index c51b7ff..3261f90 100644
 +++ b/src/core/ngx_cycle.h
 @@ -22,6 +22,9 @@
  #define NGX_DEBUG_POINTS_ABORT  2
- 
- 
+
+
 +#define HAVE_PRIVILEGED_PROCESS_PATCH   1
 +
 +
  typedef struct ngx_shm_zone_s  ngx_shm_zone_t;
- 
+
  typedef ngx_int_t (*ngx_shm_zone_init_pt) (ngx_shm_zone_t *zone, void *data);
 @@ -81,6 +84,7 @@ struct ngx_cycle_s {
  typedef struct {
      ngx_flag_t                daemon;
      ngx_flag_t                master;
 +    ngx_flag_t                privileged_agent;
- 
+
      ngx_msec_t                timer_resolution;
- 
+
 diff --git a/src/os/unix/ngx_process_cycle.c b/src/os/unix/ngx_process_cycle.c
 index 7cee1c5..c4f70d6 100644
 --- a/src/os/unix/ngx_process_cycle.c
@@ -60,22 +60,22 @@ index 7cee1c5..c4f70d6 100644
 +static void ngx_privileged_agent_process_cycle(ngx_cycle_t *cycle, void *data);
  static void ngx_cache_manager_process_handler(ngx_event_t *ev);
  static void ngx_cache_loader_process_handler(ngx_event_t *ev);
- 
+
 @@ -51,6 +54,8 @@ sig_atomic_t  ngx_noaccept;
  ngx_uint_t    ngx_noaccepting;
  ngx_uint_t    ngx_restart;
- 
+
 +ngx_uint_t    ngx_is_privileged_agent;
 +
- 
+
  static u_char  master_process[] = "master process";
- 
+
 @@ -130,6 +135,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
      ngx_start_worker_processes(cycle, ccf->worker_processes,
                                 NGX_PROCESS_RESPAWN);
      ngx_start_cache_manager_processes(cycle, 0);
 +    ngx_start_privileged_agent_processes(cycle, 0);
- 
+
      ngx_new_binary = 0;
      delay = 0;
 @@ -215,6 +221,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
@@ -84,14 +84,14 @@ index 7cee1c5..c4f70d6 100644
                  ngx_start_cache_manager_processes(cycle, 0);
 +                ngx_start_privileged_agent_processes(cycle, 0);
                  ngx_noaccepting = 0;
- 
+
                  continue;
 @@ -234,6 +241,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
              ngx_start_worker_processes(cycle, ccf->worker_processes,
                                         NGX_PROCESS_JUST_RESPAWN);
              ngx_start_cache_manager_processes(cycle, 1);
 +            ngx_start_privileged_agent_processes(cycle, 1);
- 
+
              /* allow new processes to start */
              ngx_msleep(100);
 @@ -248,6 +256,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
@@ -101,10 +101,10 @@ index 7cee1c5..c4f70d6 100644
 +            ngx_start_privileged_agent_processes(cycle, 0);
              live = 1;
          }
- 
+
 @@ -393,6 +431,26 @@ ngx_start_cache_manager_processes(ngx_cycle_t *cycle, ngx_uint_t respawn)
- 
- 
+
+
  static void
 +ngx_start_privileged_agent_processes(ngx_cycle_t *cycle, ngx_uint_t respawn)
 +{
@@ -132,7 +132,7 @@ index 7cee1c5..c4f70d6 100644
 @@ -794,7 +860,10 @@ ngx_worker_process_init(ngx_cycle_t *cycle, ngx_int_t worker)
          }
      }
- 
+
 -    if (geteuid() == 0) {
 +    /*
 +     * privileged agent process has the same permission as master process
@@ -142,8 +142,8 @@ index 7cee1c5..c4f70d6 100644
              ngx_log_error(NGX_LOG_EMERG, cycle->log, ngx_errno,
                            "setgid(%d) failed", ccf->group);
 @@ -1149,6 +1216,47 @@ ngx_cache_manager_process_cycle(ngx_cycle_t *cycle, void *data)
- 
- 
+
+
  static void
 +ngx_privileged_agent_process_cycle(ngx_cycle_t *cycle, void *data)
 +{
@@ -198,6 +198,6 @@ index 69495d5..5149396 100644
  extern ngx_uint_t      ngx_daemonized;
  extern ngx_uint_t      ngx_exiting;
 +extern ngx_uint_t      ngx_is_privileged_agent;
- 
+
  extern sig_atomic_t    ngx_reap;
  extern sig_atomic_t    ngx_sigio;

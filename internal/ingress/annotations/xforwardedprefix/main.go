@@ -34,7 +34,7 @@ var xForwardedForAnnotations = parser.Annotation{
 			Validator: parser.ValidateRegex(parser.RegexPathWithCapture, true),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskMedium,
-			Documentation: `This annotation can be used to add the non-standard X-Forwarded-Prefix header to the upstream request with a string value. It can 
+			Documentation: `This annotation can be used to add the non-standard X-Forwarded-Prefix header to the upstream request with a string value. It can
 			contain regular characters and captured groups specified as '$1', '$2', etc.`,
 		},
 	},

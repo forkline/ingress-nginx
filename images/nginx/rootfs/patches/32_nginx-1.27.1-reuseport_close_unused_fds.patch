@@ -4,7 +4,7 @@ diff --git a/src/core/ngx_connection.c b/src/core/ngx_connection.c
 @@ -1118,6 +1118,12 @@ ngx_close_listening_sockets(ngx_cycle_t *cycle)
      ls = cycle->listening.elts;
      for (i = 0; i < cycle->listening.nelts; i++) {
- 
+
 +#if (NGX_HAVE_REUSEPORT)
 +        if (ls[i].fd == (ngx_socket_t) -1) {
 +            continue;
@@ -12,13 +12,13 @@ diff --git a/src/core/ngx_connection.c b/src/core/ngx_connection.c
 +#endif
 +
          c = ls[i].connection;
- 
+
          if (c) {
 diff --git a/src/event/ngx_event.c b/src/event/ngx_event.c
 --- a/src/event/ngx_event.c
 +++ b/src/event/ngx_event.c
 @@ -775,6 +775,18 @@ ngx_event_process_init(ngx_cycle_t *cycle)
- 
+
  #if (NGX_HAVE_REUSEPORT)
          if (ls[i].reuseport && ls[i].worker != ngx_worker) {
 +            ngx_log_debug2(NGX_LOG_DEBUG_CORE, cycle->log, 0,

@@ -39,7 +39,7 @@ spec:
         image: registry.k8s.io/ingress-nginx/custom-error-pages:v1.2.9@sha256:203d3020005dbdd735c1ad51f238d8663b9851399b52cc0c9c9e3f7273b6b299
         ports:
         - containerPort: 8080
-        # Setting the environment variable DEBUG we can see the headers sent 
+        # Setting the environment variable DEBUG we can see the headers sent
         # by the ingress controller to the backend in the client response.
         # env:
         # - name: DEBUG

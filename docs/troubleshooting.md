@@ -316,10 +316,10 @@ Note: The below is based on the nginx [documentation](https://docs.nginx.com/ngi
     ```console
     cat nginx_conf.txt
     ```
-    
-## Image related issues faced on Nginx 4.2.5 or other versions (Helm chart versions) 
 
-1. Incase you face below error while installing Nginx using helm chart (either by helm commands or helm_release terraform provider ) 
+## Image related issues faced on Nginx 4.2.5 or other versions (Helm chart versions)
+
+1. Incase you face below error while installing Nginx using helm chart (either by helm commands or helm_release terraform provider )
 ```
 Warning  Failed     5m5s (x4 over 6m34s)   kubelet            Failed to pull image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.3.0@sha256:549e71a6ca248c5abd51cdb73dbc3083df62cf92ed5e6147c780e30f7e007a47": rpc error: code = Unknown desc = failed to pull and unpack image "registry.k8s.io/ingress-nginx/kube-webhook-certgen@sha256:549e71a6ca248c5abd51cdb73dbc3083df62cf92ed5e6147c780e30f7e007a47": failed to resolve reference "registry.k8s.io/ingress-nginx/kube-webhook-certgen@sha256:549e71a6ca248c5abd51cdb73dbc3083df62cf92ed5e6147c780e30f7e007a47": failed to do request: Head "https://eu.gcr.io/v2/k8s-artifacts-prod/ingress-nginx/kube-webhook-certgen/manifests/sha256:549e71a6ca248c5abd51cdb73dbc3083df62cf92ed5e6147c780e30f7e007a47": EOF
 ```
@@ -353,22 +353,22 @@ Warning  Failed     5m5s (x4 over 6m34s)   kubelet            Failed to pull ima
       ```
    Redirection in the proxy is implemented to ensure the pulling of the images.
 
-3. This is the solution recommended to whitelist the below image repositories : 
+3. This is the solution recommended to whitelist the below image repositories :
      ```
-     *.appspot.com    
-     *.k8s.io        
+     *.appspot.com
+     *.k8s.io
      *.pkg.dev
      *.gcr.io
-     
+
      ```
-     More details about the above repos : 
+     More details about the above repos :
      a. *.k8s.io -> To ensure you can pull any images from registry.k8s.io
      b. *.gcr.io -> GCP services are used for image hosting. This is part of the domains suggested by GCP to allow and ensure users can pull images from their container registry services.
      c. *.appspot.com -> This a Google domain. part of the domain used for GCR.
 
 ## Unable to listen on port (80/443)
 One possible reason for this error is lack of permission to bind to the port.  Ports 80, 443, and any other port < 1024 are Linux privileged ports which historically could only be bound by root.  The ingress-nginx-controller uses the CAP_NET_BIND_SERVICE [linux capability](https://man7.org/linux/man-pages/man7/capabilities.7.html) to allow binding these ports as a normal user (www-data / 101).  This involves two components:
-1. In the image, the /nginx-ingress-controller file has the cap_net_bind_service capability added (e.g. via [setcap](https://man7.org/linux/man-pages/man8/setcap.8.html)) 
+1. In the image, the /nginx-ingress-controller file has the cap_net_bind_service capability added (e.g. via [setcap](https://man7.org/linux/man-pages/man8/setcap.8.html))
 2. The NET_BIND_SERVICE capability is added to the container in the containerSecurityContext of the deployment.
 
 If encountering this on one/some node(s) and not on others, try to purge and pull a fresh copy of the image to the affected node(s), in case there has been corruption of the underlying layers to lose the capability on the executable.

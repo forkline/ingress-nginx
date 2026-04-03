@@ -6,7 +6,7 @@ This README will evolve as the development of testing occurs.
 - Github-Actions job runner is a 2core 7Gig VM so that limits what/how we test https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
 
   <img width="863" alt="image" src="https://user-images.githubusercontent.com/5085914/169713673-7daa56ed-dffe-4c49-8600-4e9a01754d37.png">
-  
+
   - Need to eventually get our own beefy runner, with enough cpu/memory to handle stress level load
 
 ### 2. Scale is work-in-progress
@@ -16,7 +16,7 @@ This README will evolve as the development of testing occurs.
 - Testplan discussion and coding is needed for more practical real-world testing reports
 
 ## DESCRIPTION
- 
+
 ### What
 - An issue was created for performance tests, for the ingress-nginx-controller builds, https://github.com/kubernetes/ingress-nginx/issues/8033 .
 
@@ -31,7 +31,7 @@ This README will evolve as the development of testing occurs.
    <img width="646" alt="image" src="https://user-images.githubusercontent.com/5085914/169714937-1f6f2a86-36c0-4826-8e28-5e450d461353.png">
 
   - The CI launches a ubuntu environment and uses `make dev-env` to create a kind cluster. The popular https://httpbin.org api docker image is used to create a workload
- 
+
     <img width="646" alt="image" src="https://user-images.githubusercontent.com/5085914/169714872-613ffd6a-36b5-4317-81fe-c39765a76649.png">
 
   - We don't want the test to block CI so this syntax from Github-Actions creates a button to run the test
@@ -44,7 +44,7 @@ This README will evolve as the development of testing occurs.
 
 
 ### fqdn
-- Obtained a freenom domain `ingress-nginx-controller.ga` 
+- Obtained a freenom domain `ingress-nginx-controller.ga`
 
   - The test uses a fqdn `test.ingress-nginx-controller.ga`
 
@@ -80,4 +80,3 @@ This README will evolve as the development of testing occurs.
     <img width="835" alt="image" src="https://user-images.githubusercontent.com/5085914/169715209-68aa116a-020b-4f2d-8c8e-ec2c5f68b7b0.png">
 
 - Before merging the PR, the testing is being done on personal Github project with exact same code as this PR here https://github.com/longwuyuan/k6-loadtest-example/runs/6545706269?check_suite_focus=true
-

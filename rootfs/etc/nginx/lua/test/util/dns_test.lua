@@ -41,7 +41,7 @@ describe("dns.lookup", function()
 
     it("returns host when the query returns nil", function()
       helpers.mock_resty_dns_query(nil, nil, "oops!")
-      assert.are.same({ "example.com" }, dns_lookup("example.com"))    
+      assert.are.same({ "example.com" }, dns_lookup("example.com"))
       assert.spy(spy_ngx_log).was_called_with(ngx.ERR, "failed to query the DNS server for ", "example.com", ":\n", "oops!\noops!")
     end)
 
@@ -65,7 +65,7 @@ describe("dns.lookup", function()
 
     it("returns host when the query returns nil and number of dots is not less than configured ndots", function()
       helpers.mock_resty_dns_query(nil, nil, "oops!")
-      assert.are.same({ "a.b.c.d.example.com" }, dns_lookup("a.b.c.d.example.com"))    
+      assert.are.same({ "a.b.c.d.example.com" }, dns_lookup("a.b.c.d.example.com"))
       assert.spy(spy_ngx_log).was_called_with(ngx.ERR, "failed to query the DNS server for ", "a.b.c.d.example.com", ":\n", "oops!\noops!")
     end)
 
