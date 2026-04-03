@@ -160,17 +160,21 @@ jobs:
         run: |
           echo "## E2E Test Results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          if [ -d "test/junitreports" ] && ls test/junitreports/*.xml 1>/dev/null 2>&1; then
+          GS="$GITHUB_STEP_SUMMARY"
+          if [ -d "test/junitreports" ] && \
+            ls test/junitreports/*.xml 1>/dev/null 2>&1; then
             REPORT_COUNT=$(ls test/junitreports/*.xml 2>/dev/null | wc -l)
-            echo "Found ${REPORT_COUNT} test report(s)" >> "$GITHUB_STEP_SUMMARY"
+            echo "Found ${REPORT_COUNT} test report(s)" >> "$GS"
             for report in test/junitreports/*.xml; do
-              echo "### $(basename ${report})" >> "$GITHUB_STEP_SUMMARY"
-              TESTS=$(grep -c '<testcase' "${report}" 2>/dev/null || echo "0")
-              FAILURES=$(grep -c '<failure' "${report}" 2>/dev/null || echo "0")
-              echo "- Tests: ${TESTS}, Failures: ${FAILURES}" >> "$GITHUB_STEP_SUMMARY"
+              echo "### $(basename ${report})" >> "$GS"
+              TESTS=$(grep -c '<testcase' "${report}" 2>/dev/null \
+                || echo "0")
+              FAILURES=$(grep -c '<failure' "${report}" 2>/dev/null \
+                || echo "0")
+              echo "- Tests: ${TESTS}, Failures: ${FAILURES}" >> "$GS"
             done
           else
-            echo "No junit reports found" >> "$GITHUB_STEP_SUMMARY"
+            echo "No junit reports found" >> "$GS"
           fi
 
   kubernetes-chroot:
@@ -217,17 +221,21 @@ jobs:
         run: |
           echo "## E2E Chroot Test Results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          if [ -d "test/junitreports" ] && ls test/junitreports/*.xml 1>/dev/null 2>&1; then
+          GS="$GITHUB_STEP_SUMMARY"
+          if [ -d "test/junitreports" ] && \
+            ls test/junitreports/*.xml 1>/dev/null 2>&1; then
             REPORT_COUNT=$(ls test/junitreports/*.xml 2>/dev/null | wc -l)
-            echo "Found ${REPORT_COUNT} test report(s)" >> "$GITHUB_STEP_SUMMARY"
+            echo "Found ${REPORT_COUNT} test report(s)" >> "$GS"
             for report in test/junitreports/*.xml; do
-              echo "### $(basename ${report})" >> "$GITHUB_STEP_SUMMARY"
-              TESTS=$(grep -c '<testcase' "${report}" 2>/dev/null || echo "0")
-              FAILURES=$(grep -c '<failure' "${report}" 2>/dev/null || echo "0")
-              echo "- Tests: ${TESTS}, Failures: ${FAILURES}" >> "$GITHUB_STEP_SUMMARY"
+              echo "### $(basename ${report})" >> "$GS"
+              TESTS=$(grep -c '<testcase' "${report}" 2>/dev/null \
+                || echo "0")
+              FAILURES=$(grep -c '<failure' "${report}" 2>/dev/null \
+                || echo "0")
+              echo "- Tests: ${TESTS}, Failures: ${FAILURES}" >> "$GS"
             done
           else
-            echo "No junit reports found" >> "$GITHUB_STEP_SUMMARY"
+            echo "No junit reports found" >> "$GS"
           fi
 
   rerun-failed-jobs:

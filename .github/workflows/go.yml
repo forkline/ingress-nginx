@@ -60,45 +60,56 @@ jobs:
 
       - name: Generate per-package coverage report
         run: |
-          echo "## Per-Package Coverage (Critical Update Lanes)" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Package | Coverage |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|---------|----------|" >> "$GITHUB_STEP_SUMMARY"
+          GS="$GITHUB_STEP_SUMMARY"
+          echo "## Per-Package Coverage (Critical Update Lanes)" >> "$GS"
+          echo "" >> "$GS"
+          echo "| Package | Coverage |" >> "$GS"
+          echo "|---------|----------|" >> "$GS"
+          ANN="k8s.io/ingress-nginx/internal/ingress/annotations"
+          CTRL="k8s.io/ingress-nginx/internal/ingress/controller"
           for pkg in \
             "k8s.io/ingress-nginx/internal/nginx" \
-            "k8s.io/ingress-nginx/internal/ingress/controller" \
-            "k8s.io/ingress-nginx/internal/ingress/controller/template" \
-            "k8s.io/ingress-nginx/internal/ingress/controller/store" \
-            "k8s.io/ingress-nginx/internal/ingress/controller/process" \
-            "k8s.io/ingress-nginx/internal/ingress/controller/config" \
-            "k8s.io/ingress-nginx/internal/ingress/controller/ingressclass" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/parser" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/auth" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/authreq" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/proxy" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/proxyssl" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/sslcipher" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/cors" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/modsecurity" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/rewrite" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/redirect" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/canary" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/ratelimit" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/sessionaffinity" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/loadbalancing" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/ipallowlist" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/ipdenylist" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/mirror" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/connection" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/opentelemetry" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/fastcgi" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/authtls" \
-            "k8s.io/ingress-nginx/internal/ingress/annotations/customheaders" \
+            "${CTRL}" \
+            "${CTRL}/template" \
+            "${CTRL}/store" \
+            "${CTRL}/process" \
+            "${CTRL}/config" \
+            "${CTRL}/ingressclass" \
+            "${ANN}" \
+            "${ANN}/parser" \
+            "${ANN}/auth" \
+            "${ANN}/authreq" \
+            "${ANN}/proxy" \
+            "${ANN}/proxyssl" \
+            "${ANN}/sslcipher" \
+            "${ANN}/cors" \
+            "${ANN}/modsecurity" \
+            "${ANN}/rewrite" \
+            "${ANN}/redirect" \
+            "${ANN}/canary" \
+            "${ANN}/ratelimit" \
+            "${ANN}/sessionaffinity" \
+            "${ANN}/loadbalancing" \
+            "${ANN}/ipallowlist" \
+            "${ANN}/ipdenylist" \
+            "${ANN}/mirror" \
+            "${ANN}/connection" \
+            "${ANN}/opentelemetry" \
+            "${ANN}/fastcgi" \
+            "${ANN}/authtls" \
+            "${ANN}/customheaders" \
             "k8s.io/ingress-nginx/internal/k8s" \
             "k8s.io/ingress-nginx/internal/admission/controller"; do
-            COV=$(go tool cover -func=coverage.out 2>/dev/null | grep "^${pkg}/" | awk '{print $NF}' | sed 's/%//' | awk '{s+=$1;n++} END {if(n>0) printf "%.1f%%", s/n; else print "N/A"}')
-            echo "| \`${pkg}\` | ${COV} |" >> "$GITHUB_STEP_SUMMARY"
+            COV=$(
+              go tool cover -func=coverage.out 2>/dev/null \
+                | grep "^${pkg}/" | awk '{print $NF}' \
+                | sed 's/%//' \
+                | awk '{s+=$1;n++} END {
+                    if(n>0) printf "%.1f%%", s/n
+                    else print "N/A"
+                  }'
+            )
+            echo "| \`${pkg}\` | ${COV} |" >> "$GS"
           done
 
       - name: Upload coverage to Codecov
@@ -226,46 +237,68 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "## Coverage Threshold Check" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
+          GS="$GITHUB_STEP_SUMMARY"
+          echo "## Coverage Threshold Check" >> "$GS"
+          echo "" >> "$GS"
 
-          PR_COVERAGE=$(go tool cover -func=coverage.out | tail -1 | awk '{print $NF}')
-          echo "PR total coverage: ${PR_COVERAGE}" >> "$GITHUB_STEP_SUMMARY"
+          PR_COVERAGE=$(
+            go tool cover -func=coverage.out | tail -1 | awk '{print $NF}'
+          )
+          echo "PR total coverage: ${PR_COVERAGE}" >> "$GS"
 
-          git fetch origin "${{ github.base_ref }}" --depth=1 2>/dev/null || true
+          git fetch origin \
+            "${{ github.base_ref }}" --depth=1 2>/dev/null || true
 
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
 
           if git cat-file -t "${BASE_SHA}" >/dev/null 2>&1; then
             git stash
-            git checkout "${BASE_SHA}" -- test/test.sh go.mod go.sum 2>/dev/null || true
-            PKG=k8s.io/ingress-nginx go test -coverprofile=base_coverage.out -covermode=atomic \
-              $(go list "${PKG}/..." | grep -v vendor | grep -v '/test/e2e' | grep -v images | grep -v "docs/examples") \
+            git checkout "${BASE_SHA}" \
+              -- test/test.sh go.mod go.sum 2>/dev/null || true
+            PKG=k8s.io/ingress-nginx go test \
+              -coverprofile=base_coverage.out \
+              -covermode=atomic \
+              $(go list "${PKG}/..." \
+                | grep -v vendor \
+                | grep -v '/test/e2e' \
+                | grep -v images \
+                | grep -v "docs/examples") \
               2>/dev/null || true
             git stash pop 2>/dev/null || true
 
             if [ -f base_coverage.out ]; then
-              BASE_COVERAGE=$(go tool cover -func=base_coverage.out | tail -1 | awk '{print $NF}')
-              echo "Base total coverage: ${BASE_COVERAGE}" >> "$GITHUB_STEP_SUMMARY"
+              BASE_COVERAGE=$(
+                go tool cover -func=base_coverage.out \
+                  | tail -1 | awk '{print $NF}'
+              )
+              echo "Base total coverage: ${BASE_COVERAGE}" >> "$GS"
 
               PR_PCT=$(echo "${PR_COVERAGE}" | sed 's/%//')
               BASE_PCT=$(echo "${BASE_COVERAGE}" | sed 's/%//')
 
-              echo "" >> "$GITHUB_STEP_SUMMARY"
-              DIFF=$(echo "${PR_PCT} - ${BASE_PCT}" | bc 2>/dev/null || echo "0")
-              echo "Coverage diff: ${DIFF}%" >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GS"
+              DIFF=$(echo "${PR_PCT} - ${BASE_PCT}" \
+                | bc 2>/dev/null || echo "0")
+              echo "Coverage diff: ${DIFF}%" >> "$GS"
 
-              if (( $(echo "${PR_PCT} < ${BASE_PCT}" | bc -l 2>/dev/null || echo "0") )); then
-                echo "" >> "$GITHUB_STEP_SUMMARY"
-                echo ":x: **FAIL**: Coverage decreased from ${BASE_COVERAGE} to ${PR_COVERAGE}" >> "$GITHUB_STEP_SUMMARY"
-                echo "Coverage must never decrease. Add tests for changed code paths." >> "$GITHUB_STEP_SUMMARY"
+              COVERAGE_DECREASED=$(echo "${PR_PCT} < ${BASE_PCT}" \
+                | bc -l 2>/dev/null || echo "0")
+              if (( COVERAGE_DECREASED )); then
+                echo "" >> "$GS"
+                echo ":x: **FAIL**: Coverage decreased" \
+                  "from ${BASE_COVERAGE} to ${PR_COVERAGE}" >> "$GS"
+                echo "Coverage must never decrease." \
+                  "Add tests for changed code paths." >> "$GS"
                 exit 1
               else
-                echo ":white_check_mark: **PASS**: Coverage maintained or improved" >> "$GITHUB_STEP_SUMMARY"
+                echo ":white_check_mark: **PASS**:" \
+                  "Coverage maintained or improved" >> "$GS"
               fi
             else
-              echo "Could not generate base coverage - skipping threshold check" >> "$GITHUB_STEP_SUMMARY"
+              echo "Could not generate base coverage" \
+                "- skipping threshold check" >> "$GS"
             fi
           else
-            echo "Base commit not available - skipping threshold check" >> "$GITHUB_STEP_SUMMARY"
+            echo "Base commit not available" \
+              "- skipping threshold check" >> "$GS"
           fi
