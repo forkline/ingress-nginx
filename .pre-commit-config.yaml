@@ -1,18 +1,18 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
-    hooks:
+ v    rev: v6.0.0
+ hooks:
       - id: check-added-large-files
       - id: check-executables-have-shebangs
-        exclude: >-
+ exclude: >-
           ^(docs/user-guide/nginx-configuration/annotations(-risk)?\.md|images/.*/rootfs/Dockerfile|images/kube-webhook-certgen/README\.md)$
-      - id: check-merge-conflict
+       - id: check-merge-conflict
       - id: check-shebang-scripts-are-executable
-        exclude: >-
+ exclude: >-
           ^(hack/boilerplate/boilerplate\.py\.txt)$
-      - id: end-of-file-fixer
-        exclude: ^(test/data/) 
+       - id: end-of-file-fixer
+        exclude: ^(test/data/)
       - id: mixed-line-ending
       - id: trailing-whitespace
         exclude: ^(test/data/)
@@ -24,21 +24,21 @@ repos:
           ^(\.github/workflows/.*\.(yml|yaml)|\.github/ISSUE_TEMPLATE/.*\.(yml|yaml)|\.ct\.yaml)$
   - repo: https://github.com/gruntwork-io/pre-commit
     rev: v0.1.30
-    hooks:
+ hooks:
       - id: shellcheck
         files: ^(\.github/actions/mkdocs/action\.sh)$
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 43.104.2
-    hooks:
+ hooks:
       - id: renovate-config-validator
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.24.0
-    hooks:
+ hooks:
       - id: commitlint
         stages: [commit-msg]
         additional_dependencies: ['@commitlint/config-conventional']
   - repo: https://github.com/norwoodj/helm-docs
     rev: v1.14.2
-    hooks:
+ hooks:
       - id: helm-docs
         args: ['--chart-search-root=charts']
