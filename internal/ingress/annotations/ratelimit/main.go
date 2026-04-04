@@ -150,7 +150,7 @@ var rateLimitAnnotations = parser.Annotation{
 			Validator: parser.ValidateInt,
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow, // Low, as it allows just a set of options
-			Documentation: `Limits the rate of response transmission to a client. The rate is specified in bytes per second. 
+			Documentation: `Limits the rate of response transmission to a client. The rate is specified in bytes per second.
 			The zero value disables rate limiting. The limit is set per a request, and so if a client simultaneously opens two connections, the overall rate will be twice as much as the specified limit.
 			References: https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_rate`,
 		},

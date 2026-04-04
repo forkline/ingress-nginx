@@ -44,7 +44,7 @@ var upstreamHashByAnnotations = parser.Annotation{
 			Validator: parser.ValidateRegex(hashByRegex, true),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskHigh, // High, this annotation allows accessing NGINX variables
-			Documentation: `This annotation defines the nginx variable, text value or any combination thereof to use for consistent hashing. 
+			Documentation: `This annotation defines the nginx variable, text value or any combination thereof to use for consistent hashing.
 			For example: nginx.ingress.kubernetes.io/upstream-hash-by: "$request_uri" or nginx.ingress.kubernetes.io/upstream-hash-by: "$request_uri$host" or nginx.ingress.kubernetes.io/upstream-hash-by: "${request_uri}-text-value" to consistently hash upstream requests by the current request URI.`,
 		},
 		upstreamHashBySubsetAnnotation: {

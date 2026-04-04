@@ -36,7 +36,9 @@
         "image",
         "lua",
         "release",
-        "security"
+        "security",
+        "test",
+        "commitlint"
       ]
     ],
     "subject-case": [

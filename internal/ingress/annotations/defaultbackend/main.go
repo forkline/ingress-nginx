@@ -36,7 +36,7 @@ var defaultBackendAnnotations = parser.Annotation{
 			Validator: parser.ValidateServiceName,
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `This service will be used to handle the response when the configured service in the Ingress rule does not have any active endpoints. 
+			Documentation: `This service will be used to handle the response when the configured service in the Ingress rule does not have any active endpoints.
 			It will also be used to handle the error responses if both this annotation and the custom-http-errors annotation are set.`,
 		},
 	},

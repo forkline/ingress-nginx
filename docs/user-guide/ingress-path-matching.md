@@ -98,7 +98,7 @@ spec:
         backend:
           service:
             name: service3
-            port: 
+            port:
               number: 80
 ```
 
@@ -156,14 +156,14 @@ spec:
         backend:
           service:
             name: test
-            port: 
+            port:
               number: 80
       - path: /foo/bar/[A-Z0-9]{3}
         pathType: ImplementationSpecific
         backend:
           service:
             name: test
-            port: 
+            port:
               number: 80
 ```
 

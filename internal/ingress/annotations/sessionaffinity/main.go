@@ -80,8 +80,8 @@ var sessionAffinityAnnotations = parser.Annotation{
 			Validator: parser.ValidateOptions([]string{"balanced", "persistent"}, true, true),
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskMedium,
-			Documentation: `This annotation defines the stickiness of a session. 
-			Setting this to balanced (default) will redistribute some sessions if a deployment gets scaled up, therefore rebalancing the load on the servers. 
+			Documentation: `This annotation defines the stickiness of a session.
+			Setting this to balanced (default) will redistribute some sessions if a deployment gets scaled up, therefore rebalancing the load on the servers.
 			Setting this to persistent will not rebalance sessions to new servers, therefore providing maximum stickiness.`,
 		},
 		annotationAffinityCanaryBehavior: {
@@ -132,7 +132,7 @@ var sessionAffinityAnnotations = parser.Annotation{
 			Validator: parser.ValidateOptions([]string{"none", "lax", "strict"}, false, true),
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `This annotation is used to apply a SameSite attribute to the sticky cookie. 
+			Documentation: `This annotation is used to apply a SameSite attribute to the sticky cookie.
 			Browser accepted values are None, Lax, and Strict`,
 		},
 		annotationAffinityCookieConditionalSameSiteNone: {
@@ -145,7 +145,7 @@ var sessionAffinityAnnotations = parser.Annotation{
 			Validator: parser.ValidateBool,
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `This annotation, when set to false will send request to upstream pointed by sticky cookie even if previous attempt failed. 
+			Documentation: `This annotation, when set to false will send request to upstream pointed by sticky cookie even if previous attempt failed.
 			When set to true and previous attempt failed, sticky cookie will be changed to point to another upstream.`,
 		},
 	},

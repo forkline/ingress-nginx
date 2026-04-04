@@ -1,0 +1,203 @@
+{
+  "BackendProtocol": "",
+  "Aliases": null,
+  "BasicDigestAuth": {
+    "type": "",
+    "realm": "",
+    "file": "",
+    "secured": false,
+    "fileSha": "",
+    "secret": "",
+    "secretType": ""
+  },
+  "Canary": {
+    "Enabled": false,
+    "Weight": 0,
+    "WeightTotal": 0,
+    "Header": "",
+    "HeaderValue": "",
+    "HeaderPattern": "",
+    "Cookie": ""
+  },
+  "CertificateAuth": {
+    "secret": "",
+    "caFilename": "",
+    "caSha": "",
+    "crlFileName": "",
+    "crlSha": "",
+    "pemFilename": "",
+    "verify_client": "",
+    "validationDepth": 0,
+    "errorPage": "",
+    "passCertToUpstream": false,
+    "matchCN": "",
+    "AuthTLSError": ""
+  },
+  "ClientBodyBufferSize": "",
+  "CustomHeaders": {},
+  "ConfigurationSnippet": "",
+  "Connection": {
+    "header": "",
+    "enabled": false
+  },
+  "CorsConfig": {
+    "corsEnabled": false,
+    "corsAllowOrigin": null,
+    "corsAllowMethods": "",
+    "corsAllowHeaders": "",
+    "corsAllowCredentials": false,
+    "corsExposeHeaders": "",
+    "corsMaxAge": 0
+  },
+  "CustomHTTPErrors": null,
+  "DisableProxyInterceptErrors": false,
+  "DefaultBackend": null,
+  "FastCGI": {
+    "index": "",
+    "params": null
+  },
+  "Denied": null,
+  "ExternalAuth": {
+    "url": "",
+    "host": "",
+    "signinUrl": "",
+    "method": "",
+    "requestRedirect": "",
+    "authSnippet": "",
+    "authCacheKey": "",
+    "authCacheDuration": null,
+    "keepaliveConnections": 0,
+    "keepaliveShareVars": false,
+    "keepaliveRequests": 0,
+    "keepaliveTimeout": 0
+  },
+  "EnableGlobalAuth": false,
+  "HTTP2PushPreload": false,
+  "Opentelemetry": {
+    "enabled": false,
+    "set": false,
+    "trust-enabled": false,
+    "trust-set": false,
+    "operation-name": ""
+  },
+  "Proxy": {
+    "bodySize": "",
+    "connectTimeout": 0,
+    "sendTimeout": 0,
+    "readTimeout": 0,
+    "buffersNumber": 0,
+    "bufferSize": "",
+    "busyBuffersSize": "",
+    "cookieDomain": "",
+    "cookiePath": "",
+    "nextUpstream": "",
+    "nextUpstreamTimeout": 0,
+    "nextUpstreamTries": 0,
+    "proxyRedirectFrom": "",
+    "proxyRedirectTo": "",
+    "requestBuffering": "",
+    "proxyBuffering": "",
+    "proxyHTTPVersion": "",
+    "proxyMaxTempFileSize": ""
+  },
+  "ProxySSL": {
+    "secret": "",
+    "caFilename": "",
+    "caSha": "",
+    "crlFileName": "",
+    "crlSha": "",
+    "pemFilename": "",
+    "ciphers": "",
+    "protocols": "",
+    "proxySSLName": "",
+    "verify": "",
+    "verifyDepth": 0,
+    "proxySSLServerName": ""
+  },
+  "RateLimit": {
+    "connections": {
+      "name": "",
+      "limit": 0,
+      "burst": 0,
+      "sharedSize": 0
+    },
+    "rps": {
+      "name": "",
+      "limit": 0,
+      "burst": 0,
+      "sharedSize": 0
+    },
+    "rpm": {
+      "name": "",
+      "limit": 0,
+      "burst": 0,
+      "sharedSize": 0
+    },
+    "limit-rate": 0,
+    "limit-rate-after": 0,
+    "name": "",
+    "id": "",
+    "allowlist": null
+  },
+  "Redirect": {
+    "url": "",
+    "code": 0,
+    "fromToWWW": false,
+    "relative": false
+  },
+  "Rewrite": {
+    "target": "",
+    "sslRedirect": false,
+    "forceSSLRedirect": false,
+    "preserveTrailingSlash": false,
+    "appRoot": "",
+    "useRegex": false
+  },
+  "Satisfy": "",
+  "ServerSnippet": "",
+  "ServiceUpstream": false,
+  "SessionAffinity": {
+    "type": "",
+    "mode": "",
+    "canaryBehavior": "",
+    "name": "",
+    "expires": "",
+    "maxage": "",
+    "path": "",
+    "domain": "",
+    "changeonfailure": false,
+    "secure": false,
+    "samesite": "",
+    "conditional-samesite-none": false
+  },
+  "SSLPassthrough": false,
+  "UsePortInRedirects": false,
+  "UpstreamHashBy": {},
+  "LoadBalancing": "",
+  "UpstreamVhost": "",
+  "Denylist": {},
+  "XForwardedPrefix": "",
+  "SSLCipher": {
+    "SSLCiphers": "",
+    "SSLPreferServerCiphers": ""
+  },
+  "Logs": {
+    "accessLog": false,
+    "rewriteLog": false
+  },
+  "ModSecurity": {
+    "enable-modsecurity": false,
+    "enable-modsecurity-set": false,
+    "enable-owasp-core-rules": false,
+    "modsecurity-transaction-id": "",
+    "modsecurity-snippet": ""
+  },
+  "Mirror": {
+    "source": "",
+    "requestBody": "",
+    "target": "",
+    "host": ""
+  },
+  "StreamSnippet": "",
+  "Allowlist": {}
+}

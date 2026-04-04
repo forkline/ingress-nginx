@@ -42,7 +42,7 @@ This questions are the first thing we need to know to understand the context.
 POD_NAMESPACE=ingress-nginx
 POD_NAME=$(kubectl get pods -n $POD_NAMESPACE -l app.kubernetes.io/name=ingress-nginx --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
 
-kubectl exec -it $POD_NAME -n $POD_NAMESPACE -- /nginx-ingress-controller --version  
+kubectl exec -it $POD_NAME -n $POD_NAMESPACE -- /nginx-ingress-controller --version
 -->
 
 **Kubernetes version** (use `kubectl version`):
@@ -121,7 +121,7 @@ echo "
           backend:
             service:
               name: http-svc
-              port: 
+              port:
                 number: 80
 " | kubectl apply -f -
 
@@ -136,7 +136,7 @@ kubectl exec -it -n ingress-nginx $POD_NAME -- curl -H 'Host: foo.bar' localhost
 
 <!-- If this is actually about documentation, uncomment the following block -->
 
-<!-- 
+<!--
 /kind documentation
 /remove-kind bug
 -->

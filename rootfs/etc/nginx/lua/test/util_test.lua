@@ -23,7 +23,7 @@ describe("utility", function()
     it("returns value of nginx var by key", function()
       assert.equal("192.168.1.1", ngx_complex_value("$remote_addr"))
     end)
- 
+
     it("returns value of nginx var when key is number", function()
       assert.equal("nginx/regexp/1/group/capturing", ngx_complex_value("$1"))
     end)

@@ -447,7 +447,7 @@ _Changes:_
 - [8307](https://github.com/kubernetes/ingress-nginx/pull/8307) Nginx v1.19.10
 - [8302](https://github.com/kubernetes/ingress-nginx/pull/8302) docs: fix changelog formatting for 1.1.2
 - [8300](https://github.com/kubernetes/ingress-nginx/pull/8300) Names cannot contain _ (underscore)! So I changed it to -.
-- [8288](https://github.com/kubernetes/ingress-nginx/pull/8288) [docs] Missing annotations 
+- [8288](https://github.com/kubernetes/ingress-nginx/pull/8288) [docs] Missing annotations
 - [8287](https://github.com/kubernetes/ingress-nginx/pull/8287) Add the shareProcessNamespace as a configurable setting in the helm chart
 - [8286](https://github.com/kubernetes/ingress-nginx/pull/8286) Fix OpenTelemetry sidecar image build
 - [8281](https://github.com/kubernetes/ingress-nginx/pull/8281) force prow job by changing something in images/ot dir
@@ -720,11 +720,11 @@ Changes:
 - [X] [#7443](https://github.com/kubernetes/ingress-nginx/pull/7443) fix ingress-nginx panic when the certificate format is wrong.
 - [X] [#7521](https://github.com/kubernetes/ingress-nginx/pull/7521) Update ingress to go 1.17
 - [X] [#7493](https://github.com/kubernetes/ingress-nginx/pull/7493) Add appProtocol field to all ServicePorts
-- [X] [#7525](https://github.com/kubernetes/ingress-nginx/pull/7525) improve RELEASE.md 
+- [X] [#7525](https://github.com/kubernetes/ingress-nginx/pull/7525) improve RELEASE.md
 - [X] [#7203](https://github.com/kubernetes/ingress-nginx/pull/7203) Make HPA behavior configurable
 - [X] [#7487](https://github.com/kubernetes/ingress-nginx/pull/7487)[Cherry - Pick] - Fix default backend annotation and tests
-- [X] [#7459](https://github.com/kubernetes/ingress-nginx/pull/7459) Add controller.watchIngressWithoutClass config option 
-- [X] [#7478](https://github.com/kubernetes/ingress-nginx/pull/7478) Release new helm chart with certgen fixed 
+- [X] [#7459](https://github.com/kubernetes/ingress-nginx/pull/7459) Add controller.watchIngressWithoutClass config option
+- [X] [#7478](https://github.com/kubernetes/ingress-nginx/pull/7478) Release new helm chart with certgen fixed
 - [X] [#7341](https://github.com/kubernetes/ingress-nginx/pull/7341) Fix IngressClass logic for newer releases (#7341)
 - [X] [#7355](https://github.com/kubernetes/ingress-nginx/pull/7355) Downgrade Lua modules for s390x (#7355)
 - [X] [#7319](https://github.com/kubernetes/ingress-nginx/pull/7319) Lower webhook timeout for digital ocean (#7319)
@@ -732,11 +732,11 @@ Changes:
 - [X] [#7331](https://github.com/kubernetes/ingress-nginx/pull/7331) Fix forwarding of auth-response-headers to gRPC backends (#7331)
 - [X] [#7332](https://github.com/kubernetes/ingress-nginx/pull/7332) controller: ignore non-service backends (#7332)
 - [X] [#7314](https://github.com/kubernetes/ingress-nginx/pull/7314) Add configuration to disable external name service feature
-- [X] [#7313](https://github.com/kubernetes/ingress-nginx/pull/7313) Add file containing stable release 
+- [X] [#7313](https://github.com/kubernetes/ingress-nginx/pull/7313) Add file containing stable release
 - [X] [#7311](https://github.com/kubernetes/ingress-nginx/pull/7311) Handle named (non-numeric) ports correctly
 - [X] [#7308](https://github.com/kubernetes/ingress-nginx/pull/7308) Updated v1beta1 to v1 as its deprecated
-- [X] [#7298](https://github.com/kubernetes/ingress-nginx/pull/7298) Speed up admission hook by eliminating deep copy of Ingresses in CheckIngress 
-- [X] [#7242](https://github.com/kubernetes/ingress-nginx/pull/7242) Retry to download maxmind DB if it fails 
+- [X] [#7298](https://github.com/kubernetes/ingress-nginx/pull/7298) Speed up admission hook by eliminating deep copy of Ingresses in CheckIngress
+- [X] [#7242](https://github.com/kubernetes/ingress-nginx/pull/7242) Retry to download maxmind DB if it fails
 - [X] [#7228](https://github.com/kubernetes/ingress-nginx/pull/7228) Discover mounted geoip db files
 - [X] [#7208](https://github.com/kubernetes/ingress-nginx/pull/7208) ingress/tcp: add additional error logging on failed
 - [X] [#7190](https://github.com/kubernetes/ingress-nginx/pull/7190) chart: using Helm builtin capabilities check
@@ -746,7 +746,7 @@ Changes:
 - [X] [#7031](https://github.com/kubernetes/ingress-nginx/pull/7031) Remove mercurial from build
 - [X] [#6990](https://github.com/kubernetes/ingress-nginx/pull/6990) Use listen to ensure the port is free
 - [X] [#6944](https://github.com/kubernetes/ingress-nginx/pull/6944) Update proper default value for HTTP2MaxConcurrentStreams in Docs
-- [X] [#6940](https://github.com/kubernetes/ingress-nginx/pull/6940) Fix definition order of modsecurity directives 
+- [X] [#6940](https://github.com/kubernetes/ingress-nginx/pull/6940) Fix definition order of modsecurity directives
 - [X] [#7156] Drops support for Ingress Object v1beta1
 
 ### 0.50.0
@@ -872,16 +872,16 @@ _New Features:_
 
 _Changes:_
 
-- [X] [#7298](https://github.com/kubernetes/ingress-nginx/pull/ ) Speed up admission hook by eliminating deep 
+- [X] [#7298](https://github.com/kubernetes/ingress-nginx/pull/ ) Speed up admission hook by eliminating deep
   copy of Ingresses in CheckIngress
-- [X] [#6940](https://github.com/kubernetes/ingress-nginx/pull/6940) Fix definition order of modsecurity 
+- [X] [#6940](https://github.com/kubernetes/ingress-nginx/pull/6940) Fix definition order of modsecurity
   directives for controller
 - [X] [#7314](https://github.com/kubernetes/ingress-nginx/pull/7314) Add configuration to disable external name service feature #7314
-- [X] [#7076](https://github.com/kubernetes/ingress-nginx/pull/7076) Rewrite clean-nginx-conf.sh in Go to speed up 
+- [X] [#7076](https://github.com/kubernetes/ingress-nginx/pull/7076) Rewrite clean-nginx-conf.sh in Go to speed up
   admission webhook
-- [X] [#7255](https://github.com/kubernetes/ingress-nginx/pull/7255) Fix nilpointer in admission and remove failing 
-  test #7255 
-- [X] [#7216](https://github.com/kubernetes/ingress-nginx/pull/7216) Admission: Skip validation checks if an ingress 
+- [X] [#7255](https://github.com/kubernetes/ingress-nginx/pull/7255) Fix nilpointer in admission and remove failing
+  test #7255
+- [X] [#7216](https://github.com/kubernetes/ingress-nginx/pull/7216) Admission: Skip validation checks if an ingress
   is marked as deleted #7216
 
 ### 1.0.0-beta.3
@@ -896,8 +896,8 @@ This release only supports Kubernetes versions >= v1.19. The support for Ingress
 Changes:
 
 - [X] [#7487](https://github.com/kubernetes/ingress-nginx/pull/7487)[Cherry - Pick] - Fix default backend annotation and tests
-- [X] [#7459](https://github.com/kubernetes/ingress-nginx/pull/7459) Add controller.watchIngressWithoutClass config option 
-- [X] [#7478](https://github.com/kubernetes/ingress-nginx/pull/7478) Release new helm chart with certgen fixed 
+- [X] [#7459](https://github.com/kubernetes/ingress-nginx/pull/7459) Add controller.watchIngressWithoutClass config option
+- [X] [#7478](https://github.com/kubernetes/ingress-nginx/pull/7478) Release new helm chart with certgen fixed
 
 ### 1.0.0-beta.1
 **THIS IS A BREAKING CHANGE**
@@ -931,11 +931,11 @@ This release only supports Kubernetes versions >= v1.19. The support for Ingress
 _ New Features:_
 
 - [X] [#7314](https://github.com/kubernetes/ingress-nginx/pull/7314) Add configuration to disable external name service feature
-- [X] [#7313](https://github.com/kubernetes/ingress-nginx/pull/7313) Add file containing stable release 
+- [X] [#7313](https://github.com/kubernetes/ingress-nginx/pull/7313) Add file containing stable release
 - [X] [#7311](https://github.com/kubernetes/ingress-nginx/pull/7311) Handle named (non-numeric) ports correctly
 - [X] [#7308](https://github.com/kubernetes/ingress-nginx/pull/7308) Updated v1beta1 to v1 as its deprecated
-- [X] [#7298](https://github.com/kubernetes/ingress-nginx/pull/7298) Speed up admission hook by eliminating deep copy of Ingresses in CheckIngress 
-- [X] [#7242](https://github.com/kubernetes/ingress-nginx/pull/7242) Retry to download maxmind DB if it fails 
+- [X] [#7298](https://github.com/kubernetes/ingress-nginx/pull/7298) Speed up admission hook by eliminating deep copy of Ingresses in CheckIngress
+- [X] [#7242](https://github.com/kubernetes/ingress-nginx/pull/7242) Retry to download maxmind DB if it fails
 - [X] [#7228](https://github.com/kubernetes/ingress-nginx/pull/7228) Discover mounted geoip db files
 - [X] [#7208](https://github.com/kubernetes/ingress-nginx/pull/7208) ingress/tcp: add additional error logging on failed
 - [X] [#7190](https://github.com/kubernetes/ingress-nginx/pull/7190) chart: using Helm builtin capabilities check
@@ -945,7 +945,7 @@ _ New Features:_
 - [X] [#7031](https://github.com/kubernetes/ingress-nginx/pull/7031) Remove mercurial from build
 - [X] [#6990](https://github.com/kubernetes/ingress-nginx/pull/6990) Use listen to ensure the port is free
 - [X] [#6944](https://github.com/kubernetes/ingress-nginx/pull/6944) Update proper default value for HTTP2MaxConcurrentStreams in Docs
-- [X] [#6940](https://github.com/kubernetes/ingress-nginx/pull/6940) Fix definition order of modsecurity directives 
+- [X] [#6940](https://github.com/kubernetes/ingress-nginx/pull/6940) Fix definition order of modsecurity directives
 
 ### 1.0.0-alpha.1
 **THIS IS A BREAKING CHANGE**
@@ -972,12 +972,12 @@ _New Features:_
 
 _Changes:_
 
-- [X] [#7179](https://github.com/kubernetes/ingress-nginx/pull/7179) Upgrade Nginx to 1.20.1 
+- [X] [#7179](https://github.com/kubernetes/ingress-nginx/pull/7179) Upgrade Nginx to 1.20.1
 - [X] [#7101](https://github.com/kubernetes/ingress-nginx/pull/7101)  Removed Codecov
 - [X] [#6993](https://github.com/kubernetes/ingress-nginx/pull/6993)  Fix cookieAffinity log printing error
 - [X] [#7046](https://github.com/kubernetes/ingress-nginx/pull/7046)  Allow configuring controller container name
-- [X] [#6994](https://github.com/kubernetes/ingress-nginx/pull/6994)  Fixed oauth2 callback url 
-- [X] [#6740](https://github.com/kubernetes/ingress-nginx/pull/6740)  non-host canary ingress use default server name as host to merge 
+- [X] [#6994](https://github.com/kubernetes/ingress-nginx/pull/6994)  Fixed oauth2 callback url
+- [X] [#6740](https://github.com/kubernetes/ingress-nginx/pull/6740)  non-host canary ingress use default server name as host to merge
 - [X] [#7126](https://github.com/kubernetes/ingress-nginx/pull/7126)  set x-forwarded-scheme to be the same as x-forwarded-proto
 - [X] [#6734](https://github.com/kubernetes/ingress-nginx/pull/6734)  Update controller-poddisruptionbudget.yaml
 - [X] [#7117](https://github.com/kubernetes/ingress-nginx/pull/7117)  Adding annotations for HPA
@@ -1012,9 +1012,9 @@ _Changes:_
 - [X] [#6979](https://github.com/kubernetes/ingress-nginx/pull/6979) Changed servicePort value for metrics
 - [X] [#6971](https://github.com/kubernetes/ingress-nginx/pull/6971) Fix crl not reload when crl got updated in the ca secret
 - [X] [#6957](https://github.com/kubernetes/ingress-nginx/pull/6957) Add ability to specify automountServiceAccountToken
-- [X] [#6956](https://github.com/kubernetes/ingress-nginx/pull/6956) update nginx base image, handle jaeger propagation format 
-- [X] [#6936](https://github.com/kubernetes/ingress-nginx/pull/6936) update tracing libraries for opentracing 1.6.0 
-- [X] [#6908](https://github.com/kubernetes/ingress-nginx/pull/6908) feat(chart) Add volumes to default-backend deployment #6908 
+- [X] [#6956](https://github.com/kubernetes/ingress-nginx/pull/6956) update nginx base image, handle jaeger propagation format
+- [X] [#6936](https://github.com/kubernetes/ingress-nginx/pull/6936) update tracing libraries for opentracing 1.6.0
+- [X] [#6908](https://github.com/kubernetes/ingress-nginx/pull/6908) feat(chart) Add volumes to default-backend deployment #6908
 - [X] [#6884](https://github.com/kubernetes/ingress-nginx/pull/6884) jaeger-endpoint feature for non-agent trace collectors
 - [X] [#6856](https://github.com/kubernetes/ingress-nginx/pull/6856) Allow multiple publish status addresses
 - [X] [#6971](https://github.com/kubernetes/ingress-nginx/pull/6971) Fix bug related to CRL update

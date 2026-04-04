@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -39,7 +40,11 @@ import (
 )
 
 func goldenControllerDir() string {
-	return filepath.Join(os.Getenv("PWD"), "../../../../test/data/golden/controller")
+	_, filename, unused1, unused2 := runtime.Caller(0)
+	_ = unused1
+	_ = unused2
+	repoRoot := filepath.Join(filepath.Dir(filename), "..", "..", "..")
+	return filepath.Join(repoRoot, "test", "data", "golden", "controller")
 }
 
 func snapshotJSON(t *testing.T, name string, data interface{}) {

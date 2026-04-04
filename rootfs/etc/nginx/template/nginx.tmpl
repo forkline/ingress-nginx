@@ -607,7 +607,7 @@ http {
         }
         {{ end }}
 
-        set_by_lua_file $redirect_to /etc/nginx/lua/nginx/ngx_srv_redirect.lua {{ $redirect.To }}; 
+        set_by_lua_file $redirect_to /etc/nginx/lua/nginx/ngx_srv_redirect.lua {{ $redirect.To }};
 
         return {{ $all.Cfg.HTTPRedirectCode }} $redirect_to;
     }
@@ -727,7 +727,7 @@ stream {
     lua_package_path "/etc/nginx/lua/?.lua;/etc/nginx/lua/vendor/?.lua;;";
 
     lua_shared_dict tcp_udp_configuration_data 5M;
-    
+
     {{ buildResolvers $cfg.Resolver $cfg.DisableIpv6DNS }}
 
     init_by_lua_file /etc/nginx/lua/ngx_conf_init_stream.lua;

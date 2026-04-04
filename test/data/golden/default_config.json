@@ -98,7 +98,7 @@
   "gzip-level": 1,
   "gzip-min-length": 256,
   "gzip-types": "application/atom+xml application/javascript application/x-javascript application/json application/rss+xml application/vnd.ms-fontobject application/x-font-ttf application/x-web-app-manifest+json application/xhtml+xml application/xml font/opentype image/svg+xml image/x-icon text/css text/javascript text/plain text/x-component",
-  "worker-processes": "8",
+  "worker-processes": "4",
   "worker-shutdown-timeout": "240s",
   "variables-hash-bucket-size": 256,
   "variables-hash-max-size": 2048,

@@ -146,7 +146,7 @@ var authReqAnnotations = parser.Annotation{
 			Validator: parser.ValidateBool,
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `This annotation enables setting a cookie returned by auth request. 
+			Documentation: `This annotation enables setting a cookie returned by auth request.
 			By default, the cookie will be set only if an upstream reports with the code 200, 201, 204, 206, 301, 302, 303, 304, 307, or 308`,
 		},
 	},

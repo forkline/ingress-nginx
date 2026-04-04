@@ -43,7 +43,7 @@ var rewriteAnnotations = parser.Annotation{
 			Validator: parser.ValidateRegex(parser.RegexPathWithCapture, false),
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskMedium,
-			Documentation: `This annotation allows to specify the target URI where the traffic must be redirected. It can contain regular characters and captured 
+			Documentation: `This annotation allows to specify the target URI where the traffic must be redirected. It can contain regular characters and captured
 			groups specified as '$1', '$2', etc.`,
 		},
 		sslRedirectAnnotation: {

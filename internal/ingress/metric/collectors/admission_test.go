@@ -141,42 +141,42 @@ func TestByteFormat(t *testing.T) {
 		{
 			name:   "exactly 1k",
 			bytes:  1000,
-			expect: "1.0 kB",
+			expect: "1.0kB",
 		},
 		{
 			name:   "1.5k",
 			bytes:  1500,
-			expect: "1.5 kB",
+			expect: "1.5kB",
 		},
 		{
 			name:   "1 megabyte",
 			bytes:  1000000,
-			expect: "1.0 MB",
+			expect: "1.0MB",
 		},
 		{
 			name:   "1.5 megabytes",
 			bytes:  1500000,
-			expect: "1.5 MB",
+			expect: "1.5MB",
 		},
 		{
 			name:   "1 gigabyte",
 			bytes:  1000000000,
-			expect: "1.0 GB",
+			expect: "1.0GB",
 		},
 		{
 			name:   "1 terabyte",
 			bytes:  1000000000000,
-			expect: "1.0 TB",
+			expect: "1.0TB",
 		},
 		{
 			name:   "1 petabyte",
 			bytes:  1000000000000000,
-			expect: "1.0 PB",
+			expect: "1.0PB",
 		},
 		{
 			name:   "1 exabyte",
 			bytes:  1000000000000000000,
-			expect: "1.0 EB",
+			expect: "1.0EB",
 		},
 		{
 			name:   "999 bytes",

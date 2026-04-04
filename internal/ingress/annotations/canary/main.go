@@ -68,17 +68,17 @@ var CanaryAnnotations = parser.Annotation{
 			Validator: parser.ValidateRegex(parser.BasicCharsRegex, true),
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskMedium,
-			Documentation: `This annotation defines the header value to match for notifying the Ingress to route the request to the service specified in the Canary Ingress. 
-			When the request header is set to this value, it will be routed to the canary. For any other header value, the header will be ignored and the request compared against the other canary rules by precedence. 
-			This annotation has to be used together with 'canary-by-header'. The annotation is an extension of the 'canary-by-header' to allow customizing the header value instead of using hardcoded values. 
+			Documentation: `This annotation defines the header value to match for notifying the Ingress to route the request to the service specified in the Canary Ingress.
+			When the request header is set to this value, it will be routed to the canary. For any other header value, the header will be ignored and the request compared against the other canary rules by precedence.
+			This annotation has to be used together with 'canary-by-header'. The annotation is an extension of the 'canary-by-header' to allow customizing the header value instead of using hardcoded values.
 			It doesn't have any effect if the 'canary-by-header' annotation is not defined`,
 		},
 		canaryByHeaderPatternAnnotation: {
 			Validator: parser.ValidateRegex(parser.IsValidRegex, false),
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskMedium,
-			Documentation: `This annotation works the same way as canary-by-header-value except it does PCRE Regex matching. 
-			Note that when 'canary-by-header-value' is set this annotation will be ignored. 
+			Documentation: `This annotation works the same way as canary-by-header-value except it does PCRE Regex matching.
+			Note that when 'canary-by-header-value' is set this annotation will be ignored.
 			When the given Regex causes error during request processing, the request will be considered as not matching.`,
 		},
 		canaryByCookieAnnotation: {

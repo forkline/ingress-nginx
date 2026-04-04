@@ -71,5 +71,5 @@ The ServiceAccount `ingress-nginx` is bound to the Role
 `ingress-nginx` and the ClusterRole `ingress-nginx`.
 
 The serviceAccountName associated with the containers in the deployment must
-match the serviceAccount. The namespace references in the Deployment metadata, 
+match the serviceAccount. The namespace references in the Deployment metadata,
 container arguments, and POD_NAMESPACE should be in the ingress-nginx namespace.

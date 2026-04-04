@@ -28,7 +28,7 @@ set -o pipefail
 
 if [ -z "$PKG" ] || [ -z "$ARCH" ] || [ -z "$COMMIT_SHA" ] || [ -z "$REPO_INFO" ] || [ -z "$TAG" ]; then
   echo "Environments PKG, ARCH, COMMIT_SHA, REPO_INFO and TAG are required"
-  exit 1 
+  exit 1
 fi
 
 

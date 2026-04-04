@@ -41,7 +41,7 @@ var otelAnnotations = parser.Annotation{
 			Validator: parser.ValidateBool,
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `This annotation defines if Open Telemetry collector should be enable for this location. OpenTelemetry should 
+			Documentation: `This annotation defines if Open Telemetry collector should be enable for this location. OpenTelemetry should
 			already be configured by Ingress administrator`,
 		},
 		otelTrustSpanAnnotation: {

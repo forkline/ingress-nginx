@@ -12,8 +12,10 @@ repos:
         exclude: >-
           ^(hack/boilerplate/boilerplate\.py\.txt)$
       - id: end-of-file-fixer
+        exclude: ^(test/data/)
       - id: mixed-line-ending
       - id: trailing-whitespace
+        exclude: ^(test/data/)
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
     hooks:
