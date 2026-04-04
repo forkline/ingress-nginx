@@ -54,4 +54,3 @@ Images:
 * Bump google.golang.org/protobuf from 1.32.0 to 1.33.0 in /magefiles (#11127)
 * Bump google.golang.org/protobuf in /images/custom-error-pages/rootfs (#11128)
 * Bump google.golang.org/protobuf in /images/kube-webhook-certgen/rootfs (#11122)
-

@@ -5,9 +5,9 @@
 
 Do not use in multi-tenant Kubernetes production installations. This project assumes that users that can create Ingress objects are administrators of the cluster.
 
-For example, the Ingress NGINX control plane has global and per Ingress configuration options that make it insecure, if enabled, in a multi-tenant environment. 
+For example, the Ingress NGINX control plane has global and per Ingress configuration options that make it insecure, if enabled, in a multi-tenant environment.
 
-For example, enabling snippets, a global configuration, allows any Ingress object to run arbitrary Lua code that could affect the security of all Ingress objects that a controller is running. 
+For example, enabling snippets, a global configuration, allows any Ingress object to run arbitrary Lua code that could affect the security of all Ingress objects that a controller is running.
 
 We changed the default to allow snippets to `false` in https://github.com/kubernetes/ingress-nginx/pull/10393.
 
@@ -116,7 +116,7 @@ DESCRIPTION:
     LoadBalancer IP from within the cluster will always get "Cluster" semantics,
     but clients sending to a NodePort from within the cluster may need to take
     traffic policy into account when picking a node.
-    
+
     Possible enum values:
      - `"Cluster"` routes traffic to all endpoints.
      - `"Local"` preserves the source IP of the traffic by routing only to

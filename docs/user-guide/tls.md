@@ -43,7 +43,7 @@ add `--default-ssl-certificate=default/foo-tls` in the `nginx-controller` deploy
 
 If the `tls:` section is not set, NGINX will provide the default certificate but will not force HTTPS redirect.
 
-On the other hand, if the `tls:` section is set - even without specifying a `secretName` option - NGINX will force HTTPS redirect. 
+On the other hand, if the `tls:` section is set - even without specifying a `secretName` option - NGINX will force HTTPS redirect.
 
 To force redirects for Ingresses that do not specify a TLS-block at all, take a look at `force-ssl-redirect` in [ConfigMap][ConfigMap].
 
@@ -95,13 +95,13 @@ annotation in the particular resource.
 
 ## Automated Certificate Management with cert-manager
 
-[cert-manager] automatically requests missing or expired certificates from a range of 
-[supported issuers][cert-manager-issuer-config] (including [Let's Encrypt]) by monitoring 
+[cert-manager] automatically requests missing or expired certificates from a range of
+[supported issuers][cert-manager-issuer-config] (including [Let's Encrypt]) by monitoring
 ingress resources.
 
 To set up cert-manager you should take a look at this [full example][full-cert-manager-example].
 
-To enable it for an ingress resource you have to deploy cert-manager, configure a certificate 
+To enable it for an ingress resource you have to deploy cert-manager, configure a certificate
 issuer update the manifest:
 
 ```yaml

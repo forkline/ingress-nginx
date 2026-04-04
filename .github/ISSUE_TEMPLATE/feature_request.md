@@ -15,7 +15,7 @@ assignees: ''
 
 <!-- If this is actually about documentation, uncomment the following block -->
 
-<!-- 
+<!--
 /kind documentation
 /remove-kind feature
 -->

@@ -33,9 +33,9 @@ spec:
       - path: /
         pathType: Prefix
         backend:
-          service: 
+          service:
             name: http-svc
-            port: 
+            port:
               number: 80
 status:
   loadBalancer:

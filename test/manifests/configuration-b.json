@@ -653,7 +653,7 @@
 				"validationDepth": 0
 			},
 			"use-port-in-redirects": false,
-			"configuration-snippet": "",			
+			"configuration-snippet": "",
 			"rateLimit": {
 				"connections": {
 					"name": "",

@@ -77,14 +77,14 @@ var proxyAnnotations = parser.Annotation{
 			Validator: parser.ValidateInt,
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `This annotation sets the number of the buffers in proxy_buffers used for reading the first part of the response received from the proxied server. 
+			Documentation: `This annotation sets the number of the buffers in proxy_buffers used for reading the first part of the response received from the proxied server.
 			By default proxy buffers number is set as 4`,
 		},
 		proxyBufferSizeAnnotation: {
 			Validator: parser.ValidateRegex(parser.SizeRegex, true),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `This annotation sets the size of the buffer proxy_buffer_size used for reading the first part of the response received from the proxied server. 
+			Documentation: `This annotation sets the size of the buffer proxy_buffer_size used for reading the first part of the response received from the proxied server.
 			By default proxy buffer size is set as "4k".`,
 		},
 		proxyBusyBuffersSizeAnnotation: {
@@ -115,8 +115,8 @@ var proxyAnnotations = parser.Annotation{
 			Validator: parser.ValidateRegex(validUpstreamAnnotation, false),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskMedium,
-			Documentation: `This annotation defines when the next upstream should be used. 
-			This annotation reflect the directive https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream 
+			Documentation: `This annotation defines when the next upstream should be used.
+			This annotation reflect the directive https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream
 			and only the allowed values on upstream are allowed here.`,
 		},
 		proxyNextUpstreamTimeoutAnnotation: {

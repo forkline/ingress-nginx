@@ -32,17 +32,17 @@ var (
 		worker_connections  1024;
 		multi_accept on;
 	}
-	
+
 	http {
 		default_type 'text/plain';
 		client_max_body_size 0;
-	
+
 		server {
 			access_log on;
 			access_log /dev/stdout;
-	
+
 			listen 80;
-	
+
 			location / {
 				content_by_lua_block {
 					ngx.print("ok")
@@ -57,17 +57,17 @@ var (
 		worker_connections  1024;
 		multi_accept on;
 	}
-	
+
 	http {
 		default_type 'text/plain';
 		client_max_body_size 0;
-	
+
 		server {
 			access_log on;
 			access_log /dev/stdout;
-	
+
 			listen 80;
-	
+
 			location / {
 				alias /www/html;
 			}
@@ -80,7 +80,7 @@ var (
 		worker_connections  1024;
 		multi_accept on;
 	}
-	
+
 	http {
 		default_type 'text/plain';
 		client_max_body_size 0;
@@ -88,9 +88,9 @@ var (
 		server {
 			access_log on;
 			access_log /dev/stdout;
-	
+
 			listen 80;
-	
+
 		}
 	}
 	`
