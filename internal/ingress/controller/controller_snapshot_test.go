@@ -40,9 +40,11 @@ import (
 )
 
 func goldenControllerDir() string {
-	_, filename, _, _ := runtime.Caller(0)
+	_, filename, unused1, unused2 := runtime.Caller(0)
+	_ = unused1
+	_ = unused2
 	repoRoot := filepath.Join(filepath.Dir(filename), "..", "..", "..")
-	return filepath.Join(repoRoot, "test/data/golden/controller")
+	return filepath.Join(repoRoot, "test", "data", "golden", "controller")
 }
 
 func snapshotJSON(t *testing.T, name string, data interface{}) {
