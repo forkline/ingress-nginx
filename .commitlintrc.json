@@ -36,7 +36,8 @@
         "image",
         "lua",
         "release",
-        "security"
+        "security",
+        "test"
       ]
     ],
     "subject-case": [
