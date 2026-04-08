@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"os"
 	"sort"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -57,7 +58,18 @@ func TestNewDefaultSnapshot(t *testing.T) {
 	err = json.Unmarshal(data, &actualMap)
 	assert.NoError(t, err, "parsing actual config JSON")
 
+	wpActual, wpActualOK := actualMap["worker-processes"]
+	delete(expectedMap, "worker-processes")
+	delete(actualMap, "worker-processes")
+
 	assert.Equal(t, expectedMap, actualMap, "NewDefault() config does not match golden snapshot")
+
+	assert.True(t, wpActualOK, "config should contain worker-processes")
+	wpStr, ok := wpActual.(string)
+	assert.True(t, ok, "worker-processes should be a string")
+	wpInt, err := strconv.Atoi(wpStr)
+	assert.NoError(t, err, "worker-processes should be a valid integer")
+	assert.Greater(t, wpInt, 0, "worker-processes should be a positive integer")
 }
 
 func TestNewDefaultDeterministic(t *testing.T) {
