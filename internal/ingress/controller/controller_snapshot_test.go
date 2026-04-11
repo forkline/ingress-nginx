@@ -39,7 +39,7 @@ import (
 )
 
 func goldenControllerDir() string {
-	return filepath.Join(os.Getenv("PWD"), "../../../../test/data/golden/controller")
+	return "../../../test/data/golden/controller"
 }
 
 func snapshotJSON(t *testing.T, name string, data interface{}) {
