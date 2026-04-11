@@ -1,0 +1,5 @@
+{
+  "configmap": "default/tcp-services",
+  "protocol": "TCP",
+  "services": []
+}

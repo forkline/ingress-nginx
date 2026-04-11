@@ -52,6 +52,7 @@ func mustRenderTemplate(t *testing.T, tc *config.TemplateConfig) string {
 	if tc.Cfg.DefaultSSLCertificate == nil {
 		tc.Cfg.DefaultSSLCertificate = &ingress.SSLCert{}
 	}
+	tc.Cfg.WorkerProcesses = "8"
 
 	ngxTpl, err := NewTemplate(nginx.TemplatePath)
 	assert.NoError(t, err, "loading NGINX template")

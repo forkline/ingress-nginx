@@ -27,6 +27,7 @@ import (
 
 func TestNewDefaultSnapshot(t *testing.T) {
 	cfg := NewDefault()
+	cfg.WorkerProcesses = "8"
 
 	data, err := json.MarshalIndent(cfg, "", "  ")
 	assert.NoError(t, err, "serializing default config to JSON")
