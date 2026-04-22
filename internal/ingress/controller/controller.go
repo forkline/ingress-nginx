@@ -224,7 +224,7 @@ func (n *NGINXController) syncIngress(interface{}) error {
 			n.metricCollector.ConfigSuccess(hash, false)
 			n.lastConfigSuccess = false
 			klog.Errorf("Unexpected failure reloading the backend:\n%v", err)
-			n.recorder.Eventf(k8s.IngressPodDetails, apiv1.EventTypeWarning, "RELOAD", fmt.Sprintf("Error reloading NGINX: %v", err))
+			n.recorder.Eventf(k8s.IngressPodDetails, apiv1.EventTypeWarning, "RELOAD", "Error reloading NGINX: %v", err)
 			return err
 		}
 
