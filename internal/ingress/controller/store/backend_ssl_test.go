@@ -152,6 +152,13 @@ func (f *fakeSecretStore) Resync() error {
 	return nil
 }
 
+func (f *fakeSecretStore) LastStoreSyncResourceVersion() string {
+	return ""
+}
+
+func (f *fakeSecretStore) Bookmark(rv string) {
+}
+
 func TestSendDummyEvent(t *testing.T) {
 	ch := channels.NewRingChannel(10)
 	store := &k8sStore{
