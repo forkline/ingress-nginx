@@ -156,7 +156,7 @@ func (f *fakeSecretStore) LastStoreSyncResourceVersion() string {
 	return ""
 }
 
-func (f *fakeSecretStore) Bookmark(rv string) {
+func (f *fakeSecretStore) Bookmark(_ string) {
 }
 
 func TestSendDummyEvent(t *testing.T) {
