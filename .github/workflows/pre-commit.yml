@@ -45,7 +45,12 @@ jobs:
           BASE_REF=origin/${{ github.event.pull_request.base.ref }}
           git --no-pager log --pretty=format:%H "${BASE_REF}..HEAD" | \
             while read commit; do
-            git show --no-patch --format=%B "$commit" > .git/COMMIT_EDITMSG
+            MSG=$(git show --no-patch --format=%B "$commit")
+            if [[ "$MSG" =~ ^pre-commit: ]]; then
+              echo "Skipping commitlint for Renovate pre-commit update: $commit"
+              continue
+            fi
+            echo "$MSG" > .git/COMMIT_EDITMSG
             pre-commit run \
               --hook-stage commit-msg \
               --commit-msg-filename .git/COMMIT_EDITMSG \
