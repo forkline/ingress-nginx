@@ -39,6 +39,7 @@
         "image",
         "lua",
         "nginx",
+        "pre-commit",
         "release",
         "security",
         "template",
