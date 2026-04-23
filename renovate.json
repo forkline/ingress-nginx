@@ -10,7 +10,7 @@
   "branchPrefix": "renovate/",
   "pre-commit": {
     "enabled": true,
-    "commitMessagePrefix": "pre-commit: ",
+    "commitMessagePrefix": "chore(pre-commit): ",
     "branchPrefix": "pre-commit-"
   },
   "customManagers": [
