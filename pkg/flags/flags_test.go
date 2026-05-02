@@ -26,12 +26,14 @@ import (
 )
 
 const (
-	testCmd                = "cmd"
-	testHTTPPortFlag       = "--http-port"
-	testHTTPSPortFlag      = "--https-port"
-	testPortZero           = "0"
-	testEnableSSLPassthrough = "--enable-ssl-passthrough"
-	testElectionTTLFlag    = "--election-ttl"
+	testCmd                     = "cmd"
+	testHTTPPortFlag            = "--http-port"
+	testHTTPSPortFlag           = "--https-port"
+	testPortZero                = "0"
+	testEnableSSLPassthrough    = "--enable-ssl-passthrough"
+	testElectionTTLFlag         = "--election-ttl"
+	testDefaultBackendSvcFlag   = "--default-backend-service"
+	testSSLPassthroughProxyFlag = "--ssl-passthrough-proxy-port"
 )
 
 func TestNoMandatoryFlag(t *testing.T) {
@@ -62,7 +64,7 @@ func TestDefaults(t *testing.T) {
 	defer func() { os.Args = oldArgs }()
 	os.Args = []string{
 		testCmd,
-		"--default-backend-service", "namespace/test",
+		testDefaultBackendSvcFlag, "namespace/test",
 		testHTTPPortFlag, testPortZero,
 		testHTTPSPortFlag, testPortZero,
 	}
@@ -91,7 +93,7 @@ func TestSetupSSLProxy(t *testing.T) {
 	}{
 		{
 			name:        "valid SSL proxy configuration with passthrough enabled",
-			args:        []string{testCmd, testEnableSSLPassthrough, "--ssl-passthrough-proxy-port", "9999", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
+			args:        []string{testCmd, testEnableSSLPassthrough, testSSLPassthroughProxyFlag, "9999", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
 			expectError: false,
 			description: "Should accept valid SSL proxy port with passthrough enabled",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -105,7 +107,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy port without explicit passthrough enabling",
-			args:        []string{testCmd, "--ssl-passthrough-proxy-port", "8443", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
+			args:        []string{testCmd, testSSLPassthroughProxyFlag, "8443", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
 			expectError: false,
 			description: "Should accept SSL proxy port configuration without explicit passthrough enable",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -116,7 +118,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with default backend service",
-			args:        []string{testCmd, testEnableSSLPassthrough, "--default-backend-service", "default/backend", "--ssl-passthrough-proxy-port", "9000", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
+			args:        []string{testCmd, testEnableSSLPassthrough, testDefaultBackendSvcFlag, "default/backend", testSSLPassthroughProxyFlag, "9000", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
 			expectError: false,
 			description: "Should work with default backend service and SSL passthrough",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -133,7 +135,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with default SSL certificate",
-			args:        []string{testCmd, testEnableSSLPassthrough, "--default-ssl-certificate", "default/tls-cert", "--ssl-passthrough-proxy-port", "8444", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
+			args:        []string{testCmd, testEnableSSLPassthrough, "--default-ssl-certificate", "default/tls-cert", testSSLPassthroughProxyFlag, "8444", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
 			expectError: false,
 			description: "Should work with default SSL certificate and passthrough",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -150,7 +152,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with chain completion enabled",
-			args:        []string{testCmd, testEnableSSLPassthrough, "--enable-ssl-chain-completion", "--ssl-passthrough-proxy-port", "7443", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
+			args:        []string{testCmd, testEnableSSLPassthrough, "--enable-ssl-chain-completion", testSSLPassthroughProxyFlag, "7443", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
 			expectError: false,
 			description: "Should work with SSL chain completion and passthrough",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -181,7 +183,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with comprehensive configuration",
-			args:        []string{testCmd, testEnableSSLPassthrough, "--enable-ssl-chain-completion", "--default-ssl-certificate", "kube-system/default-cert", "--default-backend-service", "kube-system/default-backend", "--ssl-passthrough-proxy-port", "10443", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
+			args:        []string{testCmd, testEnableSSLPassthrough, "--enable-ssl-chain-completion", "--default-ssl-certificate", "kube-system/default-cert", testDefaultBackendSvcFlag, "kube-system/default-backend", testSSLPassthroughProxyFlag, "10443", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
 			expectError: false,
 			description: "Should work with comprehensive SSL proxy configuration",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {

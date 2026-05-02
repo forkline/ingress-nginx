@@ -307,17 +307,17 @@ func TestIsValidHostname(t *testing.T) {
 		Valid    bool
 	}{
 		"when there is no common names": {
-			"foo.bar",
+			testHostnameFooBar,
 			[]string{},
 			false,
 		},
 		"when there is a match for foo.bar": {
-			"foo.bar",
-			[]string{"foo.bar"},
+			testHostnameFooBar,
+			[]string{testHostnameFooBar},
 			true,
 		},
 		"when there is a wildcard match for foo.bar": {
-			"foo.bar",
+			testHostnameFooBar,
 			[]string{"*.bar"},
 			true,
 		},
@@ -337,8 +337,9 @@ func TestIsValidHostname(t *testing.T) {
 }
 
 const (
-	duration365d = time.Hour * 24 * 365
-	rsaKeySize   = 2048
+	duration365d       = time.Hour * 24 * 365
+	rsaKeySize         = 2048
+	testHostnameFooBar = "foo.bar"
 )
 
 // newPrivateKey creates an RSA private key

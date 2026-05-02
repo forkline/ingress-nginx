@@ -46,6 +46,7 @@
         "security",
         "template",
         "test",
+        "tests",
         "webhook"
       ]
     ],
