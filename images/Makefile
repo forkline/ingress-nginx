@@ -43,6 +43,7 @@ build: builder
 		$(EXTRAARGS) \
 		$(NAME)/rootfs \
 		--tag $(IMAGE):$(TAG) \
+		--tag $(IMAGE):latest \
 		$(OUTPUT)
 
 .PHONY: push
