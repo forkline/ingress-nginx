@@ -47,6 +47,20 @@ make update-changelog
 echo "Running helm-docs to update chart README..."
 helm-docs --chart-search-root charts
 
+echo "Updating README Supported Versions table..."
+CHART_VERSION="${NEW_VERSION#v}"
+NGINX_VERSION=$(grep 'export NGINX_VERSION=' images/nginx/rootfs/build.sh | sed "s/.*NGINX_VERSION=//")
+ALPINE_VERSION=$(grep '^FROM alpine:' images/nginx/rootfs/Dockerfile | head -1 | sed 's/.*alpine://')
+K8S_VERSIONS=$(grep '|    ✅' README.md | head -1 | cut -d'|' -f4 | xargs)
+
+if [ -z "$K8S_VERSIONS" ]; then
+    K8S_VERSIONS="1.35, 1.34, 1.33, 1.32, 1.31"
+fi
+
+NEW_ROW="|    ✅     | **$NEW_VERSION**         | $K8S_VERSIONS | $ALPINE_VERSION         | $NGINX_VERSION        | $CHART_VERSION           |"
+sed -i "s/|    ✅/|    🔄/g" README.md
+sed -i "/^| :-------:/a\\$NEW_ROW" README.md
+
 git add .
 git commit -m "release: prepare $NEW_VERSION"
 
