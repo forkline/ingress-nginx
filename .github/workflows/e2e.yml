@@ -79,6 +79,18 @@ jobs:
             --tag ingress-nginx/nginx:${TAGNGINX} \
             --load
 
+      - name: Build kube-webhook-certgen image
+        working-directory: images
+        run: |
+          TAG=$(cat kube-webhook-certgen/TAG)
+          GOLANG_VERSION=$(cat ../GOLANG_VERSION)
+          docker buildx build \
+            --platform linux/amd64 \
+            --build-arg GOLANG_VERSION=${GOLANG_VERSION} \
+            kube-webhook-certgen/rootfs \
+            --tag ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${TAG} \
+            --load
+
       - name: Build controller and e2e images
         env:
           TAG: 1.0.0-dev
@@ -90,10 +102,12 @@ jobs:
             BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
             clean-image build image image-chroot
           make -C test/e2e-image image
+          CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
           docker save \
             nginx-ingress-controller:e2e \
             ingress-controller/controller:1.0.0-dev \
             ingress-controller/controller-chroot:1.0.0-dev \
+            ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG} \
             | gzip > docker.tar.gz
 
       - name: Upload image cache
