@@ -33,7 +33,7 @@ const (
 	testEnableSSLPassthrough     = "--enable-ssl-passthrough" //nolint:gosec // This is a flag name, not credentials
 	testElectionTTLFlag          = "--election-ttl"
 	testDefaultBackendSvcFlag    = "--default-backend-service"
-	testSSLPassthroughProxyFlag  = "--ssl-passthrough-proxy-port"
+	testSSLPassthroughProxyFlag  = "--ssl-passthrough-proxy-port" //nolint:gosec // This is a flag name, not credentials
 	testPublishSvcFlag           = "--publish-service"
 	testPublishStatusAddressFlag = "--publish-status-address"
 	testMaxmindEditionIDsFlag    = "--maxmind-edition-ids"
@@ -70,7 +70,7 @@ func TestDefaults(t *testing.T) {
 	defer func() { os.Args = oldArgs }()
 	os.Args = []string{
 		testCmd,
-		testDefaultBackendSvcFlag, "namespace/test",
+		testDefaultBackendSvcFlag, testNamespaceTest,
 		testHTTPPortFlag, testPortZero,
 		testHTTPSPortFlag, testPortZero,
 	}
