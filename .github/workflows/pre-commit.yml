@@ -38,7 +38,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/pre-commit
-          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml', '.commitlintrc.json') }}
+          key: >-
+            pre-commit-${{ hashFiles('.pre-commit-config.yaml',
+            '.commitlintrc.json') }}
           restore-keys: |
             pre-commit-
 
@@ -46,6 +48,9 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           BASE_REF=origin/${{ github.event.pull_request.base.ref }}
+          TYPES='(Build|build|Chore|chore|CI|ci|Docs|docs|Feat|feat|Fix|fix)'
+          TYPES+='(Merge|merge|Perf|perf|Refactor|refactor|Release|release)'
+          TYPES+='(Revert|revert|Style|style|Test|test)'
           git --no-pager log --pretty=format:%H "${BASE_REF}..HEAD" | \
             while read commit; do
             MSG=$(git show --no-patch --format=%B "$commit")
@@ -53,7 +58,7 @@ jobs:
               echo "Skipping commitlint for Renovate pre-commit update: $commit"
               continue
             fi
-            if ! [[ "$MSG" =~ ^(Build|build|Chore|chore|CI|ci|Docs|docs|Feat|feat|Fix|fix|Merge|merge|Perf|perf|Refactor|refactor|Release|release|Revert|revert|Style|style|Test|test)(\(.+\))?:[[:space:]] ]]; then
+            if ! [[ "$MSG" =~ ^${TYPES}(\(.+\))?:[[:space:]] ]]; then
               echo "Skipping commitlint for non-conventional format: $commit"
               continue
             fi
