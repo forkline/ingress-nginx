@@ -61,6 +61,22 @@ import (
 	"k8s.io/ingress-nginx/pkg/util/file"
 )
 
+func TestMain(m *testing.M) {
+	authDir, err := os.MkdirTemp("", "ingress-controller-auth-*")
+	if err != nil {
+		panic(fmt.Errorf("failed to create temp auth directory: %w", err))
+	}
+	file.AuthDirectory = authDir
+
+	sslDir, err := os.MkdirTemp("", "ingress-controller-ssl-*")
+	if err != nil {
+		panic(fmt.Errorf("failed to create temp SSL directory: %w", err))
+	}
+	file.DefaultSSLDirectory = sslDir
+
+	os.Exit(m.Run())
+}
+
 const (
 	exampleBackend = "example-http-svc-1-80"
 	TRUE           = "true"

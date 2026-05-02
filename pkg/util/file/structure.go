@@ -21,28 +21,22 @@ import (
 	"os"
 )
 
-const (
+var (
 	// AuthDirectory default directory used to store files
 	// to authenticate request
+	// This is a variable instead of a constant to allow tests to override it with a temp directory.
 	AuthDirectory = "/etc/ingress-controller/auth"
+
+	// DefaultSSLDirectory defines the location where the SSL certificates will be generated
+	// This directory contains all the SSL certificates that are specified in Ingress rules.
+	// The name of each file is <namespace>-<secret name>.pem. The content is the concatenated
+	// certificate and key.
+	// This is a variable instead of a constant to allow tests to override it with a temp directory.
+	DefaultSSLDirectory = "/etc/ingress-controller/ssl"
 )
 
-// DefaultSSLDirectory defines the location where the SSL certificates will be generated
-// This directory contains all the SSL certificates that are specified in Ingress rules.
-// The name of each file is <namespace>-<secret name>.pem. The content is the concatenated
-// certificate and key.
-// This is a variable instead of a constant to allow tests to override it with a temp directory.
-var DefaultSSLDirectory = "/etc/ingress-controller/ssl"
-
-var directories = []string{
-	DefaultSSLDirectory,
-	AuthDirectory,
-}
-
-// CreateRequiredDirectories verifies if the required directories to
-// start the ingress controller exist and creates the missing ones.
 func CreateRequiredDirectories() error {
-	for _, directory := range directories {
+	for _, directory := range []string{DefaultSSLDirectory, AuthDirectory} {
 		_, err := os.Stat(directory)
 		if err != nil {
 			if os.IsNotExist(err) {
