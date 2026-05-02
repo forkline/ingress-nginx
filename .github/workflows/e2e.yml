@@ -77,7 +77,7 @@ jobs:
         run: |
           TAGNGINX=$(cat images/nginx/TAG)
           make \
-            BASE_IMAGE=registry.k8s.io/ingress-nginx/nginx:${TAGNGINX} \
+            BASE_IMAGE=ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX} \
             clean-image build image image-chroot
           make -C test/e2e-image image
           docker save \

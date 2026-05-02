@@ -5,7 +5,7 @@
 global:
   image:
     # -- Registry host to pull images from.
-    registry: registry.k8s.io
+    registry: ghcr.io/forkline
 ## Overrides for generated resource names
 # See templates/_helpers.tpl
 # nameOverride:
@@ -25,14 +25,12 @@ controller:
   image:
     ## Keep false as default for now!
     chroot: false
-    # registry: registry.k8s.io
+    # registry: ghcr.io/forkline
     image: ingress-nginx/controller
     ## for backwards compatibility consider setting the full image url via the repository value below
     ## use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
     ## repository:
-    tag: "v1.15.1"
-    digest: sha256:594ceea76b01c592858f803f9ff4d2cb40542cae2060410b2c95f75907d659e1
-    digestChroot: sha256:af31d00c9d82c612896b380a9003bd36843b7647b98e4588251c66325317bc72
+    tag: "v2026.5.2"
     pullPolicy: IfNotPresent
     runAsNonRoot: true
     # -- This value must not be changed using the official image.
@@ -725,7 +723,7 @@ controller:
   extraModules: []
   # - name: mytestmodule
   #   image:
-  #     # registry: registry.k8s.io
+  #     # registry: ghcr.io/forkline
   #     image: ingress-nginx/mytestmodule
   #     ## for backwards compatibility consider setting the full image url via the repository value below
   #     ## use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
@@ -848,13 +846,12 @@ controller:
     patch:
       enabled: true
       image:
-        # registry: registry.k8s.io
+        # registry: ghcr.io/forkline
         image: ingress-nginx/kube-webhook-certgen
         ## for backwards compatibility consider setting the full image url via the repository value below
         ## use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
         ## repository:
-        tag: v1.6.9
-        digest: sha256:01038e7de14b78d702d2849c3aad72fd25903c4765af63cf16aa3398f5d5f2dd
+        tag: v2026.5.2
         pullPolicy: IfNotPresent
       # -- Provide a priority class name to the webhook patching job
       ##
@@ -1027,12 +1024,12 @@ defaultBackend:
   enabled: false
   name: defaultbackend
   image:
-    # registry: registry.k8s.io
+    # registry: ghcr.io/forkline
     image: defaultbackend-amd64
     ## for backwards compatibility consider setting the full image url via the repository value below
     ## use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
     ## repository:
-    tag: "1.5"
+    tag: "v2026.5.2"
     pullPolicy: IfNotPresent
     runAsNonRoot: true
     # nobody user -> uid 65534
