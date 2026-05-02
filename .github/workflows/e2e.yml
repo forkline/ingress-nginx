@@ -69,27 +69,45 @@ jobs:
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
 
-      - name: Build nginx base image
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull or build nginx base image
         working-directory: images/nginx
         run: |
           TAGNGINX=$(cat TAG)
-          docker buildx build \
-            --platform linux/amd64 \
-            rootfs \
-            --tag ingress-nginx/nginx:${TAGNGINX} \
-            --load
+          if docker pull ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX}; then
+            docker tag ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX} ingress-nginx/nginx:${TAGNGINX}
+            echo "Reused nginx base image from registry"
+          else
+            echo "Image not in registry, building locally..."
+            docker buildx build \
+              --platform linux/amd64 \
+              rootfs \
+              --tag ingress-nginx/nginx:${TAGNGINX} \
+              --load
+          fi
 
-      - name: Build kube-webhook-certgen image
+      - name: Pull or build kube-webhook-certgen image
         working-directory: images
         run: |
           TAG=$(cat kube-webhook-certgen/TAG)
-          GOLANG_VERSION=$(cat ../GOLANG_VERSION)
-          docker buildx build \
-            --platform linux/amd64 \
-            --build-arg GOLANG_VERSION=${GOLANG_VERSION} \
-            kube-webhook-certgen/rootfs \
-            --tag ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${TAG} \
-            --load
+          if docker pull ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${TAG}; then
+            echo "Reused kube-webhook-certgen from registry"
+          else
+            echo "Image not in registry, building locally..."
+            GOLANG_VERSION=$(cat ../GOLANG_VERSION)
+            docker buildx build \
+              --platform linux/amd64 \
+              --build-arg GOLANG_VERSION=${GOLANG_VERSION} \
+              kube-webhook-certgen/rootfs \
+              --tag ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${TAG} \
+              --load
+          fi
 
       - name: Build controller and e2e images
         env:
