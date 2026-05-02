@@ -42,9 +42,11 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	if err := os.MkdirAll(file.DefaultSSLDirectory, 0o755); err != nil {
-		panic(err)
+	dir, err := os.MkdirTemp("", "ingress-controller-ssl-*")
+	if err != nil {
+		panic(fmt.Errorf("failed to create temp SSL directory: %w", err))
 	}
+	file.DefaultSSLDirectory = dir
 	os.Exit(m.Run())
 }
 

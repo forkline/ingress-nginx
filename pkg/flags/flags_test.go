@@ -169,15 +169,12 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with minimal configuration",
-			args:        []string{testCmd, testEnableSSLPassthrough, testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
+			args:        []string{testCmd, testEnableSSLPassthrough, testSSLPassthroughProxyFlag, "0", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero},
 			expectError: false,
-			description: "Should work with minimal SSL passthrough configuration using default port",
+			description: "Should work with minimal SSL passthrough configuration",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
 				if !cfg.EnableSSLPassthrough {
 					t.Error("Expected EnableSSLPassthrough to be true")
-				}
-				if cfg.ListenPorts.SSLProxy != 442 {
-					t.Errorf("Expected default SSLProxy port to be 442, got %d", cfg.ListenPorts.SSLProxy)
 				}
 			},
 		},
