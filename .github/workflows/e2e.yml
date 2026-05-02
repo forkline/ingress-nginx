@@ -84,15 +84,18 @@ jobs:
         working-directory: images/nginx
         run: |
           TAGNGINX=$(cat TAG)
+          NGINX_IMAGE="ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX}"
           if docker pull ghcr.io/forkline/ingress-nginx/nginx:latest; then
             docker tag ghcr.io/forkline/ingress-nginx/nginx:latest \
-              ingress-nginx/nginx:${TAGNGINX}
+              ${NGINX_IMAGE}
+            docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
             echo "Reused nginx base image from registry"
           else
             echo "Image not in registry, building locally..."
             docker buildx build \
               --platform linux/amd64 \
               rootfs \
+              --tag ${NGINX_IMAGE} \
               --tag ingress-nginx/nginx:${TAGNGINX} \
               --load
           fi
@@ -127,6 +130,7 @@ jobs:
           REGISTRY: ingress-controller
         run: |
           TAGNGINX=$(cat images/nginx/TAG)
+          NGINX_BASE_IMAGE=ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX}
           PKG=k8s.io/ingress-nginx
           COMMIT_SHA=$(git rev-parse HEAD)
           REPO_INFO=$(git remote get-url origin)
@@ -144,13 +148,13 @@ jobs:
               -o rootfs/bin/${ARCH}/${name} ${PKG}/${path}
           done
           docker build --no-cache \
-            --build-arg BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
+            --build-arg BASE_IMAGE=${NGINX_BASE_IMAGE} \
             --build-arg VERSION=${TAG} \
             --build-arg TARGETARCH=${ARCH} \
             --build-arg COMMIT_SHA=${COMMIT_SHA} \
             -t ${REGISTRY}/controller:${TAG} rootfs
           docker build --no-cache \
-            --build-arg BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
+            --build-arg BASE_IMAGE=${NGINX_BASE_IMAGE} \
             --build-arg VERSION=${TAG} \
             --build-arg TARGETARCH=${ARCH} \
             --build-arg COMMIT_SHA=${COMMIT_SHA} \
@@ -166,10 +170,6 @@ jobs:
             --build-arg E2E_BASE_IMAGE=${E2E_BASE_IMAGE} \
             --tag nginx-ingress-controller:e2e \
             test/e2e-image
-          TAGNGINX=$(cat images/nginx/TAG)
-          CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
-          NGINX_BASE_IMAGE=$(cat NGINX_BASE)
-          docker tag ingress-nginx/nginx:${TAGNGINX} ${NGINX_BASE_IMAGE}
           CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
           docker save \
             nginx-ingress-controller:e2e \
