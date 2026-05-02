@@ -26,6 +26,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	core "k8s.io/api/core/v1"
+	discoveryv1 "k8s.io/api/discovery/v1"
 	networking "k8s.io/api/networking/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -192,14 +193,16 @@ func WaitForEndpoints(kubeClientSet kubernetes.Interface, timeout time.Duration,
 	}
 
 	err := wait.PollUntilContextTimeout(context.Background(), Poll, timeout, true, func(_ context.Context) (bool, error) {
-		endpoint, err := kubeClientSet.CoreV1().Endpoints(ns).Get(context.TODO(), name, metav1.GetOptions{})
+		endpointSlices, err := kubeClientSet.DiscoveryV1().EndpointSlices(ns).List(context.TODO(), metav1.ListOptions{
+			LabelSelector: "kubernetes.io/service-name=" + name,
+		})
 		if k8sErrors.IsNotFound(err) {
 			return false, nil
 		}
 
-		assert.Nil(ginkgo.GinkgoT(), err, "getting endpoints")
+		assert.Nil(ginkgo.GinkgoT(), err, "getting endpoint slices")
 
-		if countReadyEndpoints(endpoint) == expectedEndpoints {
+		if countReadyEndpointSlices(endpointSlices) == expectedEndpoints {
 			return true, nil
 		}
 
@@ -209,14 +212,18 @@ func WaitForEndpoints(kubeClientSet kubernetes.Interface, timeout time.Duration,
 	return err
 }
 
-func countReadyEndpoints(e *core.Endpoints) int {
-	if e == nil || e.Subsets == nil {
+func countReadyEndpointSlices(endpointSlices *discoveryv1.EndpointSliceList) int {
+	if endpointSlices == nil || len(endpointSlices.Items) == 0 {
 		return 0
 	}
 
 	num := 0
-	for _, sub := range e.Subsets {
-		num += len(sub.Addresses)
+	for _, slice := range endpointSlices.Items {
+		for _, endpoint := range slice.Endpoints {
+			if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
+				num++
+			}
+		}
 	}
 
 	return num
