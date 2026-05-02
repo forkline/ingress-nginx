@@ -4,9 +4,9 @@ function mock_ngx(mock)
   _G.ngx = _ngx
 end
 
-local function get_test_backend(n_endpoints) 
+local function get_test_backend(n_endpoints)
    local backend = {
-    name = "my-dummy-backend", 
+    name = "my-dummy-backend",
     ["upstreamHashByConfig"] = {
       ["upstream-hash-by"] = "$request_uri",
       ["upstream-hash-by-subset"] = true,
@@ -21,7 +21,7 @@ local function get_test_backend(n_endpoints)
 
   return backend
 end
- 
+
 describe("Balancer chash subset", function()
   local balancer_chashsubset
 
@@ -34,7 +34,7 @@ describe("Balancer chash subset", function()
     it("returns peers from the same subset", function()
 
       local backend = get_test_backend(9)
-      
+
       local instance = balancer_chashsubset:new(backend)
 
       instance:sync(backend)
@@ -78,7 +78,7 @@ describe("Balancer chash subset", function()
     it("fills last subset correctly", function()
 
       local backend = get_test_backend(7)
-      
+
       local instance = balancer_chashsubset:new(backend)
 
       instance:sync(backend)

@@ -1,6 +1,7 @@
+---
 name: Performance Test
 
-on:
+on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
       logLevel:
@@ -19,13 +20,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: >-
+          actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Install K6
         run: |
-          wget https://github.com/grafana/k6/releases/download/v0.38.2/k6-v0.38.2-linux-amd64.tar.gz
-          echo '7c9e5a26aaa2c638c042f6dfda7416161b8d2e0d4cb930721a38083b8be109ab *k6-v0.38.2-linux-amd64.tar.gz' | shasum -c
-          tar -xvf k6-v0.38.2-linux-amd64.tar.gz k6-v0.38.2-linux-amd64/k6
+          K6_URL=https://github.com/grafana/k6/releases/download/v0.38.2
+          K6_FILE=k6-v0.38.2-linux-amd64.tar.gz
+          wget ${K6_URL}/${K6_FILE}
+          K6_SHA='7c9e5a26aaa2c638c042f6dfda7416161b8d2e0d4cb930721a38083b8be109ab'
+          echo "${K6_SHA} *${K6_FILE}" | shasum -c
+          tar -xvf ${K6_FILE} k6-v0.38.2-linux-amd64/k6
           mv k6-v0.38.2-linux-amd64/k6 .
           ./k6
 
@@ -33,7 +38,8 @@ jobs:
         run: |
           mkdir $HOME/.kube
           make dev-env
-          podName=`kubectl -n ingress-nginx get po | grep -i controller | awk '{print $1}'`
+          podName=`kubectl -n ingress-nginx get po | \
+            grep -i controller | awk '{print $1}'`
           if [[ -z ${podName} ]] ; then
             sleep 5
           fi
@@ -54,8 +60,9 @@ jobs:
           kubectl get all,secrets,ing
 
       - name: Tune OS
-        run : |
-          sudo sysctl -A 2>/dev/null | egrep -i "local_port_range|tw_reuse|tcp_timestamps"
+        run: |
+          sudo sysctl -A 2>/dev/null | \
+            egrep -i "local_port_range|tw_reuse|tcp_timestamps"
           sudo sh -c "ulimit"
           sudo sysctl -w net.ipv4.ip_local_port_range="1024 65535"
           sudo sysctl -w net.ipv4.tcp_tw_reuse=1

@@ -34,7 +34,7 @@ var upstreamVhostAnnotations = parser.Annotation{
 			Validator: parser.ValidateServerName,
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow, // Low, as it allows regexes but on a very limited set
-			Documentation: `This configuration setting allows you to control the value for host in the following statement: proxy_set_header Host $host, which forms part of the location block. 
+			Documentation: `This configuration setting allows you to control the value for host in the following statement: proxy_set_header Host $host, which forms part of the location block.
 			This is useful if you need to call the upstream server by something other than $host`,
 		},
 	},

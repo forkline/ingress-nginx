@@ -63,7 +63,7 @@ var redirectAnnotations = parser.Annotation{
 			Validator: parser.ValidateRegex(parser.URLIsValidRegex, false),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskMedium, // Medium, as it allows arbitrary URLs that needs to be validated
-			Documentation: `This annotation allows you to return a temporal redirect (Return Code 302) instead of sending data to the upstream. 
+			Documentation: `This annotation allows you to return a temporal redirect (Return Code 302) instead of sending data to the upstream.
 			For example setting this annotation to https://www.google.com would redirect everything to Google with a Return Code of 302 (Moved Temporarily).`,
 		},
 		temporalRedirectAnnotationCode: {
@@ -76,7 +76,7 @@ var redirectAnnotations = parser.Annotation{
 			Validator: parser.ValidateRegex(parser.URLIsValidRegex, false),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskMedium, // Medium, as it allows arbitrary URLs that needs to be validated
-			Documentation: `This annotation allows to return a permanent redirect (Return Code 301) instead of sending data to the upstream. 
+			Documentation: `This annotation allows to return a permanent redirect (Return Code 301) instead of sending data to the upstream.
 			For example setting this annotation https://www.google.com would redirect everything to Google with a code 301`,
 		},
 		permanentRedirectAnnotationCode: {

@@ -39,7 +39,7 @@ var backendProtocolConfig = parser.Annotation{
 			Validator: parser.ValidateOptions(validProtocols, false, true),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow, // Low, as it allows just a set of options
-			Documentation: `this annotation can be used to define which protocol should 
+			Documentation: `this annotation can be used to define which protocol should
 			be used to communicate with backends`,
 		},
 	},

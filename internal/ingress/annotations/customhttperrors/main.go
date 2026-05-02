@@ -42,7 +42,7 @@ var customHTTPErrorsAnnotations = parser.Annotation{
 			Validator: parser.ValidateRegex(arrayOfHTTPErrors, true),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `If a default backend annotation is specified on the ingress, the errors code specified on this annotation 
+			Documentation: `If a default backend annotation is specified on the ingress, the errors code specified on this annotation
 			will be routed to that annotation's default backend service. Otherwise they will be routed to the global default backend.
 			A comma-separated list of error codes is accepted (anything between 400 and 599, like 403, 503)`,
 		},

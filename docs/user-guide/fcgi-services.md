@@ -146,7 +146,7 @@ You will have to look at the external-ip of the ingress or you have to send the 
 > Host: app.example.com
 > User-Agent: curl/8.6.0
 > Accept: */*
-> 
+>
 < HTTP/1.1 200 OK
 HTTP/1.1 200 OK
 < Date: Wed, 12 Jun 2024 07:11:59 GMT
@@ -160,7 +160,7 @@ Connection: keep-alive
 < X-Powered-By: PHP/8.3.8
 X-Powered-By: PHP/8.3.8
 
-< 
+<
 <!DOCTYPE html>
 <html>
     <head>
