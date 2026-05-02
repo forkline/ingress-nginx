@@ -168,11 +168,14 @@ jobs:
             test/e2e-image
           TAGNGINX=$(cat images/nginx/TAG)
           CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
+          NGINX_BASE_IMAGE=$(cat NGINX_BASE)
+          docker tag ingress-nginx/nginx:${TAGNGINX} ${NGINX_BASE_IMAGE}
+          CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
           docker save \
             nginx-ingress-controller:e2e \
             ingress-controller/controller:1.0.0-dev \
             ingress-controller/controller-chroot:1.0.0-dev \
-            ingress-nginx/nginx:${TAGNGINX} \
+            ${NGINX_BASE_IMAGE} \
             ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG} \
             | gzip > docker.tar.gz
 
