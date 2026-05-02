@@ -293,7 +293,7 @@ update-version: ## Update version in all relevant files
 	echo "Updating version to $$VERSION..."; \
 	sed -i -E "s/^(appVersion: ).*/\1$$VERSION/" charts/ingress-nginx/Chart.yaml; \
 	sed -i -E "s/^(version: ).*/\1$$VERSION/" charts/ingress-nginx/Chart.yaml; \
-	sed -i -E 's|^(\s+tag: ")[0-9].*(")|\1'"$$VERSION"'"\2|' charts/ingress-nginx/values.yaml; \
+	sed -i -E 's|^(\s+tag: ")[0-9][^"]*(")|\1'"$$VERSION"'\2|' charts/ingress-nginx/values.yaml; \
 	sed -i -E 's|^(\s+tag: )[0-9].*$$|\1'"$$VERSION"'|' charts/ingress-nginx/values.yaml; \
 	echo "Version updated to $$VERSION in TAG, Chart.yaml, values.yaml"
 

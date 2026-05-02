@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.5.2-1](https://github.com/forkline/ingress-nginx/tree/v2026.5.2-1) - 2026-05-02
+
+### Fixed
+
+- Remove v prefix from image tags in Helm chart([5983520](https://github.com/forkline/ingress-nginx/commit/59835202ddcf8b5b56f0cce79d767b60b5071638))
+
+
 ## [v2026.5.2](https://github.com/forkline/ingress-nginx/tree/v2026.5.2) - 2026-05-02
 
 ### Added
