@@ -90,7 +90,7 @@ echo "[dev-env] copying docker images to cluster..."
 
 kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes=${KIND_WORKERS} ${REGISTRY}/controller:${TAG}
 
-CERTGEN_TAG=$(cat ${DIR}/../images/kube-webhook-certgen/TAG)
+CERTGEN_TAG=$(cat ${DIR}/../../images/kube-webhook-certgen/TAG)
 CERTGEN_IMAGE="ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG}"
 if docker image inspect ${CERTGEN_IMAGE} >/dev/null 2>&1; then
   echo "[dev-env] loading webhook-certgen image into kind..."
