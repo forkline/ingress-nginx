@@ -30,7 +30,7 @@ the traffic for the `ingress-nginx` Service IP. See [Traffic policies][metallb-t
     yourself by reading the official documentation thoroughly.
 
 MetalLB can be deployed either with a simple Kubernetes manifest or with Helm. The rest of this example assumes MetalLB
-was deployed following the [Installation][metallb-install] instructions, and that the Ingress-Nginx Controller was installed 
+was deployed following the [Installation][metallb-install] instructions, and that the Ingress-Nginx Controller was installed
 using the steps described in the [quickstart section of the installation guide][install-quickstart].
 
 MetalLB requires a pool of IP addresses in order to be able to take ownership of the `ingress-nginx` Service. This pool

@@ -42,7 +42,7 @@ for dir in "${writeDirs[@]}"; do
   chown -R www-data:www-data ${dir};
 done
 
-mkdir -p  /chroot/lib /chroot/proc /chroot/usr /chroot/bin /chroot/dev /chroot/run 
+mkdir -p  /chroot/lib /chroot/proc /chroot/usr /chroot/bin /chroot/dev /chroot/run
 cp /etc/passwd /etc/group /etc/hosts /chroot/etc/
 cp -a /usr/* /chroot/usr/
 cp -a /etc/nginx/* /chroot/etc/nginx/

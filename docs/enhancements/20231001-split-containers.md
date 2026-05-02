@@ -7,7 +7,7 @@
   * Controller container should have bare minimum to work (just go program)
   * ServiceAccount should be mounted just on controller
 
-* Inside nginx container, there should be a really small http listener just able 
+* Inside nginx container, there should be a really small http listener just able
 to start, stop and reload NGINX
 
 ## Roadmap (what needs to be done)
@@ -54,8 +54,8 @@ spec:
 ```
 
 ### Mapped folders on NGINX configuration
-**WARNING** We need to be aware of inter mount containers and inode problems. If we 
-mount a file instead of a directory, it may take time to reflect the file value on 
+**WARNING** We need to be aware of inter mount containers and inode problems. If we
+mount a file instead of a directory, it may take time to reflect the file value on
 the target container
 
 *  "/etc/nginx/lua/?.lua;/etc/nginx/lua/vendor/?.lua;;"; - Lua scripts

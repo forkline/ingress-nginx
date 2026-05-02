@@ -34,7 +34,7 @@ var satisfyAnnotations = parser.Annotation{
 			Validator: parser.ValidateOptions([]string{"any", "all"}, true, true),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow,
-			Documentation: `By default, a request would need to satisfy all authentication requirements in order to be allowed. 
+			Documentation: `By default, a request would need to satisfy all authentication requirements in order to be allowed.
 			By using this annotation, requests that satisfy either any or all authentication requirements are allowed, based on the configuration value.
 			Valid options are "all" and "any"`,
 		},

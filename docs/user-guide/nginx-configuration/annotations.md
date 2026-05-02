@@ -274,7 +274,7 @@ You can further customize client certificate authentication and behavior with th
     * `optional_no_ca`: Do optional client certificate validation, but do not fail the request when the client certificate is not signed by the CAs from `auth-tls-secret`. Certificate verification result is sent to the upstream service.
 * `nginx.ingress.kubernetes.io/auth-tls-error-page`: The URL/Page that user should be redirected in case of a Certificate Authentication Error
 * `nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream`: Indicates if the received certificates should be passed or not to the upstream server in the header `ssl-client-cert`. Possible values are "true" or "false" (default).
-* `nginx.ingress.kubernetes.io/auth-tls-match-cn`: Adds a sanity check for the CN of the client certificate that is sent over using a string / regex starting with "CN=", example: `"CN=myvalidclient"`. If the certificate CN sent during mTLS does not match your string / regex it will fail with status code 403. Another way of using this is by adding multiple options in your regex, example: `"CN=(option1|option2|myvalidclient)"`. In this case, as long as one of the options in the brackets matches the certificate CN then you will receive a 200 status code. 
+* `nginx.ingress.kubernetes.io/auth-tls-match-cn`: Adds a sanity check for the CN of the client certificate that is sent over using a string / regex starting with "CN=", example: `"CN=myvalidclient"`. If the certificate CN sent during mTLS does not match your string / regex it will fail with status code 403. Another way of using this is by adding multiple options in your regex, example: `"CN=(option1|option2|myvalidclient)"`. In this case, as long as one of the options in the brackets matches the certificate CN then you will receive a 200 status code.
 
 The following headers are sent to the upstream service according to the `auth-tls-*` annotations:
 
@@ -360,7 +360,7 @@ metadata:
 
 ### Default Backend
 
-This annotation is of the form `nginx.ingress.kubernetes.io/default-backend: <svc name>` to specify a custom default backend.  This `<svc name>` is a reference to a service inside of the same namespace in which you are applying this annotation. This annotation overrides the global default backend. In case the service has [multiple ports](https://kubernetes.io/docs/concepts/services-networking/service/#multi-port-services), the first one is the one which will receive the backend traffic. 
+This annotation is of the form `nginx.ingress.kubernetes.io/default-backend: <svc name>` to specify a custom default backend.  This `<svc name>` is a reference to a service inside of the same namespace in which you are applying this annotation. This annotation overrides the global default backend. In case the service has [multiple ports](https://kubernetes.io/docs/concepts/services-networking/service/#multi-port-services), the first one is the one which will receive the backend traffic.
 
 This service will be used to handle the response when the configured service in the Ingress rule does not have any active endpoints. It will also be used to handle the error responses if both this annotation and the [custom-http-errors annotation](#custom-http-errors) are set.
 
@@ -552,7 +552,7 @@ By default the controller redirects all requests to an existing service that pro
 These annotations define limits on connections and transmission rates.  These can be used to mitigate [DDoS Attacks](https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus).
 
 !!! attention
-    Rate limits are applied per Ingress NGINX controller replica. 
+    Rate limits are applied per Ingress NGINX controller replica.
     If you're running multiple replicas or using a horizontal pod autoscaler (HPA), the effective rate limit will be multiplied by the number of replicas.
     When using HPA, the exact rate limit becomes dynamic as the number of replicas may change based on load.
 

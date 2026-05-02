@@ -34,9 +34,9 @@ var clientBodyBufferSizeConfig = parser.Annotation{
 			Validator: parser.ValidateRegex(parser.SizeRegex, true),
 			Scope:     parser.AnnotationScopeLocation,
 			Risk:      parser.AnnotationRiskLow, // Low, as it allows just a set of options
-			Documentation: `Sets buffer size for reading client request body per location. 
-			In case the request body is larger than the buffer, the whole body or only its part is written to a temporary file. 
-			By default, buffer size is equal to two memory pages. This is 8K on x86, other 32-bit platforms, and x86-64. 
+			Documentation: `Sets buffer size for reading client request body per location.
+			In case the request body is larger than the buffer, the whole body or only its part is written to a temporary file.
+			By default, buffer size is equal to two memory pages. This is 8K on x86, other 32-bit platforms, and x86-64.
 			It is usually 16K on other 64-bit platforms. This annotation is applied to each location provided in the ingress rule.`,
 		},
 	},

@@ -1,6 +1,6 @@
 <!--- Provide a general summary of your changes in the Title above --->
 <!--- Please don't @-mention people in PR or commit messages (do so in an additional comment). --->
-<!--- Please make sure you title is descriptive, it is used in the Release notes to let others know what it does ---> 
+<!--- Please make sure you title is descriptive, it is used in the Release notes to let others know what it does --->
 
 ## What this PR does / why we need it:
 <!--- Why is this change required? What problem does it solve? -->

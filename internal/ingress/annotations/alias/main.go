@@ -38,7 +38,7 @@ var aliasAnnotation = parser.Annotation{
 			Validator: parser.ValidateArrayOfServerName,
 			Scope:     parser.AnnotationScopeIngress,
 			Risk:      parser.AnnotationRiskHigh, // High as this allows regex chars
-			Documentation: `this annotation can be used to define additional server 
+			Documentation: `this annotation can be used to define additional server
 			aliases for this Ingress`,
 		},
 	},

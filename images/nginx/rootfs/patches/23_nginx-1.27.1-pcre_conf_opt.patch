@@ -14,7 +14,7 @@ diff -r 30e806b8636a -r 9ba6b149669f auto/options
          --with-pcre-opt=*)               PCRE_OPT="$value"          ;;
 +        --with-pcre-conf-opt=*)          PCRE_CONF_OPT="$value"     ;;
          --with-pcre-jit)                 PCRE_JIT=YES               ;;
- 
+
          --with-openssl=*)                OPENSSL="$value"           ;;
 @@ -441,6 +442,7 @@
    --with-pcre                        force PCRE library usage
@@ -22,5 +22,5 @@ diff -r 30e806b8636a -r 9ba6b149669f auto/options
    --with-pcre-opt=OPTIONS            set additional build options for PCRE
 +  --with-pcre-conf-opt=OPTIONS       set additional configure options for PCRE
    --with-pcre-jit                    build PCRE with JIT compilation support
- 
+
    --with-md5=DIR                     set path to md5 library sources
