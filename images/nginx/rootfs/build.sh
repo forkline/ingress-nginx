@@ -121,7 +121,24 @@ get_src()
 
   echo "Downloading $url"
 
-  curl -sSL "$url" -o "$f"
+  max_retries=3
+  retry_count=0
+  while [ $retry_count -lt $max_retries ]; do
+    curl -sSL "$url" -o "$f"
+    if gzip -t "$f" 2>/dev/null; then
+      break
+    fi
+    echo "Download failed or invalid gzip, retrying... ($((retry_count + 1))/$max_retries)"
+    rm -f "$f"
+    retry_count=$((retry_count + 1))
+    sleep 2
+  done
+
+  if [ $retry_count -eq $max_retries ]; then
+    echo "ERROR: Failed to download valid archive from $url after $max_retries attempts"
+    exit 1
+  fi
+
   # TODO: Reenable checksum verification but make it smarter
   # echo "$hash  $f" | sha256sum -c - || exit 10
   if [ ! -z "$dest" ]; then
