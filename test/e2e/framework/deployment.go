@@ -258,13 +258,31 @@ func (f *Framework) NewHttpbunDeployment(opts ...func(*deploymentOptions)) strin
 	assert.Nil(ginkgo.GinkgoT(), err, "waiting for endpoints to become ready")
 
 	// Get cluster ip for HTTPBun to be used in tests
-	e, err := f.KubeClientSet.
-		CoreV1().
-		Endpoints(f.Namespace).
-		Get(context.TODO(), HTTPBunService, metav1.GetOptions{})
-	assert.Nil(ginkgo.GinkgoT(), err, "failed to get httpbun endpoint")
+	endpointSlices, err := f.KubeClientSet.
+		DiscoveryV1().
+		EndpointSlices(f.Namespace).
+		List(context.TODO(), metav1.ListOptions{
+			LabelSelector: "kubernetes.io/service-name=" + HTTPBunService,
+		})
+	assert.Nil(ginkgo.GinkgoT(), err, "failed to get httpbun endpoint slices")
 
-	return e.Subsets[0].Addresses[0].IP
+	var httpbunIP string
+	for _, slice := range endpointSlices.Items {
+		for _, endpoint := range slice.Endpoints {
+			if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
+				if len(endpoint.Addresses) > 0 {
+					httpbunIP = endpoint.Addresses[0]
+					break
+				}
+			}
+		}
+		if httpbunIP != "" {
+			break
+		}
+	}
+	assert.NotEmpty(ginkgo.GinkgoT(), httpbunIP, "expected at least one ready address in httpbun endpoint slice")
+
+	return httpbunIP
 }
 
 // NewSlowEchoDeployment creates a new deployment of the slow echo server image in a particular namespace.

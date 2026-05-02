@@ -25,9 +25,9 @@ import (
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/stretchr/testify/assert"
+	networking "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	networking "k8s.io/api/networking/v1"
 	"k8s.io/ingress-nginx/test/e2e/framework"
 )
 
@@ -298,13 +298,27 @@ http {
 		ginkgo.BeforeEach(func() {
 			f.NGINXWithConfigDeployment("http-cookie-with-error", cfg)
 
-			e, err := f.KubeClientSet.CoreV1().Endpoints(f.Namespace).Get(context.TODO(), "http-cookie-with-error", metav1.GetOptions{})
+			endpointSlices, err := f.KubeClientSet.DiscoveryV1().EndpointSlices(f.Namespace).List(context.TODO(), metav1.ListOptions{
+				LabelSelector: "kubernetes.io/service-name=http-cookie-with-error",
+			})
 			assert.Nil(ginkgo.GinkgoT(), err)
 
-			assert.GreaterOrEqual(ginkgo.GinkgoT(), len(e.Subsets), 1, "expected at least one endpoint")
-			assert.GreaterOrEqual(ginkgo.GinkgoT(), len(e.Subsets[0].Addresses), 1, "expected at least one address ready in the endpoint")
-
-			nginxIP := e.Subsets[0].Addresses[0].IP
+			assert.GreaterOrEqual(ginkgo.GinkgoT(), len(endpointSlices.Items), 1, "expected at least one endpoint slice")
+			var nginxIP string
+			for _, slice := range endpointSlices.Items {
+				for _, endpoint := range slice.Endpoints {
+					if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
+						if len(endpoint.Addresses) > 0 {
+							nginxIP = endpoint.Addresses[0]
+							break
+						}
+					}
+				}
+				if nginxIP != "" {
+					break
+				}
+			}
+			assert.NotEmpty(ginkgo.GinkgoT(), nginxIP, "expected at least one ready address in the endpoint slice")
 
 			f.UpdateNginxConfigMapData(globalExternalAuthURLSetting, fmt.Sprintf("http://%s/cookies/set/alma/armud", nginxIP))
 
