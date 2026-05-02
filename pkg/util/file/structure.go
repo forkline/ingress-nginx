@@ -27,14 +27,12 @@ const (
 	AuthDirectory = "/etc/ingress-controller/auth"
 )
 
-var (
-	// DefaultSSLDirectory defines the location where the SSL certificates will be generated
-	// This directory contains all the SSL certificates that are specified in Ingress rules.
-	// The name of each file is <namespace>-<secret name>.pem. The content is the concatenated
-	// certificate and key.
-	// This is a variable instead of a constant to allow tests to override it with a temp directory.
-	DefaultSSLDirectory = "/etc/ingress-controller/ssl"
-)
+// DefaultSSLDirectory defines the location where the SSL certificates will be generated
+// This directory contains all the SSL certificates that are specified in Ingress rules.
+// The name of each file is <namespace>-<secret name>.pem. The content is the concatenated
+// certificate and key.
+// This is a variable instead of a constant to allow tests to override it with a temp directory.
+var DefaultSSLDirectory = "/etc/ingress-controller/ssl"
 
 var directories = []string{
 	DefaultSSLDirectory,
