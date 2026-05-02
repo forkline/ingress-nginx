@@ -89,6 +89,7 @@ KIND_WORKERS=$(kind get nodes --name="${KIND_CLUSTER_NAME}" | awk '{printf (NR>1
 echo "[dev-env] copying docker images to cluster..."
 
 kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes=${KIND_WORKERS} ${REGISTRY}/controller:${TAG}
+kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes=${KIND_WORKERS} ${NGINX_BASE_IMAGE}
 
 CERTGEN_TAG=$(cat ${DIR}/../../images/kube-webhook-certgen/TAG)
 CERTGEN_IMAGE="ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG}"
