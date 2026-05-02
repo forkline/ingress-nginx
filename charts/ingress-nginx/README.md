@@ -2,7 +2,7 @@
 
 [ingress-nginx](https://github.com/kubernetes/ingress-nginx) Ingress controller for Kubernetes using NGINX as a reverse proxy and load balancer
 
-![Version: 2026.5.2-1](https://img.shields.io/badge/Version-2026.5.2--1-informational?style=flat-square) ![AppVersion: 2026.5.2-1](https://img.shields.io/badge/AppVersion-2026.5.2--1-informational?style=flat-square)
+![Version: 2026.5.3](https://img.shields.io/badge/Version-2026.5.3-informational?style=flat-square) ![AppVersion: 2026.5.3](https://img.shields.io/badge/AppVersion-2026.5.3-informational?style=flat-square)
 
 To use, add `ingressClassName: nginx` spec field or the `kubernetes.io/ingress.class: nginx` annotation to your Ingress resources.
 
@@ -277,7 +277,7 @@ metadata:
 | controller.admissionWebhooks.patch.enabled | bool | `true` |  |
 | controller.admissionWebhooks.patch.image.image | string | `"ingress-nginx/kube-webhook-certgen"` |  |
 | controller.admissionWebhooks.patch.image.pullPolicy | string | `"IfNotPresent"` |  |
-| controller.admissionWebhooks.patch.image.tag | string | `"2026.5.2-1"` |  |
+| controller.admissionWebhooks.patch.image.tag | string | `"2026.5.3"` |  |
 | controller.admissionWebhooks.patch.labels | object | `{}` | Labels to be added to patch job resources |
 | controller.admissionWebhooks.patch.networkPolicy.enabled | bool | `false` | Enable 'networkPolicy' or not |
 | controller.admissionWebhooks.patch.nodeSelector."kubernetes.io/os" | string | `"linux"` |  |
@@ -355,7 +355,7 @@ metadata:
 | controller.image.runAsNonRoot | bool | `true` |  |
 | controller.image.runAsUser | int | `101` | This value must not be changed using the official image. uid=101(www-data) gid=82(www-data) groups=82(www-data) |
 | controller.image.seccompProfile.type | string | `"RuntimeDefault"` |  |
-| controller.image.tag | string | `"2026.5.2-1"` |  |
+| controller.image.tag | string | `"2026.5.3"` |  |
 | controller.ingressClass | string | `"nginx"` | For backwards compatibility with ingress.class annotation, use ingressClass. Algorithm is as follows, first ingressClassName is considered, if not present, controller looks for ingress.class annotation |
 | controller.ingressClassByName | bool | `false` | Process IngressClass per name (additionally as per spec.controller). |
 | controller.ingressClassResource | object | `{"aliases":[],"annotations":{},"controllerValue":"k8s.io/ingress-nginx","default":false,"enabled":true,"name":"nginx","parameters":{}}` | This section refers to the creation of the IngressClass resource. IngressClasses are immutable and cannot be changed after creation. We do not support namespaced IngressClasses, yet, so a ClusterRole and a ClusterRoleBinding is required. |
@@ -532,7 +532,7 @@ metadata:
 | defaultBackend.image.runAsNonRoot | bool | `true` |  |
 | defaultBackend.image.runAsUser | int | `65534` |  |
 | defaultBackend.image.seccompProfile.type | string | `"RuntimeDefault"` |  |
-| defaultBackend.image.tag | string | `"2026.5.2-1"` |  |
+| defaultBackend.image.tag | string | `"2026.5.3"` |  |
 | defaultBackend.labels | object | `{}` | Labels to be added to the default backend resources |
 | defaultBackend.livenessProbe.failureThreshold | int | `3` |  |
 | defaultBackend.livenessProbe.initialDelaySeconds | int | `30` |  |

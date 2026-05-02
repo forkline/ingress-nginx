@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.5.3](https://github.com/forkline/ingress-nginx/tree/v2026.5.3) - 2026-05-02
+
+### Fixed
+
+- Correct sed pattern and regenerate chart docs for release([b3de357](https://github.com/forkline/ingress-nginx/commit/b3de357df0dca66805c3782e4886132330bbe048))
+
+
 ## [v2026.5.2-1](https://github.com/forkline/ingress-nginx/tree/v2026.5.2-1) - 2026-05-02
 
 ### Fixed
