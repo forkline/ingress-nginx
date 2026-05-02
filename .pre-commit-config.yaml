@@ -12,7 +12,8 @@ repos:
         exclude: >-
           ^(hack/boilerplate/boilerplate\.py\.txt)$
       - id: end-of-file-fixer
-        exclude: ^(test/data/.*\.conf)$
+        exclude: >-
+          ^(test/data/.*\.conf|docs/user-guide/nginx-configuration/annotations-risk\.md)$
       - id: mixed-line-ending
       - id: trailing-whitespace
         exclude: ^(test/data/.*\.conf)$
