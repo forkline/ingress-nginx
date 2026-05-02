@@ -745,7 +745,7 @@ func New(
 		triggerUpdate := false
 		if changeTriggerUpdate(key) {
 			triggerUpdate = true
-			recorder.Eventf(cfgMap, corev1.EventTypeNormal, eventName, fmt.Sprintf("ConfigMap %v", key))
+			recorder.Eventf(cfgMap, corev1.EventTypeNormal, eventName, "ConfigMap %v", key)
 			if key == configmap {
 				store.setConfig(cfgMap)
 			}
@@ -952,7 +952,7 @@ func (s *k8sStore) syncIngress(ing *networkingv1.Ingress) {
 		return
 	}
 	if parsed.Denied != nil {
-		s.recorder.Eventf(ing, corev1.EventTypeWarning, "AnnotationParsingFailed", fmt.Sprintf("Error parsing annotations: %v", *parsed.Denied))
+		s.recorder.Eventf(ing, corev1.EventTypeWarning, "AnnotationParsingFailed", "Error parsing annotations: %v", *parsed.Denied)
 	}
 	err = s.listers.IngressWithAnnotation.Update(&ingress.Ingress{
 		Ingress:           *copyIng,
