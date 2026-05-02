@@ -184,10 +184,10 @@ func NewNGINXController(config *Configuration, mc metric.Collector) *NGINXContro
 
 	filesToWatch := []string{}
 
-	if err := os.Mkdir("/etc/ingress-controller/geoip/", 0o755); err != nil && !os.IsExist(err) {
+	if err := os.Mkdir(nginx.GeoIPDirectory, 0o755); err != nil && !os.IsExist(err) {
 		klog.Fatalf("Error creating geoip dir: %v", err)
 	}
-	err = filepath.WalkDir("/etc/ingress-controller/geoip/", func(path string, info fs.DirEntry, err error) error {
+	err = filepath.WalkDir(nginx.GeoIPDirectory, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
