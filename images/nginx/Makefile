@@ -41,6 +41,7 @@ push: build
 		--platform $(PLATFORMS) \
 		rootfs \
 		--tag $(IMAGE):$(TAG) \
+		--tag $(IMAGE):latest \
 		--push
 
 .PHONY: clean

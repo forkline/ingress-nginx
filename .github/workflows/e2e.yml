@@ -80,8 +80,8 @@ jobs:
         working-directory: images/nginx
         run: |
           TAGNGINX=$(cat TAG)
-          if docker pull ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX}; then
-            docker tag ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX} ingress-nginx/nginx:${TAGNGINX}
+          if docker pull ghcr.io/forkline/ingress-nginx/nginx:latest; then
+            docker tag ghcr.io/forkline/ingress-nginx/nginx:latest ingress-nginx/nginx:${TAGNGINX}
             echo "Reused nginx base image from registry"
           else
             echo "Image not in registry, building locally..."
@@ -95,8 +95,9 @@ jobs:
       - name: Pull or build kube-webhook-certgen image
         working-directory: images
         run: |
-          TAG=$(cat kube-webhook-certgen/TAG)
-          if docker pull ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${TAG}; then
+          CERTGEN_TAG=$(cat kube-webhook-certgen/TAG)
+          if docker pull ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:latest; then
+            docker tag ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:latest ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG}
             echo "Reused kube-webhook-certgen from registry"
           else
             echo "Image not in registry, building locally..."
@@ -105,7 +106,7 @@ jobs:
               --platform linux/amd64 \
               --build-arg GOLANG_VERSION=${GOLANG_VERSION} \
               kube-webhook-certgen/rootfs \
-              --tag ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${TAG} \
+              --tag ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG} \
               --load
           fi
 
