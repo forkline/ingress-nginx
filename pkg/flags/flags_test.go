@@ -26,14 +26,20 @@ import (
 )
 
 const (
-	testCmd                     = "cmd"
-	testHTTPPortFlag            = "--http-port"
-	testHTTPSPortFlag           = "--https-port"
-	testPortZero                = "0"
-	testEnableSSLPassthrough    = "--enable-ssl-passthrough"
-	testElectionTTLFlag         = "--election-ttl"
-	testDefaultBackendSvcFlag   = "--default-backend-service"
-	testSSLPassthroughProxyFlag = "--ssl-passthrough-proxy-port"
+	testCmd                      = "cmd"
+	testHTTPPortFlag             = "--http-port"
+	testHTTPSPortFlag            = "--https-port"
+	testPortZero                 = "0"
+	testEnableSSLPassthrough     = "--enable-ssl-passthrough" //nolint:gosec // This is a flag name, not credentials
+	testElectionTTLFlag          = "--election-ttl"
+	testDefaultBackendSvcFlag    = "--default-backend-service"
+	testSSLPassthroughProxyFlag  = "--ssl-passthrough-proxy-port"
+	testPublishSvcFlag           = "--publish-service"
+	testPublishStatusAddressFlag = "--publish-status-address"
+	testMaxmindEditionIDsFlag    = "--maxmind-edition-ids"
+	testMaxmindLicenseKeyFlag    = "--maxmind-license-key"
+	testMaxmindMirrorFlag        = "--maxmind-mirror"
+	testNamespaceTest            = "namespace/test"
 )
 
 func TestNoMandatoryFlag(t *testing.T) {
@@ -232,7 +238,7 @@ func TestFlagConflict(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{testCmd, "--publish-service", "namespace/test", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero, "--publish-status-address", "1.1.1.1"}
+	os.Args = []string{testCmd, testPublishSvcFlag, testNamespaceTest, testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero, testPublishStatusAddressFlag, "1.1.1.1"}
 
 	_, _, err := ParseFlags()
 	if err == nil {
@@ -245,7 +251,7 @@ func TestMaxmindEdition(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{testCmd, "--publish-service", "namespace/test", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero, "--maxmind-license-key", "0000000", "--maxmind-edition-ids", "GeoLite2-City, TestCheck"}
+	os.Args = []string{testCmd, testPublishSvcFlag, testNamespaceTest, testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero, testMaxmindLicenseKeyFlag, "0000000", testMaxmindEditionIDsFlag, "GeoLite2-City, TestCheck"}
 
 	_, _, err := ParseFlags()
 	if err == nil {
@@ -258,7 +264,7 @@ func TestMaxmindMirror(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{testCmd, "--publish-service", "namespace/test", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero, "--maxmind-mirror", "http://geoip.local", "--maxmind-license-key", "0000000", "--maxmind-edition-ids", "GeoLite2-City, TestCheck"}
+	os.Args = []string{testCmd, testPublishSvcFlag, testNamespaceTest, testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero, testMaxmindMirrorFlag, "http://geoip.local", testMaxmindLicenseKeyFlag, "0000000", testMaxmindEditionIDsFlag, "GeoLite2-City, TestCheck"}
 
 	_, _, err := ParseFlags()
 	if err == nil {
@@ -271,7 +277,7 @@ func TestMaxmindRetryDownload(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{testCmd, "--publish-service", "namespace/test", testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero, "--maxmind-mirror", "http://127.0.0.1", "--maxmind-license-key", "0000000", "--maxmind-edition-ids", "GeoLite2-City", "--maxmind-retries-timeout", "1s", "--maxmind-retries-count", "3"}
+	os.Args = []string{testCmd, testPublishSvcFlag, testNamespaceTest, testHTTPPortFlag, testPortZero, testHTTPSPortFlag, testPortZero, testMaxmindMirrorFlag, "http://127.0.0.1", testMaxmindLicenseKeyFlag, "0000000", testMaxmindEditionIDsFlag, "GeoLite2-City", "--maxmind-retries-timeout", "1s", "--maxmind-retries-count", "3"}
 
 	_, _, err := ParseFlags()
 	if err == nil {
