@@ -137,7 +137,8 @@ jobs:
             name=${bin%:*}
             path=${bin#*:}
             mkdir -p rootfs/bin/${ARCH}
-            go build -trimpath -ldflags="${LDFLAGS}" -buildvcs=false -o rootfs/bin/${ARCH}/${name} ${PKG}/${path}
+            go build -trimpath -ldflags="${LDFLAGS}" -buildvcs=false \
+              -o rootfs/bin/${ARCH}/${name} ${PKG}/${path}
           done
           docker build --no-cache \
             --build-arg BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
