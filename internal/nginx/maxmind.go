@@ -56,11 +56,18 @@ var MaxmindRetriesTimeout = time.Second * 0
 const minimumRetriesCount = 1
 
 const (
-	geoIPPath   = "/etc/ingress-controller/geoip"
 	dbExtension = ".mmdb"
 
 	maxmindURL = "https://download.maxmind.com/app/geoip_download?license_key=%v&edition_id=%v&suffix=tar.gz"
 )
+
+var (
+	GeoIPDirectory = "/etc/ingress-controller/geoip"
+)
+
+func getGeoIPPath() string {
+	return GeoIPDirectory
+}
 
 // GeoLite2DBExists checks if the required databases for
 // the GeoIP2 NGINX module are present in the filesystem
@@ -70,7 +77,7 @@ func GeoLite2DBExists() bool {
 	files := []string{}
 	for _, dbName := range strings.Split(MaxmindEditionIDs, ",") {
 		filename := dbName + dbExtension
-		if !fileExists(path.Join(geoIPPath, filename)) {
+		if !fileExists(path.Join(getGeoIPPath(), filename)) {
 			klog.Error(filename, " not found")
 			return false
 		}
@@ -180,7 +187,7 @@ func downloadDatabase(dbName string) error {
 				continue
 			}
 			return func() error {
-				outFile, err := os.Create(path.Join(geoIPPath, mmdbFile))
+				outFile, err := os.Create(path.Join(getGeoIPPath(), mmdbFile))
 				if err != nil {
 					return err
 				}

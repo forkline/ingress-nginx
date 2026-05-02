@@ -80,6 +80,11 @@ const updateDummyHost = "update-dummy"
 
 //nolint:gocyclo // Ignore function complexity error
 func TestStore(t *testing.T) {
+	// Skip if envtest dependencies (etcd, kube-apiserver) are not available
+	if _, err := os.Stat("/usr/local/bin/etcd"); os.IsNotExist(err) {
+		t.Skip("skipping test: envtest dependencies (etcd) not available at /usr/local/bin")
+	}
+
 	// TODO: move env definition to docker image?
 	t.Setenv("KUBEBUILDER_ASSETS", "/usr/local/bin")
 

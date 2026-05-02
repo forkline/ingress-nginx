@@ -37,8 +37,31 @@ import (
 	"k8s.io/ingress-nginx/internal/k8s"
 	"k8s.io/ingress-nginx/internal/nginx"
 	ingressflags "k8s.io/ingress-nginx/pkg/flags"
+	"k8s.io/ingress-nginx/pkg/util/file"
 	"k8s.io/ingress-nginx/pkg/util/process"
 )
+
+func TestMain(m *testing.M) {
+	geoipDir, err := os.MkdirTemp("", "ingress-controller-geoip-*")
+	if err != nil {
+		panic(fmt.Errorf("failed to create temp geoip directory: %w", err))
+	}
+	nginx.GeoIPDirectory = geoipDir
+
+	authDir, err := os.MkdirTemp("", "ingress-controller-auth-*")
+	if err != nil {
+		panic(fmt.Errorf("failed to create temp auth directory: %w", err))
+	}
+	file.AuthDirectory = authDir
+
+	sslDir, err := os.MkdirTemp("", "ingress-controller-ssl-*")
+	if err != nil {
+		panic(fmt.Errorf("failed to create temp SSL directory: %w", err))
+	}
+	file.DefaultSSLDirectory = sslDir
+
+	os.Exit(m.Run())
+}
 
 func TestCreateApiserverClient(t *testing.T) {
 	_, err := createApiserverClient("", "", "")
