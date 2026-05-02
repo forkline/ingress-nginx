@@ -126,11 +126,17 @@ jobs:
           PKG=k8s.io/ingress-nginx
           COMMIT_SHA=$(git rev-parse HEAD)
           REPO_INFO=$(git remote get-url origin)
-          LDFLAGS="-buildid= -w -s -X ${PKG}/version.RELEASE=${TAG} -X ${PKG}/version.COMMIT=${COMMIT_SHA} -X ${PKG}/version.REPO=${REPO_INFO}"
-          for bin in nginx-ingress-controller:cmd/nginx dbg:cmd/dbg wait-shutdown:cmd/waitshutdown; do
+          LDFLAGS="-buildid= -w -s"
+          LDFLAGS="${LDFLAGS} -X ${PKG}/version.RELEASE=${TAG}"
+          LDFLAGS="${LDFLAGS} -X ${PKG}/version.COMMIT=${COMMIT_SHA}"
+          LDFLAGS="${LDFLAGS} -X ${PKG}/version.REPO=${REPO_INFO}"
+          for bin in nginx-ingress-controller:cmd/nginx \
+            dbg:cmd/dbg \
+            wait-shutdown:cmd/waitshutdown; do
             name=${bin%:*}
             path=${bin#*:}
-            go build -trimpath -ldflags="${LDFLAGS}" -buildvcs=false -o rootfs/bin/${name} ${PKG}/${path}
+            go build -trimpath -ldflags="${LDFLAGS}" -buildvcs=false \
+              -o rootfs/bin/${name} ${PKG}/${path}
           done
           docker build --no-cache \
             --build-arg BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
@@ -143,7 +149,8 @@ jobs:
             --build-arg VERSION=${TAG} \
             --build-arg TARGETARCH=${ARCH} \
             --build-arg COMMIT_SHA=${COMMIT_SHA} \
-            -t ${REGISTRY}/controller-chroot:${TAG} rootfs -f rootfs/Dockerfile-chroot
+            -t ${REGISTRY}/controller-chroot:${TAG} rootfs \
+            -f rootfs/Dockerfile-chroot
           GOFLAGS=-vet=off ginkgo build ./test/e2e
           cp test/e2e/e2e.test test/e2e-image/
           cp test/e2e/wait-for-nginx.sh test/e2e-image/
