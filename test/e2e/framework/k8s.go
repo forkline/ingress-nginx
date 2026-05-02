@@ -192,8 +192,8 @@ func WaitForEndpoints(kubeClientSet kubernetes.Interface, timeout time.Duration,
 		return nil
 	}
 
-	err := wait.PollUntilContextTimeout(context.Background(), Poll, timeout, true, func(_ context.Context) (bool, error) {
-		endpointSlices, err := kubeClientSet.DiscoveryV1().EndpointSlices(ns).List(context.TODO(), metav1.ListOptions{
+	err := wait.PollUntilContextTimeout(context.Background(), Poll, timeout, true, func(ctx context.Context) (bool, error) {
+		endpointSlices, err := kubeClientSet.DiscoveryV1().EndpointSlices(ns).List(ctx, metav1.ListOptions{
 			LabelSelector: "kubernetes.io/service-name=" + name,
 		})
 		if k8sErrors.IsNotFound(err) {
@@ -218,8 +218,8 @@ func countReadyEndpointSlices(endpointSlices *discoveryv1.EndpointSliceList) int
 	}
 
 	num := 0
-	for _, slice := range endpointSlices.Items {
-		for _, endpoint := range slice.Endpoints {
+	for i := range endpointSlices.Items {
+		for _, endpoint := range endpointSlices.Items[i].Endpoints {
 			if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
 				num++
 			}
