@@ -84,7 +84,7 @@ func (f *Framework) ExecCommand(pod *corev1.Pod, command string) (string, error)
 }
 
 // NamespaceContent executes a kubectl command that returns information about
-// pods, services, endpoint and deployments inside the current namespace
+// pods, services, endpointslices and deployments inside the current namespace
 func (f *Framework) NamespaceContent() (string, error) {
 	var (
 		execOut bytes.Buffer
@@ -92,7 +92,7 @@ func (f *Framework) NamespaceContent() (string, error) {
 	)
 
 	//nolint:gosec // Ignore G204 error
-	cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("%v get pods,services,endpoints,deployments --namespace %s", KubectlPath, f.Namespace))
+	cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("%v get pods,services,endpointslices,deployments --namespace %s", KubectlPath, f.Namespace))
 	cmd.Stdout = &execOut
 	cmd.Stderr = &execErr
 
