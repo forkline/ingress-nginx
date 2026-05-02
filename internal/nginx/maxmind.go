@@ -61,9 +61,7 @@ const (
 	maxmindURL = "https://download.maxmind.com/app/geoip_download?license_key=%v&edition_id=%v&suffix=tar.gz"
 )
 
-var (
-	GeoIPDirectory = "/etc/ingress-controller/geoip"
-)
+var GeoIPDirectory = "/etc/ingress-controller/geoip"
 
 func getGeoIPPath() string {
 	return GeoIPDirectory
