@@ -64,6 +64,14 @@
         "webhook"
       ]
     ],
+    "type-empty": [
+      1,
+      "never"
+    ],
+    "subject-empty": [
+      1,
+      "never"
+    ],
     "subject-case": [
       0
     ],
