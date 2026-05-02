@@ -34,6 +34,12 @@ fi
 
 echo "$NEW_VERSION" > TAG
 
+for img in nginx kube-webhook-certgen test-runner cfssl custom-error-pages e2e-test-echo fastcgi-helloserver go-grpc-greeter-server httpbun ext-auth-example-authsvc; do
+    echo "$NEW_VERSION" > "images/$img/TAG"
+done
+
+sed -i "s|ghcr.io/forkline/ingress-nginx/nginx:.*|ghcr.io/forkline/ingress-nginx/nginx:$NEW_VERSION|" NGINX_BASE
+
 make update-version
 
 make update-changelog
