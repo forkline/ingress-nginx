@@ -146,7 +146,7 @@ golint-check:
 
 .PHONY: test
 test:  ## Run go unit tests.
-	@build/run-in-docker.sh \
+	@E2E_IMAGE=golang:$(GO_VERSION)-alpine3.23 USE_SHELL=/bin/sh build/run-in-docker.sh \
 		PKG=$(PKG) \
 		MAC_OS=$(MAC_OS) \
 		ARCH=$(ARCH) \
