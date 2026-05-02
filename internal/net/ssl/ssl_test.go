@@ -41,6 +41,11 @@ import (
 	"k8s.io/ingress-nginx/pkg/util/file"
 )
 
+func TestMain(m *testing.M) {
+	os.MkdirAll(file.DefaultSSLDirectory, 0o755)
+	os.Exit(m.Run())
+}
+
 // generateRSACerts generates a self signed certificate using a self generated ca
 func generateRSACerts(host string) (newCert, newCa *keyPair, err error) {
 	ca, err := newCA("self-sign-ca")

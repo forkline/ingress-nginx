@@ -26,6 +26,20 @@ import (
 )
 
 func TestNoMandatoryFlag(t *testing.T) {
+	ResetForTesting(func() { t.Fatal("Parsing failed") })
+
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+	os.Args = []string{
+		"cmd",
+		"--http-port", "0",
+		"--https-port", "0",
+		"--default-server-port", "0",
+		"--status-port", "0",
+		"--stream-port", "0",
+		"--profiler-port", "0",
+	}
+
 	_, _, err := ParseFlags()
 	if err != nil {
 		t.Fatalf("Expected no error but got: %s", err)
@@ -66,9 +80,9 @@ func TestSetupSSLProxy(t *testing.T) {
 		description    string
 		validateConfig func(t *testing.T, _ bool, cfg *controller.Configuration)
 	}{
-		{
+{
 			name:        "valid SSL proxy configuration with passthrough enabled",
-			args:        []string{"cmd", "--enable-ssl-passthrough", "--ssl-passthrough-proxy-port", "9999"},
+			args:        []string{"cmd", "--enable-ssl-passthrough", "--ssl-passthrough-proxy-port", "9999", "--http-port", "0", "--https-port", "0"},
 			expectError: false,
 			description: "Should accept valid SSL proxy port with passthrough enabled",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -82,7 +96,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy port without explicit passthrough enabling",
-			args:        []string{"cmd", "--ssl-passthrough-proxy-port", "8443"},
+			args:        []string{"cmd", "--ssl-passthrough-proxy-port", "8443", "--http-port", "0", "--https-port", "0"},
 			expectError: false,
 			description: "Should accept SSL proxy port configuration without explicit passthrough enable",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -93,7 +107,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with default backend service",
-			args:        []string{"cmd", "--enable-ssl-passthrough", "--default-backend-service", "default/backend", "--ssl-passthrough-proxy-port", "9000"},
+			args:        []string{"cmd", "--enable-ssl-passthrough", "--default-backend-service", "default/backend", "--ssl-passthrough-proxy-port", "9000", "--http-port", "0", "--https-port", "0"},
 			expectError: false,
 			description: "Should work with default backend service and SSL passthrough",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -110,7 +124,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with default SSL certificate",
-			args:        []string{"cmd", "--enable-ssl-passthrough", "--default-ssl-certificate", "default/tls-cert", "--ssl-passthrough-proxy-port", "8080"},
+			args:        []string{"cmd", "--enable-ssl-passthrough", "--default-ssl-certificate", "default/tls-cert", "--ssl-passthrough-proxy-port", "8444", "--http-port", "0", "--https-port", "0"},
 			expectError: false,
 			description: "Should work with default SSL certificate and passthrough",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -120,14 +134,14 @@ func TestSetupSSLProxy(t *testing.T) {
 				if cfg.DefaultSSLCertificate != "default/tls-cert" {
 					t.Errorf("Expected DefaultSSLCertificate to be 'default/tls-cert', got %s", cfg.DefaultSSLCertificate)
 				}
-				if cfg.ListenPorts.SSLProxy != 8080 {
-					t.Errorf("Expected SSLProxy port to be 8080, got %d", cfg.ListenPorts.SSLProxy)
+				if cfg.ListenPorts.SSLProxy != 8444 {
+					t.Errorf("Expected SSLProxy port to be 8444, got %d", cfg.ListenPorts.SSLProxy)
 				}
 			},
 		},
 		{
 			name:        "SSL proxy with chain completion enabled",
-			args:        []string{"cmd", "--enable-ssl-passthrough", "--enable-ssl-chain-completion", "--ssl-passthrough-proxy-port", "7443"},
+			args:        []string{"cmd", "--enable-ssl-passthrough", "--enable-ssl-chain-completion", "--ssl-passthrough-proxy-port", "7443", "--http-port", "0", "--https-port", "0"},
 			expectError: false,
 			description: "Should work with SSL chain completion and passthrough",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -144,14 +158,13 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with minimal configuration",
-			args:        []string{"cmd", "--enable-ssl-passthrough"},
+			args:        []string{"cmd", "--enable-ssl-passthrough", "--http-port", "0", "--https-port", "0"},
 			expectError: false,
 			description: "Should work with minimal SSL passthrough configuration using default port",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
 				if !cfg.EnableSSLPassthrough {
 					t.Error("Expected EnableSSLPassthrough to be true")
 				}
-				// Default port should be 442
 				if cfg.ListenPorts.SSLProxy != 442 {
 					t.Errorf("Expected default SSLProxy port to be 442, got %d", cfg.ListenPorts.SSLProxy)
 				}
@@ -159,7 +172,7 @@ func TestSetupSSLProxy(t *testing.T) {
 		},
 		{
 			name:        "SSL proxy with comprehensive configuration",
-			args:        []string{"cmd", "--enable-ssl-passthrough", "--enable-ssl-chain-completion", "--default-ssl-certificate", "kube-system/default-cert", "--default-backend-service", "kube-system/default-backend", "--ssl-passthrough-proxy-port", "10443"},
+			args:        []string{"cmd", "--enable-ssl-passthrough", "--enable-ssl-chain-completion", "--default-ssl-certificate", "kube-system/default-cert", "--default-backend-service", "kube-system/default-backend", "--ssl-passthrough-proxy-port", "10443", "--http-port", "0", "--https-port", "0"},
 			expectError: false,
 			description: "Should work with comprehensive SSL proxy configuration",
 			validateConfig: func(t *testing.T, _ bool, cfg *controller.Configuration) {
@@ -264,7 +277,7 @@ func TestDisableLeaderElectionFlag(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{"cmd", "--disable-leader-election", "--http-port", "80", "--https-port", "443"}
+	os.Args = []string{"cmd", "--disable-leader-election", "--http-port", "0", "--https-port", "0"}
 
 	_, conf, err := ParseFlags()
 	if err != nil {
@@ -281,7 +294,7 @@ func TestIfLeaderElectionDisabledFlagIsFalse(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{"cmd", "--http-port", "80", "--https-port", "443"}
+	os.Args = []string{"cmd", "--http-port", "0", "--https-port", "0"}
 
 	_, conf, err := ParseFlags()
 	if err != nil {
@@ -298,7 +311,7 @@ func TestLeaderElectionTTLDefaultValue(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{"cmd", "--http-port", "80", "--https-port", "443"}
+	os.Args = []string{"cmd", "--http-port", "0", "--https-port", "0"}
 
 	_, conf, err := ParseFlags()
 	if err != nil {
@@ -315,7 +328,7 @@ func TestLeaderElectionTTLParseValueInSeconds(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{"cmd", "--http-port", "80", "--https-port", "443", "--election-ttl", "10s"}
+	os.Args = []string{"cmd", "--http-port", "0", "--https-port", "0", "--election-ttl", "10s"}
 
 	_, conf, err := ParseFlags()
 	if err != nil {
@@ -332,7 +345,7 @@ func TestLeaderElectionTTLParseValueInMinutes(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{"cmd", "--http-port", "80", "--https-port", "443", "--election-ttl", "10m"}
+	os.Args = []string{"cmd", "--http-port", "0", "--https-port", "0", "--election-ttl", "10m"}
 
 	_, conf, err := ParseFlags()
 	if err != nil {
@@ -349,7 +362,7 @@ func TestLeaderElectionTTLParseValueInHours(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{"cmd", "--http-port", "80", "--https-port", "443", "--election-ttl", "1h"}
+	os.Args = []string{"cmd", "--http-port", "0", "--https-port", "0", "--election-ttl", "1h"}
 
 	_, conf, err := ParseFlags()
 	if err != nil {
@@ -366,7 +379,7 @@ func TestMetricsPerUndefinedHost(t *testing.T) {
 
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
-	os.Args = []string{"cmd", "--metrics-per-undefined-host=true"}
+	os.Args = []string{"cmd", "--metrics-per-undefined-host=true", "--http-port", "0", "--https-port", "0"}
 
 	_, _, err := ParseFlags()
 	if err != nil {
