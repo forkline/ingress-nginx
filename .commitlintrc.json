@@ -30,6 +30,7 @@
         "api",
         "chart",
         "ci",
+        "commitlint",
         "config",
         "controller",
         "coverage",
