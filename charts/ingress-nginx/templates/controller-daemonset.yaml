@@ -195,7 +195,9 @@ spec:
       {{- end }}
       {{- if and .Values.controller.admissionWebhooks.enabled .Values.controller.admissionWebhooks.certManager.enabled }}
         - name: wait-for-webhook-cert
-          image: "{{ .Values.global.image.registry }}/ingress-nginx/kube-webhook-certgen:{{ .Values.controller.admissionWebhooks.patch.image.tag }}"
+          {{- with (merge .Values.controller.image .Values.global.image) }}
+          image: {{ if .repository }}{{ .repository }}{{ else }}{{ .registry }}/{{ include "ingress-nginx.image" . }}{{ end }}:{{ .tag }}{{ include "ingress-nginx.imageDigest" . }}
+          {{- end }}
           command:
             - sh
             - -c
