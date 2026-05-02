@@ -1,33 +1,12 @@
-# Forkline Maintained Fork
+# Ingress NGINX Controller
 
-> **⚠️ Maintenance Mode Notice**
+> **⚠️ Maintenance Mode — Forkline Maintained Fork**
 >
-> This fork is maintained in **strict maintenance mode**. We do NOT develop new features or change existing behavior. Our sole purpose is to keep this mature, well-tested software functional and secure through controlled dependency updates.
+> This is a maintained fork of the retired Kubernetes ingress-nginx controller, kept in **strict maintenance mode**: no new features, no behavior changes — only dependency updates and security patches. We use date-based versioning (e.g., `v2026.5.3`) since semantic versioning has no meaning when there are no features or breaking changes.
 >
-> **How we maintain this project:**
-> - **Automated dependency updates**: Renovate handles NGINX, Go modules, Kubernetes clients, and security fixes
-> - **Human-in-the-loop**: Every update is validated with comprehensive testing and coverage checks
-> - **No regressions policy**: Test coverage must never decrease; all behavior preserved exactly
-> - **Critical coverage tracking**: Issue #4 implements coverage baseline to prevent regressions
+> **For new deployments**, consider [Gateway API](https://gateway-api.sigs.k8s.io/guides/) implementations instead. This fork serves existing ingress-nginx users who need continued maintenance.
 >
-> **Date-based Versioning**: We use date-based versions (e.g., `v2026.4.3`) instead of semantic versioning. Since we don't add features or make breaking changes, semantic versioning is meaningless here. Date versions clearly show when the software was last maintained, helping you identify recent security updates and dependency patches.
->
-> This project is maintained by Forkline using coding-agent orchestration. Updates are automatic but never unattended—we prioritize security, stability, and community needs.
->
-> **For new deployments**: Consider [Gateway API](https://gateway-api.sigs.k8s.io/guides/) implementations instead. This fork serves existing ingress-nginx users who need continued maintenance.
-
----
-
-> This fork exists because the upstream project was retired, while the software
-> itself remains practical to maintain: the codebase is mature, behavior is well
-> known, and most future work is concentrated in controlled update lanes such as
-> NGINX, Go libraries, Kubernetes dependencies, and release automation.
->
-> We maintain this project with our own coding-agent orchestration platform,
-> Forkline, the software factory. Much of the maintenance work is designed to be
-> automatic, but never unattended: we keep a human in the loop, listen to the
-> community, and prioritize fast bug fixes because we depend on this project
-> ourselves.
+> Maintained by [Forkline](https://github.com/forkline) using coding-agent orchestration — automated but never unattended.
 
 ## Upstream Retirement Context
 
@@ -36,8 +15,6 @@
 * Best-effort maintenance continued until March 2026.
 * Upstream no longer provides releases, bugfixes, or security updates.
 * Existing deployments and historical artifacts remain important for operators and forks like this one.
-
-# Ingress NGINX Controller
 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5691/badge)](https://bestpractices.coreinfrastructure.org/projects/5691)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kubernetes/ingress-nginx)](https://goreportcard.com/report/github.com/kubernetes/ingress-nginx)
@@ -53,8 +30,6 @@ balancer.
 [Learn more about Ingress on the Kubernetes documentation site](https://kubernetes.io/docs/concepts/services-networking/ingress/).
 
 ## Usage warnings
-
-If you are not already using ingress-nginx, you should not be deploying it as it is [not being developed](#retiring). Instead you should identify a [Gateway API](https://gateway-api.sigs.k8s.io/guides/) implementation and use it.
 
 Do not use in multi-tenant Kubernetes production installations. This project assumes that users that can create Ingress objects are administrators of the cluster. See the [FAQ](https://kubernetes.github.io/ingress-nginx/faq/#faq) for more.
 
