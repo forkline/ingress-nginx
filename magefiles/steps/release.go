@@ -24,7 +24,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/google/go-github/v84/github"
+	"github.com/google/go-github/v85/github"
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"go.yaml.in/yaml/v3"
