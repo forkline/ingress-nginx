@@ -48,10 +48,11 @@ jobs:
         uses: helm/chart-testing-action@v2.7.0
 
       - name: Set up Artifact Hub CLI
+        env:
+          AH_SHA256: >-  # yamllint disable-line rule:line-length
+            9027626f19ff9f3ac668f222917130ac885e289e922e1428bfd2e7f066324e31
         run: |
           AH_VERSION=v1.20.0
-          AH_SHA256=\
-            9027626f19ff9f3ac668f222917130ac885e289e922e1428bfd2e7f066324e31
           AH_ARCHIVE=ah_1.20.0_linux_amd64.tar.gz
           AH_URL_BASE=https://github.com/artifacthub/hub/releases/download
           curl --fail --location \
