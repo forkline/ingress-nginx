@@ -135,8 +135,8 @@ jobs:
             wait-shutdown:cmd/waitshutdown; do
             name=${bin%:*}
             path=${bin#*:}
-            go build -trimpath -ldflags="${LDFLAGS}" -buildvcs=false \
-              -o rootfs/bin/${name} ${PKG}/${path}
+            mkdir -p rootfs/bin/${ARCH}
+            go build -trimpath -ldflags="${LDFLAGS}" -buildvcs=false -o rootfs/bin/${ARCH}/${name} ${PKG}/${path}
           done
           docker build --no-cache \
             --build-arg BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
