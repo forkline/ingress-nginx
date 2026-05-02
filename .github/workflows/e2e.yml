@@ -69,6 +69,16 @@ jobs:
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
 
+      - name: Build nginx base image
+        working-directory: images/nginx
+        run: |
+          TAGNGINX=$(cat TAG)
+          docker buildx build \
+            --platform linux/amd64 \
+            rootfs \
+            --tag ingress-nginx/nginx:${TAGNGINX} \
+            --load
+
       - name: Build controller and e2e images
         env:
           TAG: 1.0.0-dev
@@ -77,7 +87,7 @@ jobs:
         run: |
           TAGNGINX=$(cat images/nginx/TAG)
           make \
-            BASE_IMAGE=ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX} \
+            BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
             clean-image build image image-chroot
           make -C test/e2e-image image
           docker save \
