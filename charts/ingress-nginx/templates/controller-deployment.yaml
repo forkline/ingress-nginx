@@ -188,7 +188,7 @@ spec:
       {{- if .Values.controller.extraContainers }}
         {{- toYaml .Values.controller.extraContainers | nindent 8 }}
       {{- end }}
-    {{- if (or .Values.controller.extraInitContainers .Values.controller.extraModules) }}
+    {{- if (or .Values.controller.extraInitContainers .Values.controller.extraModules (and .Values.controller.admissionWebhooks.enabled .Values.controller.admissionWebhooks.certManager.enabled)) }}
       initContainers:
       {{- if .Values.controller.extraInitContainers }}
         {{- tpl (toYaml .Values.controller.extraInitContainers) $ | nindent 8 }}
@@ -198,6 +198,18 @@ spec:
           {{- $containerSecurityContext := .containerSecurityContext | default $.Values.controller.containerSecurityContext }}
           {{- include "extraModules" (dict "name" .name "image" (merge .image $.Values.global.image) "containerSecurityContext" $containerSecurityContext "resources" .resources) | nindent 8 }}
         {{- end }}
+      {{- end }}
+      {{- if and .Values.controller.admissionWebhooks.enabled .Values.controller.admissionWebhooks.certManager.enabled }}
+        - name: wait-for-webhook-cert
+          image: "{{ .Values.global.image.registry }}/ingress-nginx/kube-webhook-certgen:{{ .Values.controller.admissionWebhooks.patch.image.tag }}"
+          command:
+            - sh
+            - -c
+            - "until test -f /usr/local/certificates/cert && test -f /usr/local/certificates/key; do echo 'Waiting for webhook certificates...'; sleep 5; done; echo 'Webhook certificates found'"
+          volumeMounts:
+            - name: webhook-cert
+              mountPath: /usr/local/certificates/
+              readOnly: true
       {{- end }}
     {{- end }}
     {{- if .Values.controller.hostNetwork }}
@@ -236,6 +248,7 @@ spec:
         - name: webhook-cert
           secret:
             secretName: {{ include "ingress-nginx.admissionWebhooks.fullname" . }}
+            optional: {{ .Values.controller.admissionWebhooks.certManager.enabled }}
         {{- if .Values.controller.admissionWebhooks.certManager.enabled }}
             items:
               - key: tls.crt
