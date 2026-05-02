@@ -123,10 +123,37 @@ jobs:
           REGISTRY: ingress-controller
         run: |
           TAGNGINX=$(cat images/nginx/TAG)
-          make \
-            BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
-            clean-image build image image-chroot
-          make -C test/e2e-image image
+          PKG=k8s.io/ingress-nginx
+          COMMIT_SHA=$(git rev-parse HEAD)
+          REPO_INFO=$(git remote get-url origin)
+          LDFLAGS="-buildid= -w -s -X ${PKG}/version.RELEASE=${TAG} -X ${PKG}/version.COMMIT=${COMMIT_SHA} -X ${PKG}/version.REPO=${REPO_INFO}"
+          for bin in nginx-ingress-controller:cmd/nginx dbg:cmd/dbg wait-shutdown:cmd/waitshutdown; do
+            name=${bin%:*}
+            path=${bin#*:}
+            go build -trimpath -ldflags="${LDFLAGS}" -buildvcs=false -o rootfs/bin/${name} ${PKG}/${path}
+          done
+          docker build --no-cache \
+            --build-arg BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
+            --build-arg VERSION=${TAG} \
+            --build-arg TARGETARCH=${ARCH} \
+            --build-arg COMMIT_SHA=${COMMIT_SHA} \
+            -t ${REGISTRY}/controller:${TAG} rootfs
+          docker build --no-cache \
+            --build-arg BASE_IMAGE=ingress-nginx/nginx:${TAGNGINX} \
+            --build-arg VERSION=${TAG} \
+            --build-arg TARGETARCH=${ARCH} \
+            --build-arg COMMIT_SHA=${COMMIT_SHA} \
+            -t ${REGISTRY}/controller-chroot:${TAG} rootfs -f rootfs/Dockerfile-chroot
+          GOFLAGS=-vet=off ginkgo build ./test/e2e
+          cp test/e2e/e2e.test test/e2e-image/
+          cp test/e2e/wait-for-nginx.sh test/e2e-image/
+          cp -R charts test/e2e-image/ 2>/dev/null || true
+          cp -R test/e2e/settings/ocsp/* test/e2e-image/ 2>/dev/null || true
+          E2E_BASE_IMAGE="registry.k8s.io/ingress-nginx/e2e-test-runner:v2.2.9@sha256:6eda6a8d17ff65c5af647abb0714b882047b77d18161712d77daf5f610fd4020"
+          docker build \
+            --build-arg E2E_BASE_IMAGE=${E2E_BASE_IMAGE} \
+            --tag nginx-ingress-controller:e2e \
+            test/e2e-image
           TAGNGINX=$(cat images/nginx/TAG)
           CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
           docker save \
