@@ -160,7 +160,7 @@ jobs:
             --build-arg COMMIT_SHA=${COMMIT_SHA} \
             -t ${REGISTRY}/controller-chroot:${TAG} rootfs \
             -f rootfs/Dockerfile-chroot
-          GOFLAGS=-vet=off ginkgo build ./test/e2e
+          CGO_ENABLED=0 GOFLAGS=-vet=off ginkgo build ./test/e2e
           cp test/e2e/e2e.test test/e2e-image/
           cp test/e2e/wait-for-nginx.sh test/e2e-image/
           cp -R charts test/e2e-image/ 2>/dev/null || true
