@@ -50,15 +50,11 @@ jobs:
       - name: Set up Artifact Hub CLI
         run: |
           AH_VERSION=v1.20.0
-          AH_SHA256=\
-            9027626f19ff9f3ac668f222917130ac885e289e922e1428bfd2e7f066324e31
+          AH_SHA256=9027626f19ff9f3ac668f222917130ac885e289e922e1428bfd2e7f066324e31
           AH_ARCHIVE=ah_1.20.0_linux_amd64.tar.gz
           AH_URL_BASE=https://github.com/artifacthub/hub/releases/download
-          curl --fail --location \
-            "${AH_URL_BASE}/${AH_VERSION}/${AH_ARCHIVE}" \
-            --output /tmp/ah.tar.gz
-          echo "${AH_SHA256}  /tmp/ah.tar.gz" \
-            | shasum --check
+          curl --fail --location "${AH_URL_BASE}/${AH_VERSION}/${AH_ARCHIVE}" --output /tmp/ah.tar.gz
+          echo "${AH_SHA256}  /tmp/ah.tar.gz" | shasum --check
           sudo tar --extract --file /tmp/ah.tar.gz --directory /usr/local/bin ah
 
       - name: Set up Helm Docs
