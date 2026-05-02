@@ -42,7 +42,9 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	os.MkdirAll(file.DefaultSSLDirectory, 0o755)
+	if err := os.MkdirAll(file.DefaultSSLDirectory, 0o755); err != nil {
+		panic(err)
+	}
 	os.Exit(m.Run())
 }
 
