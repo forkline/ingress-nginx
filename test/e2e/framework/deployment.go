@@ -267,8 +267,8 @@ func (f *Framework) NewHttpbunDeployment(opts ...func(*deploymentOptions)) strin
 	assert.Nil(ginkgo.GinkgoT(), err, "failed to get httpbun endpoint slices")
 
 	var httpbunIP string
-	for _, slice := range endpointSlices.Items {
-		for _, endpoint := range slice.Endpoints {
+	for i := range endpointSlices.Items {
+		for _, endpoint := range endpointSlices.Items[i].Endpoints {
 			if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
 				if len(endpoint.Addresses) > 0 {
 					httpbunIP = endpoint.Addresses[0]
