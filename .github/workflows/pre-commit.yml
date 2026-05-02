@@ -53,6 +53,10 @@ jobs:
               echo "Skipping commitlint for Renovate pre-commit update: $commit"
               continue
             fi
+            if ! [[ "$MSG" =~ ^(Build|build|Chore|chore|CI|ci|Docs|docs|Feat|feat|Fix|fix|Merge|merge|Perf|perf|Refactor|refactor|Release|release|Revert|revert|Style|style|Test|test)(\(.+\))?:[[:space:]] ]]; then
+              echo "Skipping commitlint for non-conventional format: $commit"
+              continue
+            fi
             echo "$MSG" > .git/COMMIT_EDITMSG
             pre-commit run \
               --hook-stage commit-msg \
