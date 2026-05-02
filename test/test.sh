@@ -24,10 +24,6 @@ set -o nounset
 set -o pipefail
 
 mkdir -p /tmp/nginx
-if [ -z "${PKG}" ]; then
-  echo "PKG must be set"
-  exit 1
-fi
 
 go test -v -coverprofile=coverage.out -covermode=atomic \
-  $(go list "${PKG}/..." | grep -v vendor | grep -v '/test/e2e' | grep -v images | grep -v "docs/examples")
+  $(go list ./... | grep -v vendor | grep -v '/test/e2e' | grep -v images | grep -v "docs/examples")

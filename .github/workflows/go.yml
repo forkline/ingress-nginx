@@ -60,8 +60,6 @@ jobs:
           check-latest: true
 
       - name: Run unit tests
-        env:
-          PKG: k8s.io/ingress-nginx
         run: ./test/test.sh
 
       - name: Generate coverage summary
