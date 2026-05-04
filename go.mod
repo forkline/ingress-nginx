@@ -7,7 +7,7 @@ require (
 	github.com/Anddd7/pb v0.0.0-20250506021228-7e355c18f206
 	github.com/blang/semver/v4 v4.0.0
 	github.com/eapache/channels v1.1.0
-	github.com/fsnotify/fsnotify v1.10.0
+	github.com/fsnotify/fsnotify v1.10.1
 	github.com/google/go-github/v85 v85.0.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kylelemons/godebug v1.1.0
