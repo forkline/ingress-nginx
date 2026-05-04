@@ -30,7 +30,7 @@ import (
 )
 
 var _ = framework.IngressNginxDescribe("[Security] request smuggling", func() {
-	f := framework.NewDefaultFramework("request-smuggling")
+	f := framework.NewDefaultFramework("request-smuggling", framework.WithHTTPBunEnabled())
 
 	ginkgo.BeforeEach(func() {
 		f.NewEchoDeployment()
@@ -50,12 +50,9 @@ server {
 
 		f.UpdateNginxConfigMapData("http-snippet", snippet)
 
-		// TODO: currently using a self hosted HTTPBun instance results in a 499, we
-		// should move away from using httpbun.com once we have the httpbun
-		// deployment as part of the framework
 		ing := framework.NewSingleIngress(host, "/", host, f.Namespace, framework.EchoService, 80, map[string]string{
-			"nginx.ingress.kubernetes.io/auth-signin": "https://httpbun.com/bearer/d4bcba7a-0def-4a31-91a7-47e420adf44b",
-			"nginx.ingress.kubernetes.io/auth-url":    "https://httpbun.com/basic-auth/user/passwd",
+			"nginx.ingress.kubernetes.io/auth-signin": fmt.Sprintf("http://%s/bearer/d4bcba7a-0def-4a31-91a7-47e420adf44b", f.HTTPBunIP),
+			"nginx.ingress.kubernetes.io/auth-url":    fmt.Sprintf("http://%s/basic-auth/user/passwd", f.HTTPBunIP),
 		})
 		f.EnsureIngress(ing)
 
