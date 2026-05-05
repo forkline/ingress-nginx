@@ -328,3 +328,28 @@ jobs:
             echo "Base commit not available" \
               "- skipping threshold check" >> "$GS"
           fi
+
+  go-checks-passed:
+    name: Go checks passed
+    runs-on: ubuntu-latest
+    needs: [changes, test, lint, build, verify-docs, coverage-check]
+    if: >-
+      always()
+      && github.event_name == 'pull_request'
+      && needs.changes.outputs.go != 'true'
+    steps:
+      - name: Report success
+        run: |
+          echo "## Go Checks Appropriately Skipped" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "No Go-related files changed in PR:" >> "$GITHUB_STEP_SUMMARY"
+          echo "- No .go files modified" >> "$GITHUB_STEP_SUMMARY"
+          echo "- No go.mod/go.sum changes" >> "$GITHUB_STEP_SUMMARY"
+          echo "- No GOLANG_VERSION changes" >> "$GITHUB_STEP_SUMMARY"
+          echo "- No workflow file changes" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "All required Go checks were appropriately skipped." \
+            >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo ":white_check_mark: **Status: PASSED (Skipped)**" \
+            >> "$GITHUB_STEP_SUMMARY"
