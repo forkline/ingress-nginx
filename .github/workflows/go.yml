@@ -342,7 +342,7 @@ jobs:
         run: |
           echo "## Go Checks Appropriately Skipped" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "No Go-related files changed in this PR:" >> "$GITHUB_STEP_SUMMARY"
+          echo "No Go-related files changed in PR:" >> "$GITHUB_STEP_SUMMARY"
           echo "- No .go files modified" >> "$GITHUB_STEP_SUMMARY"
           echo "- No go.mod/go.sum changes" >> "$GITHUB_STEP_SUMMARY"
           echo "- No GOLANG_VERSION changes" >> "$GITHUB_STEP_SUMMARY"
