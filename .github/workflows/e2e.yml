@@ -372,22 +372,32 @@ jobs:
     if: >-
       always()
       && github.event_name == 'pull_request'
-      && needs.changes.outputs.e2e != 'true'
     steps:
-      - name: Report success
+      - name: Check E2E results
         run: |
-          echo "## E2E Checks Appropriately Skipped" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "No E2E-related files changed in PR:" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No .go files modified" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No go.mod/go.sum changes" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No rootfs changes" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No test/e2e changes" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No charts changes" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No NGINX_BASE changes" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "All required E2E checks were appropriately skipped." \
-            >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo ":white_check_mark: **Status: PASSED (Skipped)**" \
-            >> "$GITHUB_STEP_SUMMARY"
+          GS="$GITHUB_STEP_SUMMARY"
+          if [[ "${{ needs.changes.outputs.e2e }}" == "true" ]]; then
+            echo "## E2E Changes Detected" >> "$GS"
+            echo "" >> "$GS"
+            BUILD="${{ needs.build.result }}"
+            CHART="${{ needs.chart-test.result }}"
+            K8S="${{ needs.kubernetes.result }}"
+            echo "- Build test images: ${BUILD}" >> "$GS"
+            echo "- Chart e2e: ${CHART}" >> "$GS"
+            echo "- Kubernetes: ${K8S}" >> "$GS"
+            echo "" >> "$GS"
+            if [[ "${BUILD}" == "success" ]] \
+              && [[ "${CHART}" == "success" ]] \
+              && [[ "${K8S}" == "success" ]]; then
+              echo ":white_check_mark: **Status: PASSED**" >> "$GS"
+            else
+              echo ":x: **Status: FAILED**" >> "$GS"
+              exit 1
+            fi
+          else
+            echo "## E2E Checks Appropriately Skipped" >> "$GS"
+            echo "" >> "$GS"
+            echo "No E2E-related files changed in PR." >> "$GS"
+            echo "" >> "$GS"
+            echo ":white_check_mark: **Status: PASSED (Skipped)**" >> "$GS"
+          fi
