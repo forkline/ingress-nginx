@@ -4,6 +4,53 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.5.14](https://github.com/forkline/ingress-nginx/tree/v2026.5.14) - 2026-05-14
+
+### Added
+
+- Update release script to maintain README Supported Versions table([b120e9d](https://github.com/forkline/ingress-nginx/commit/b120e9d6028de36b91674e8eb5f0d5d6e00624a6))
+
+
+### Fixed
+
+- Make gate jobs run on all PRs for required checks (ci)([ca995ff](https://github.com/forkline/ingress-nginx/commit/ca995ff9ce4b8d43c9f5120be59ab88e15be8aa8))
+
+- Update to 1.30.1 stable and fix Renovate version tracking (#55) (nginx)([16be02e](https://github.com/forkline/ingress-nginx/commit/16be02e09826451ed54855ef7e8fb61ff96fabe0))
+
+
+### Documentation
+
+- Simplify README by removing duplicate information and consolidating notice([624d9ce](https://github.com/forkline/ingress-nginx/commit/624d9ceb2c0d97ef29f7c7d108cc9279bf5aae06))
+
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.150.0 (#45) (pre-commit)([248b673](https://github.com/forkline/ingress-nginx/commit/248b6735c4e47d38656d8ec6a8bcaebd55bb8c5d))
+
+
+### Build
+
+- Update github actions (#43) (deps)([3d7d717](https://github.com/forkline/ingress-nginx/commit/3d7d7171f53aab36b70b03b84d0eff93ac1cd58a))
+
+- Update module google.golang.org/grpc to v1.81.0 (#44) (deps)([9dd98e5](https://github.com/forkline/ingress-nginx/commit/9dd98e50e2b9a6b2041055b875fa00a5fd71e3c3))
+
+- Update module github.com/fsnotify/fsnotify to v1.10.1 (#46) (deps)([9648818](https://github.com/forkline/ingress-nginx/commit/9648818fbb271dafe703b12d72ae762b08d902c6))
+
+- Update google.golang.org/grpc/examples digest to 811290b (#47) (deps)([452bbad](https://github.com/forkline/ingress-nginx/commit/452bbad02ab0d645a34086c7377c97644926802d))
+
+- Update google.golang.org/grpc/examples digest to 89fe783 (#48) (deps)([9c84c66](https://github.com/forkline/ingress-nginx/commit/9c84c6632a0a52be86339fc5be07c5afa12fe142))
+
+- Update go modules (#49) (deps)([9d65976](https://github.com/forkline/ingress-nginx/commit/9d65976b68e7dadd5f558985e0e91ea1b3f26fa8))
+
+- Update actions/dependency-review-action action to v5 (#50) (deps)([5265068](https://github.com/forkline/ingress-nginx/commit/5265068f6c41bd07155d843484bff7d8253c9308))
+
+- Update dependency helm to v4.2.0 (#51) (deps)([430dc0b](https://github.com/forkline/ingress-nginx/commit/430dc0b927e3c91e3d174e8a1d8f02d744800acc))
+
+- Enable Renovate tracking for upstream NGINX version (deps)([aa522d6](https://github.com/forkline/ingress-nginx/commit/aa522d6e8a3a7dbfd82fef4f1ac7932238ee240c))
+
+- Update go modules (#52) (deps)([4302152](https://github.com/forkline/ingress-nginx/commit/430215226d22be4dbd311588b94ae329de1b9923))
+
+
 ## [v2026.5.3](https://github.com/forkline/ingress-nginx/tree/v2026.5.3) - 2026-05-02
 
 ### Fixed
