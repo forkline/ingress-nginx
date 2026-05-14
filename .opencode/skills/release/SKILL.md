@@ -1,0 +1,131 @@
+---
+name: release
+description: Prepare and publish a new release. Use when the user asks to release, cut a release, or publish a new version.
+---
+
+## Purpose
+
+Release a new version of ingress-nginx using the automated release script and CI pipeline.
+
+## When to use
+
+Use this skill when:
+- The user asks to release a new version
+- The user asks to cut a release or publish
+- The user asks to tag a new version
+
+## Prerequisites
+
+Before releasing, verify:
+
+1. **Working tree is clean** — no uncommitted changes
+2. **You are on `main`** — releases only happen from main
+3. **There are new commits** since the last tag worth releasing
+
+Check with:
+```bash
+git status --short
+git rev-parse --abbrev-ref HEAD
+git tag --sort=-creatordate | head -3
+git log --oneline <latest_tag>..HEAD
+```
+
+## Release Process
+
+### Step 1: Run the release script
+
+```bash
+.ci/release.sh
+```
+
+This script **automatically**:
+1. Verifies you're on main with no unmerged commits
+2. Computes the new version (`vYYYY.M.D`, auto-incrementing suffix if same-day)
+3. Updates `TAG` file and all image `TAG` files
+4. Updates `NGINX_BASE` reference
+5. Runs `make update-version` (Chart.yaml, values.yaml)
+6. Runs `make update-changelog` (git-cliff from conventional commits)
+7. Updates helm-docs and README Supported Versions table
+8. Creates commit: `release: prepare <version>`
+
+### Step 2: Push to main
+
+```bash
+git push origin main
+```
+
+### Step 3: Verify automation triggers
+
+After pushing, the auto-tag workflow (`auto-tag.yml`) will:
+1. Read the new version from CHANGELOG.md
+2. Create a signed git tag
+3. Push the tag
+
+The tag then triggers build/release workflows for:
+- Container images (`ghcr.io/forkline/ingress-nginx/controller`) — published for `linux/amd64,linux/arm64`
+- Helm charts (`ghcr.io/forkline/helm-charts/ingress-nginx`)
+- kubectl plugin binaries (GitHub release)
+
+Monitor with:
+```bash
+gh run list --limit 5
+```
+
+## CI Pipeline Details
+
+### Nginx base image caching
+
+The nginx base image is tagged with the actual NGINX version (e.g. `1.30.1`) in addition to the release tag. This enables caching across workflow runs:
+
+- **E2E workflow**: Pulls by NGINX version. If not in registry, builds multi-platform and pushes. Pulls amd64 variant back locally for controller/e2e builds.
+- **Release workflow**: Checks if NGINX version manifest exists. Skips build if already published by E2E.
+
+This means NGINX version changes are validated by E2E tests before they reach the release workflow.
+
+### Published platforms
+
+All images are published for `linux/amd64` and `linux/arm64`.
+
+## What NOT to do
+
+| Mistake | Why it's wrong | Fix |
+|---------|---------------|-----|
+| Manually editing CHANGELOG.md | git-cliff generates it from conventional commits automatically | Use `.ci/release.sh` |
+| Manually editing TAG, Chart.yaml, values.yaml | `make update-version` handles all of them | Use `.ci/release.sh` |
+| Creating git tags manually | `auto-tag.yml` creates signed tags automatically | Just push to main |
+| Running from a feature branch | CHANGELOG generation needs main commit IDs | Checkout main first |
+| Releasing with dirty working tree | Script will fail or produce incomplete release | Commit or stash changes first |
+
+## Troubleshooting
+
+### "There are commits in this branch. Please merge them first."
+You're on a branch with unmerged commits. Switch to main and merge first.
+
+### "Version unchanged. Nothing to do."
+Already released this version today. If you need a same-day re-release, the script auto-increments the suffix (`v2026.5.14-1`, `v2026.5.14-2`, etc.) only if the base tag already exists. Check `cat TAG` to see current version.
+
+### Auto-tag workflow didn't trigger
+Ensure:
+- The CHANGELOG.md has a new version entry as the first `## [v...]` heading
+- The tag doesn't already exist: `git tag -l | grep <version>`
+- The `PAT` and `GPG_PRIVATE_KEY` secrets are configured
+
+### git-cliff not installed
+```bash
+cargo install git-cliff
+```
+
+## Key Files
+
+| File | Role |
+|------|------|
+| `.ci/release.sh` | Main release script — runs everything |
+| `TAG` | Current version file |
+| `images/*/TAG` | Per-image version tags |
+| `NGINX_BASE` | Base nginx image reference |
+| `cliff.toml` | git-cliff configuration (conventional commit parsing) |
+| `CHANGELOG.md` | Generated changelog (auto-tag reads version from here) |
+| `.github/workflows/auto-tag.yml` | Creates signed tag on push to main |
+| `.github/workflows/e2e.yml` | E2E tests — builds nginx if NGINX version changed |
+| `.github/workflows/docker_images.yml` | Release images — skips nginx build if already published |
+| `Makefile` | `update-version`, `update-changelog`, and `release` targets |

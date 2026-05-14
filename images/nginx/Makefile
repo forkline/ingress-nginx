@@ -13,10 +13,11 @@
 # limitations under the License.
 
 BUILDER ?= ingress-nginx
-PLATFORMS ?= linux/amd64,linux/arm,linux/arm64
+PLATFORMS ?= linux/amd64,linux/arm64
 REGISTRY ?= ghcr.io/forkline/ingress-nginx
 IMAGE ?= $(REGISTRY)/nginx
 TAG ?= $(shell cat TAG)
+NGINX_VERSION ?= $(shell grep 'export NGINX_VERSION=' rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
 
 .PHONY: builder
 builder:
@@ -29,7 +30,8 @@ build: builder
 		--builder $(BUILDER) \
 		--platform $(PLATFORMS) \
 		rootfs \
-		--tag $(IMAGE):$(TAG)
+		--tag $(IMAGE):$(TAG) \
+		--tag $(IMAGE):$(NGINX_VERSION)
 
 # Pushing in the `build` target does not work as authentication times out after one hour.
 #
@@ -41,6 +43,7 @@ push: build
 		--platform $(PLATFORMS) \
 		rootfs \
 		--tag $(IMAGE):$(TAG) \
+		--tag $(IMAGE):$(NGINX_VERSION) \
 		--tag $(IMAGE):latest \
 		--push
 

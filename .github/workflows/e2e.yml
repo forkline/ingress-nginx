@@ -94,21 +94,28 @@ jobs:
         working-directory: images/nginx
         run: |
           TAGNGINX=$(cat TAG)
+          NGINX_VERSION=$(grep 'export NGINX_VERSION=' rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
           NGINX_IMAGE="ghcr.io/forkline/ingress-nginx/nginx:${TAGNGINX}"
-          if docker pull ghcr.io/forkline/ingress-nginx/nginx:latest; then
-            docker tag ghcr.io/forkline/ingress-nginx/nginx:latest \
-              ${NGINX_IMAGE}
-            docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
-            echo "Reused nginx base image from registry"
+          if docker pull ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}; then
+            docker tag ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION} ${NGINX_IMAGE}
+            docker tag ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION} ingress-nginx/nginx:${TAGNGINX}
+            echo "Reused nginx base image (NGINX ${NGINX_VERSION}) from registry"
           else
-            echo "Image not in registry, building locally..."
+            echo "NGINX ${NGINX_VERSION} not in registry, building..."
+            docker buildx create --name ingress-nginx --bootstrap || :
             docker buildx build \
-              --platform linux/amd64 \
+              --builder ingress-nginx \
+              --platform linux/amd64,linux/arm64 \
               rootfs \
               --tag ${NGINX_IMAGE} \
+              --tag ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION} \
+              --tag ghcr.io/forkline/ingress-nginx/nginx:latest \
               --tag ingress-nginx/nginx:${TAGNGINX} \
-              --load
+              --push
+            echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
           fi
+          docker pull --platform linux/amd64 ${NGINX_IMAGE}
+          docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
 
       - name: Pull or build kube-webhook-certgen image
         working-directory: images
