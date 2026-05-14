@@ -18,6 +18,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# renovate: datasource=github-releases depName=nginx/nginx versioning=semver
 export NGINX_VERSION=1.27.1
 
 # Check for recent changes: https://github.com/vision5/ngx_devel_kit/compare/v0.3.3...master
