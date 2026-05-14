@@ -41,6 +41,7 @@ jobs:
               - 'go.mod'
               - 'go.sum'
               - 'rootfs/**'
+              - 'images/nginx/**'
               - 'test/e2e/**'
               - 'test/e2e-image/**'
               - 'charts/**'
