@@ -59,12 +59,12 @@ jobs:
         working-directory: images/nginx
         run: |
           NGINX_VERSION=$(grep 'export NGINX_VERSION=' rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
-          if docker manifest inspect ${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_VERSION} >/dev/null 2>&1; then
+          if docker manifest inspect "${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_VERSION}" >/dev/null 2>&1; then
             echo "nginx ${NGINX_VERSION} already published, skipping build"
           else
             make \
-              REGISTRY=${{ env.IMAGE_REGISTRY }} \
-              PLATFORMS=${{ env.IMAGE_PLATFORMS }} \
+              REGISTRY="${{ env.IMAGE_REGISTRY }}" \
+              PLATFORMS="${{ env.IMAGE_PLATFORMS }}" \
               push
           fi
 
@@ -72,19 +72,19 @@ jobs:
         run: |
           NGINX_TAG=$(cat images/nginx/TAG)
           make \
-            PLATFORMS=${{ env.IMAGE_ARCHES }} \
-            BUILDX_PLATFORMS=${{ env.IMAGE_PLATFORMS }} \
-            REGISTRY=${{ env.IMAGE_REGISTRY }} \
-            BASE_IMAGE=${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_TAG} \
-            TAG=${VERSION} \
+            PLATFORMS="${{ env.IMAGE_ARCHES }}" \
+            BUILDX_PLATFORMS="${{ env.IMAGE_PLATFORMS }}" \
+            REGISTRY="${{ env.IMAGE_REGISTRY }}" \
+            BASE_IMAGE="${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_TAG}" \
+            TAG="${VERSION}" \
             release
 
       - name: Publish kube-webhook-certgen image
         working-directory: images
         run: |
           make \
-            PLATFORMS=${{ env.IMAGE_PLATFORMS }} \
-            REGISTRY=${{ env.IMAGE_REGISTRY }} \
+            PLATFORMS="${{ env.IMAGE_PLATFORMS }}" \
+            REGISTRY="${{ env.IMAGE_REGISTRY }}" \
             NAME=kube-webhook-certgen \
             push
 
