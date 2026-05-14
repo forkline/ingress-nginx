@@ -87,6 +87,7 @@ jobs:
             PLATFORMS="${{ env.IMAGE_PLATFORMS }}" \
             REGISTRY="${{ env.IMAGE_REGISTRY }}" \
             NAME=kube-webhook-certgen \
+            TAG="${VERSION}" \
             push
 
       - name: Get Changelog Entry
