@@ -19,10 +19,11 @@
       "description": "Track inline renovate hints in workflow and config files",
       "managerFilePatterns": ["/.+\\.ya?ml$/", "/(^|/)Makefile$/", "/images/nginx/rootfs/build\\.sh$/"],
       "matchStrings": [
-        "#\\srenovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\\n.*?: (?<currentValue>.*)\\n",
-        "#\\srenovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\\n.*?=\\s*(?<currentValue>.*)\\n"
+        "#\\srenovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( extractVersion=(?<extractVersion>\\S+))?( versioning=(?<versioning>\\S+))?\\n.*?: (?<currentValue>.*)\\n",
+        "#\\srenovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( extractVersion=(?<extractVersion>\\S+))?( versioning=(?<versioning>\\S+))?\\n.*?=\\s*(?<currentValue>.*)\\n"
       ],
-      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
+      "extractVersionTemplate": "{{#if extractVersion}}{{{extractVersion}}}{{/if}}"
     }
   ],
   "packageRules": [
