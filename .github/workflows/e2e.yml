@@ -109,8 +109,9 @@ jobs:
               --tag ${NGINX_IMAGE} \
               --tag ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION} \
               --tag ghcr.io/forkline/ingress-nginx/nginx:latest \
-              --tag ingress-nginx/nginx:${TAGNGINX} \
               --push
+            docker pull --platform linux/amd64 ${NGINX_IMAGE}
+            docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
             echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
           fi
           docker pull --platform linux/amd64 ${NGINX_IMAGE}
