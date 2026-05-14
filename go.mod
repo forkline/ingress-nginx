@@ -1,6 +1,6 @@
 module k8s.io/ingress-nginx
 
-go 1.26.1
+go 1.26.3
 
 require (
 	dario.cat/mergo v1.0.2
@@ -45,7 +45,7 @@ require (
 	k8s.io/code-generator v0.36.0
 	k8s.io/component-base v0.36.0
 	k8s.io/klog/v2 v2.140.0
-	k8s.io/utils v0.0.0-20260319190234-28399d86e0b5
+	k8s.io/utils v0.0.0-20260507154919-ff6756f316d2
 	pault.ag/go/sniff v0.0.0-20200207005214-cf7e4d167732
 	sigs.k8s.io/controller-runtime v0.24.0
 	sigs.k8s.io/mdtoc v1.4.0
