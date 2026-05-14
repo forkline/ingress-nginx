@@ -336,20 +336,38 @@ jobs:
     if: >-
       always()
       && github.event_name == 'pull_request'
-      && needs.changes.outputs.go != 'true'
     steps:
-      - name: Report success
+      - name: Check Go results
         run: |
-          echo "## Go Checks Appropriately Skipped" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "No Go-related files changed in PR:" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No .go files modified" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No go.mod/go.sum changes" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No GOLANG_VERSION changes" >> "$GITHUB_STEP_SUMMARY"
-          echo "- No workflow file changes" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "All required Go checks were appropriately skipped." \
-            >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo ":white_check_mark: **Status: PASSED (Skipped)**" \
-            >> "$GITHUB_STEP_SUMMARY"
+          GS="$GITHUB_STEP_SUMMARY"
+          if [[ "${{ needs.changes.outputs.go }}" == "true" ]]; then
+            echo "## Go Changes Detected" >> "$GS"
+            echo "" >> "$GS"
+            TEST="${{ needs.test.result }}"
+            LINT="${{ needs.lint.result }}"
+            BUILD="${{ needs.build.result }}"
+            DOCS="${{ needs.verify-docs.result }}"
+            COV="${{ needs.coverage-check.result }}"
+            echo "- Unit tests: ${TEST}" >> "$GS"
+            echo "- golangci-lint: ${LINT}" >> "$GS"
+            echo "- Build binaries: ${BUILD}" >> "$GS"
+            echo "- Verify docs: ${DOCS}" >> "$GS"
+            echo "- Coverage threshold: ${COV}" >> "$GS"
+            echo "" >> "$GS"
+            if [[ "${TEST}" == "success" ]] \
+              && [[ "${LINT}" == "success" ]] \
+              && [[ "${BUILD}" == "success" ]] \
+              && [[ "${DOCS}" == "success" ]] \
+              && { [[ "${COV}" == "success" ]] || [[ "${COV}" == "skipped" ]]; }; then
+              echo ":white_check_mark: **Status: PASSED**" >> "$GS"
+            else
+              echo ":x: **Status: FAILED**" >> "$GS"
+              exit 1
+            fi
+          else
+            echo "## Go Checks Appropriately Skipped" >> "$GS"
+            echo "" >> "$GS"
+            echo "No Go-related files changed in PR." >> "$GS"
+            echo "" >> "$GS"
+            echo ":white_check_mark: **Status: PASSED (Skipped)**" >> "$GS"
+          fi
