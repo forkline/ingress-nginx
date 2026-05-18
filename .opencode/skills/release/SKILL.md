@@ -39,14 +39,15 @@ git log --oneline <latest_tag>..HEAD
 ```
 
 This script **automatically**:
-1. Verifies you're on main with no unmerged commits
-2. Computes the new version (`vYYYY.M.D`, auto-incrementing suffix if same-day)
-3. Updates `TAG` file and all image `TAG` files
-4. Updates `NGINX_BASE` reference
-5. Runs `make update-version` (Chart.yaml, values.yaml)
-6. Runs `make update-changelog` (git-cliff from conventional commits)
-7. Updates helm-docs and README Supported Versions table
-8. Creates commit: `release: prepare <version>`
+1. Detects and fixes shallow clones (fetches full history + tags)
+2. Verifies you're on main with no unmerged commits
+3. Computes the new version (`vYYYY.M.D`, auto-incrementing suffix if same-day)
+4. Updates `TAG` file and all image `TAG` files
+5. Updates `NGINX_BASE` reference
+6. Runs `make update-version` (Chart.yaml, values.yaml)
+7. Runs `make update-changelog` (git-cliff from conventional commits)
+8. Updates helm-docs and README Supported Versions table
+9. Creates commit: `release: prepare <version>`
 
 ### Step 2: Push to main
 
@@ -95,11 +96,15 @@ All images are published for `linux/amd64` and `linux/arm64`.
 | Creating git tags manually | `auto-tag.yml` creates signed tags automatically | Just push to main |
 | Running from a feature branch | CHANGELOG generation needs main commit IDs | Checkout main first |
 | Releasing with dirty working tree | Script will fail or produce incomplete release | Commit or stash changes first |
+| Worrying about shallow clones | Script auto-detects and fetches full history | Just run `.ci/release.sh` |
 
 ## Troubleshooting
 
 ### "There are commits in this branch. Please merge them first."
 You're on a branch with unmerged commits. Switch to main and merge first.
+
+### "Shallow clone detected. Fetching full history and tags..."
+The release script detected a shallow clone (e.g. CI with `fetch-depth: 1`). It automatically fetches full history and tags so git-cliff can generate a correct CHANGELOG. No action needed.
 
 ### "Version unchanged. Nothing to do."
 Already released this version today. If you need a same-day re-release, the script auto-increments the suffix (`v2026.5.14-1`, `v2026.5.14-2`, etc.) only if the base tag already exists. Check `cat TAG` to see current version.
