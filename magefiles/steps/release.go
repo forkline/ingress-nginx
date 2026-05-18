@@ -197,13 +197,14 @@ func updateStaticManifest() error {
 //	utils.Info("New Release: Tag %v, ID: %v", newRelease.TagName, newRelease.ID)
 //}
 
-// Returns a GitHub client ready for use
 func githubClient() *github.Client {
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: GITHUB_TOKEN},
 	)
 	oauthClient := oauth2.NewClient(ctx, ts)
-	return github.NewClient(oauthClient)
+	client, err := github.NewClient(github.WithHTTPClient(oauthClient))
+	utils.CheckIfError(err, "Error creating GitHub client")
+	return client
 }
 
 // LatestCommitLogs Retrieves the commit log between the latest two controller versions.
