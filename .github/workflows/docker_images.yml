@@ -71,12 +71,12 @@ jobs:
 
       - name: Publish controller images
         run: |
-          NGINX_TAG=$(cat images/nginx/TAG)
+          NGINX_VERSION=$(grep 'export NGINX_VERSION=' images/nginx/rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
           make \
             PLATFORMS="${{ env.IMAGE_ARCHES }}" \
             BUILDX_PLATFORMS="${{ env.IMAGE_PLATFORMS }}" \
             REGISTRY="${{ env.IMAGE_REGISTRY }}" \
-            BASE_IMAGE="${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_TAG}" \
+            BASE_IMAGE="${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_VERSION}" \
             TAG="${VERSION}" \
             release
 

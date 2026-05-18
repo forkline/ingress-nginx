@@ -52,7 +52,8 @@ for img in nginx kube-webhook-certgen test-runner cfssl custom-error-pages e2e-t
     echo "$TAG_VERSION" > "images/$img/TAG"
 done
 
-sed -i "s|ghcr.io/forkline/ingress-nginx/nginx:.*|ghcr.io/forkline/ingress-nginx/nginx:$NEW_VERSION|" NGINX_BASE
+NGINX_VERSION=$(grep 'export NGINX_VERSION=' images/nginx/rootfs/build.sh | sed "s/.*NGINX_VERSION=//")
+sed -i "s|ghcr.io/forkline/ingress-nginx/nginx:.*|ghcr.io/forkline/ingress-nginx/nginx:$NGINX_VERSION|" NGINX_BASE
 
 make update-version
 
