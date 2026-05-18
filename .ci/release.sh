@@ -1,7 +1,20 @@
 #!/bin/bash
 set -e
 
-if ! [ "$(git rev-list --count origin/main..HEAD)" -eq 0 ]; then
+ensure_full_history() {
+    if git rev-parse --is-shallow-repository 2>/dev/null | grep -q "true"; then
+        echo "Shallow clone detected. Fetching full history and tags..."
+        git fetch --unshallow --quiet
+    fi
+    if [ -z "$(git tag -l)" ]; then
+        echo "No tags found. Fetching tags..."
+        git fetch --tags --quiet
+    fi
+}
+
+ensure_full_history
+
+if ! [ "$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 1)" -eq 0 ]; then
     echo "There are commits in this branch. Please merge them first."
     echo "CHANGELOG template needs main commit ID."
     exit 1
@@ -39,7 +52,8 @@ for img in nginx kube-webhook-certgen test-runner cfssl custom-error-pages e2e-t
     echo "$TAG_VERSION" > "images/$img/TAG"
 done
 
-sed -i "s|ghcr.io/forkline/ingress-nginx/nginx:.*|ghcr.io/forkline/ingress-nginx/nginx:$NEW_VERSION|" NGINX_BASE
+NGINX_VERSION=$(grep 'export NGINX_VERSION=' images/nginx/rootfs/build.sh | sed "s/.*NGINX_VERSION=//")
+sed -i "s|ghcr.io/forkline/ingress-nginx/nginx:.*|ghcr.io/forkline/ingress-nginx/nginx:$NGINX_VERSION|" NGINX_BASE
 
 make update-version
 

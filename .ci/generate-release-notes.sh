@@ -8,6 +8,12 @@ NOTES_FILE="/tmp/release-notes.md"
 REGISTRY="ghcr.io/forkline/ingress-nginx"
 
 if [ -z "$PREV_VERSION" ]; then
+    if git rev-parse --is-shallow-repository 2>/dev/null | grep -q "true"; then
+        git fetch --unshallow --quiet 2>/dev/null || true
+    fi
+    if [ -z "$(git tag -l)" ]; then
+        git fetch --tags --quiet
+    fi
     PREV_VERSION=$(git tag --sort=-creatordate | grep -v "^${VERSION}$" | head -1)
 fi
 
