@@ -4,6 +4,42 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
+## [v2026.5.18](https://github.com/forkline/ingress-nginx/tree/v2026.5.18) - 2026-05-18
+
+### Fixed
+
+- Remove obsolete CVE-2025-23419 patch included in 1.30.1 (nginx)([362c07d](https://github.com/forkline/ingress-nginx/commit/362c07dc131440587d0e1130b80b8508f1095824))
+
+- Nginx image caching by NGINX version and multi-platform builds (ci)([1f8b3b8](https://github.com/forkline/ingress-nginx/commit/1f8b3b8e72b7b25e7e991f465b1ccc450d56aa1e))
+
+- Add yamllint config with 120 char line length (lint)([ffee14f](https://github.com/forkline/ingress-nginx/commit/ffee14f6550079df0477672aca75f82fff8d248f))
+
+- Ensure E2E runs on push to main (ci)([86871aa](https://github.com/forkline/ingress-nginx/commit/86871aafff6a312989b369d33744cc3ea53d1bf3))
+
+- Increase timeout to 360m in release images workflow (ci)([4a75adc](https://github.com/forkline/ingress-nginx/commit/4a75adcd9f0fbe9a1f3139afc067be0b36601cd4))
+
+- Quote make variables to prevent target parsing errors (ci)([3018ef5](https://github.com/forkline/ingress-nginx/commit/3018ef59ec82a0fc00a4244002d95cf9fab2f1ad))
+
+- Increase nginx build timeout to 360min for arm64 QEMU (ci)([db3de00](https://github.com/forkline/ingress-nginx/commit/db3de004016f6b8f6dd0e1d52c6b625c71e4a33a))
+
+- Pass TAG to kube-webhook-certgen publish step (#59) (release)([0df4c3d](https://github.com/forkline/ingress-nginx/commit/0df4c3ddf3ce5071ecf7e6f177511784b2d9ecef))
+
+- Strip v prefix from image TAG files([506fdd7](https://github.com/forkline/ingress-nginx/commit/506fdd7331d54f7688efcd79d42c752383229109))
+
+
+### Build
+
+- Update module github.com/google/go-github/v85 to v86 (#56) (deps)([18d8634](https://github.com/forkline/ingress-nginx/commit/18d8634ac4c2f6fbf7ac105fdb1ac56bc0c09d5e))
+
+- Update module google.golang.org/grpc to v1.81.1 (#60) (deps)([6eff2ca](https://github.com/forkline/ingress-nginx/commit/6eff2ca90719fed84413f1121f14f580b4e65c37))
+
+- Update google.golang.org/grpc/examples digest to 6602080 (#62) (deps)([671840a](https://github.com/forkline/ingress-nginx/commit/671840a6c2eb6b6bba8f957a3709b6dbc41c3dd9))
+
+- Update go modules (#63) (deps)([729178d](https://github.com/forkline/ingress-nginx/commit/729178de09f5a77c1bdba62b8708c8cd82922eab))
+
+
+
 ## [v2026.5.14](https://github.com/forkline/ingress-nginx/tree/v2026.5.14) - 2026-05-14
 
 ### Added
