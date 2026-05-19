@@ -59,6 +59,13 @@
       "matchDatasources": ["docker"],
       "versioning": "loose",
       "matchPackageNames": ["/debian/"]
+    },
+    {
+      "matchPackageNames": ["google.golang.org/grpc/examples"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "ignoreTests": false
     }
   ]
 }
