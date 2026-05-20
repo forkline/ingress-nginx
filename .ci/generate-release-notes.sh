@@ -30,7 +30,7 @@ fi
 
     echo "### Container Images"
     echo ""
-    echo "- \`${REGISTRY}/controller:${VERSION}\`"
+    echo "- \`${REGISTRY}/controller:${VERSION#v}\`"
 
     if [ -f images/nginx/TAG ]; then
         echo "- \`${REGISTRY}/nginx:$(cat images/nginx/TAG)\`"

@@ -1,6 +1,6 @@
 
 DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-E2E_BASE_IMAGE ?= "ghcr.io/forkline/ingress-nginx/e2e-test-runner:v2026.5.2"
+E2E_BASE_IMAGE ?= "ghcr.io/forkline/ingress-nginx/e2e-test-runner:2026.5.18"
 
 image:
 	echo "..entered Makefile in /test/e2e-image"
