@@ -16,6 +16,7 @@ name: E2E
 permissions:
   actions: write
   contents: read
+  packages: write
 
 concurrency:
   group: e2e-${{ github.ref }}
