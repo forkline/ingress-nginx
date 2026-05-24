@@ -3,11 +3,11 @@ set -e
 
 check_dependencies() {
     local missing=()
-    
+
     if ! command -v git-cliff &>/dev/null; then
         missing+=("git-cliff")
     fi
-    
+
     if ! command -v helm-docs &>/dev/null; then
         if [ -x "$(go env GOPATH 2>/dev/null)/bin/helm-docs" ]; then
             export PATH="$PATH:$(go env GOPATH)/bin"
@@ -15,7 +15,7 @@ check_dependencies() {
             missing+=("helm-docs")
         fi
     fi
-    
+
     if [ ${#missing[@]} -gt 0 ]; then
         echo "Error: Missing required dependencies:"
         for dep in "${missing[@]}"; do
