@@ -19,15 +19,33 @@ Use this skill when:
 Before releasing, verify:
 
 1. **Working tree is clean** — no uncommitted changes
-2. **You are on `main`** — releases only happen from main
+2. **Dependencies installed** — `git-cliff` and `helm-docs` are required
 3. **There are new commits** since the last tag worth releasing
 
 Check with:
 ```bash
 git status --short
-git rev-parse --abbrev-ref HEAD
+command -v git-cliff && command -v helm-docs || echo "Missing deps"
 git tag --sort=-creatordate | head -3
 git log --oneline <latest_tag>..HEAD
+```
+
+### Required Dependencies
+
+The release script now checks for these upfront and fails fast if missing:
+
+```bash
+# Install git-cliff (changelog generator from conventional commits)
+cargo install git-cliff
+
+# Install helm-docs (generates Helm chart README)
+go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest
+```
+
+**Note**: If `helm-docs` is installed via `go install`, it may be in `$(go env GOPATH)/bin` which isn't always in PATH. The release script auto-detects this, but you can also add it manually:
+
+```bash
+export PATH="$PATH:$(go env GOPATH)/bin"
 ```
 
 ## Release Process
@@ -96,12 +114,48 @@ All images are published for `linux/amd64` and `linux/arm64`.
 | Creating git tags manually | `auto-tag.yml` creates signed tags automatically | Just push to main |
 | Running from a feature branch | CHANGELOG generation needs main commit IDs | Checkout main first |
 | Releasing with dirty working tree | Script will fail or produce incomplete release | Commit or stash changes first |
+| Pushing directly to main when protected | Branch protection requires PR workflow | Create release branch and PR |
 | Worrying about shallow clones | Script auto-detects and fetches full history | Just run `.ci/release.sh` |
+| Running without git-cliff/helm-docs | Script will fail mid-process, leaving inconsistent state | Install deps first (script now checks upfront) |
+
+## Protected Branch Workflow
+
+If `main` is protected (requires PR):
+
+1. **Create release branch** from current HEAD:
+   ```bash
+   git checkout -b release/v2026.X.Y
+   ```
+
+2. **Run release script on the branch**:
+   ```bash
+   .ci/release.sh
+   ```
+
+3. **Push and create PR**:
+   ```bash
+   git push origin release/v2026.X.Y
+   git-api pr create --title "release: prepare v2026.X.Y" --body "..."
+   ```
+
+4. **After merge**, the auto-tag workflow triggers on `main`
+
+**Why PR workflow?** The release script needs to compute versions from `origin/main` commit history. Running on a branch that tracks `main` works correctly because:
+- `git rev-list --count origin/main..HEAD` returns 0 before the release commit
+- git-cliff correctly generates CHANGELOG from main's commit IDs
 
 ## Troubleshooting
 
 ### "There are commits in this branch. Please merge them first."
 You're on a branch with unmerged commits. Switch to main and merge first.
+
+### "Error: Missing required dependencies: git-cliff / helm-docs"
+The release script now checks for dependencies before making any changes. Install them:
+```bash
+cargo install git-cliff
+go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest
+export PATH="$PATH:$(go env GOPATH)/bin"  # if helm-docs not found
+```
 
 ### "Shallow clone detected. Fetching full history and tags..."
 The release script detected a shallow clone (e.g. CI with `fetch-depth: 1`). It automatically fetches full history and tags so git-cliff can generate a correct CHANGELOG. No action needed.
@@ -109,16 +163,28 @@ The release script detected a shallow clone (e.g. CI with `fetch-depth: 1`). It 
 ### "Version unchanged. Nothing to do."
 Already released this version today. If you need a same-day re-release, the script auto-increments the suffix (`v2026.5.14-1`, `v2026.5.14-2`, etc.) only if the base tag already exists. Check `cat TAG` to see current version.
 
+### "Protected branch update failed for refs/heads/main"
+The main branch requires PR workflow. Create a release branch instead:
+```bash
+git checkout -b release/v2026.X.Y
+.ci/release.sh
+git push origin release/v2026.X.Y
+git-api pr create --title "release: prepare v2026.X.Y" --body "..."
+```
+
+### Release script failed mid-process (before dependency check fix)
+Old versions of the script would update TAG/Chart.yaml then fail at git-cliff. Fix by:
+1. Resetting changes: `git checkout -- .`
+2. Installing missing dependencies
+3. Re-running `.ci/release.sh`
+
+**Current script**: Checks dependencies FIRST, fails fast before any changes.
+
 ### Auto-tag workflow didn't trigger
 Ensure:
 - The CHANGELOG.md has a new version entry as the first `## [v...]` heading
 - The tag doesn't already exist: `git tag -l | grep <version>`
 - The `PAT` and `GPG_PRIVATE_KEY` secrets are configured
-
-### git-cliff not installed
-```bash
-cargo install git-cliff
-```
 
 ## Key Files
 
