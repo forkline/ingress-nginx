@@ -94,7 +94,7 @@ helm-docs --chart-search-root charts
 echo "Updating README Supported Versions table..."
 CHART_VERSION="${NEW_VERSION#v}"
 NGINX_VERSION=$(grep 'export NGINX_VERSION=' images/nginx/rootfs/build.sh | sed "s/.*NGINX_VERSION=//")
-ALPINE_VERSION=$(grep '^FROM alpine:' images/nginx/rootfs/Dockerfile | head -1 | sed 's/.*alpine://')
+ALPINE_VERSION=$(grep '^FROM alpine:' images/nginx/rootfs/Dockerfile | head -1 | sed 's/.*alpine://' | sed 's/ .*//')
 K8S_VERSIONS=$(grep '|    ✅' README.md | head -1 | cut -d'|' -f4 | xargs)
 
 if [ -z "$K8S_VERSIONS" ]; then
