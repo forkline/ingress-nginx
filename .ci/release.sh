@@ -1,6 +1,34 @@
 #!/bin/bash
 set -e
 
+check_dependencies() {
+    local missing=()
+    
+    if ! command -v git-cliff &>/dev/null; then
+        missing+=("git-cliff")
+    fi
+    
+    if ! command -v helm-docs &>/dev/null; then
+        if [ -x "$(go env GOPATH 2>/dev/null)/bin/helm-docs" ]; then
+            export PATH="$PATH:$(go env GOPATH)/bin"
+        else
+            missing+=("helm-docs")
+        fi
+    fi
+    
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo "Error: Missing required dependencies:"
+        for dep in "${missing[@]}"; do
+            echo "  - $dep"
+        done
+        echo ""
+        echo "Install with:"
+        echo "  cargo install git-cliff"
+        echo "  go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest"
+        exit 1
+    fi
+}
+
 ensure_full_history() {
     if git rev-parse --is-shallow-repository 2>/dev/null | grep -q "true"; then
         echo "Shallow clone detected. Fetching full history and tags..."
@@ -12,6 +40,7 @@ ensure_full_history() {
     fi
 }
 
+check_dependencies
 ensure_full_history
 
 if ! [ "$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 1)" -eq 0 ]; then

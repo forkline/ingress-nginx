@@ -4,6 +4,42 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.5.24](https://github.com/forkline/ingress-nginx/tree/v2026.5.24) - 2026-05-24
+
+### Fixed
+
+- Remove v prefix from container image tags in release notes([39dceba](https://github.com/forkline/ingress-nginx/commit/39dcebadfedfd296012f2a8ad73ecb5ddf356876))
+
+- Update go-github import paths from v87 to v88 (deps)([4e52d9e](https://github.com/forkline/ingress-nginx/commit/4e52d9ed9cea60e034b7cd369c21e11c3107176a))
+
+- Update NGINX_BASE to match NGINX_VERSION 1.31.0([95f504f](https://github.com/forkline/ingress-nginx/commit/95f504fbcea7ef00659fb7b45fdae4a7b8b98bf9))
+
+- Remove Docker Hub tag from buildx push in e2e workflow([63e26f5](https://github.com/forkline/ingress-nginx/commit/63e26f5978bf06cfa54223d334c2bb561a5dbdfa))
+
+
+### Build
+
+- Update module github.com/google/go-github/v86 to v87 (#65) (deps)([9d440ec](https://github.com/forkline/ingress-nginx/commit/9d440ecfb312119e547e8fedb5fe9160a1de238b))
+
+- Update google.golang.org/grpc/examples digest to bb023f8 (deps)([9834ed9](https://github.com/forkline/ingress-nginx/commit/9834ed9788f538dcb06640d36dee45dbc7ae1a60))
+
+- Enable automerge for google.golang.org/grpc/examples (deps)([2de964c](https://github.com/forkline/ingress-nginx/commit/2de964cb6262824d5321d95bb9c1802ba608ff30))
+
+- Update google.golang.org/grpc/examples digest to 4ee6ac4 (#70) (deps)([67c28ab](https://github.com/forkline/ingress-nginx/commit/67c28abc8b85d01a835bb455960fc2358b60d2d5))
+
+- Update google.golang.org/grpc/examples digest to 037c6ef (#72) (deps)([f7c373a](https://github.com/forkline/ingress-nginx/commit/f7c373a3bd98a6093e2b82bb7d060116df37a29c))
+
+- Update go modules (deps)([c66bf96](https://github.com/forkline/ingress-nginx/commit/c66bf9652cd0ecaa5708fd6c1e2a987472505069))
+
+- Update module github.com/google/go-github/v87 to v88 (deps)([64faa7b](https://github.com/forkline/ingress-nginx/commit/64faa7bea260919c5085f2881abe10bfa9c1f6de))
+
+- Update google.golang.org/grpc/examples digest to db35da8 (#76) (deps)([ba9f0f9](https://github.com/forkline/ingress-nginx/commit/ba9f0f92169887a8d4d5f9dd1e58351ef4e84637))
+
+- Update dependency nginx/nginx to v1.31.0 (deps)([f5a2f2b](https://github.com/forkline/ingress-nginx/commit/f5a2f2bde92e9f192e3e5167de026f0bbeb62c50))
+
+- Update dependency nginx/nginx to v1.31.1 (deps)([320ffc1](https://github.com/forkline/ingress-nginx/commit/320ffc11240a7e97faed36e134a0677fdfde76e2))
+
+
 
 ## [v2026.5.18](https://github.com/forkline/ingress-nginx/tree/v2026.5.18) - 2026-05-18
 
