@@ -26,6 +26,7 @@ jobs:
   changes:
     name: Detect E2E changes
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: github.event_name == 'pull_request'
     outputs:
       e2e: ${{ steps.filter.outputs.e2e }}
@@ -52,6 +53,7 @@ jobs:
   build:
     name: Build test images
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: [changes]
     if: always() && (github.event_name != 'pull_request' || needs.changes.outputs.e2e == 'true')
     steps:
@@ -203,6 +205,7 @@ jobs:
   chart-test:
     name: Chart e2e
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: [changes, build]
     if: >-
       always() && (github.event_name != 'pull_request' ||
@@ -230,6 +233,7 @@ jobs:
   kubernetes:
     name: Kubernetes
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     needs: [changes, build]
     if: >-
       always() && (github.event_name != 'pull_request' ||
@@ -293,6 +297,7 @@ jobs:
   kubernetes-chroot:
     name: Kubernetes chroot
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     needs: [changes, build]
     if: >-
       always() && github.event_name != 'pull_request' &&
@@ -371,6 +376,7 @@ jobs:
   e2e-checks-passed:
     name: E2E checks passed
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [changes, build, chart-test, kubernetes]
     if: >-
       always()
