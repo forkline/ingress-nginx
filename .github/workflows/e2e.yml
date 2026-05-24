@@ -106,6 +106,7 @@ jobs:
               --platform linux/amd64,linux/arm64 \
               rootfs \
               --tag ${NGINX_IMAGE} \
+              --tag ingress-nginx/nginx:${TAGNGINX} \
               --push
             echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
           fi
