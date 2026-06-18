@@ -70,7 +70,9 @@ func setupLeaderElection(config *leaderElectionConfig) {
 		},
 		OnStoppedLeading: func() {
 			klog.V(2).InfoS("I am not leader anymore")
-			close(stopCh)
+			if stopCh != nil {
+				close(stopCh)
+			}
 
 			// cancel the context
 			cancelContext()
