@@ -23,8 +23,8 @@ import (
 	"strings"
 	"time"
 
-	"k8s.io/ingress-nginx/test/e2e/framework/httpexpect"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/ingress-nginx/test/e2e/framework/httpexpect"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/stretchr/testify/assert"
