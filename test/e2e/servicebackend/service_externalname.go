@@ -323,7 +323,7 @@ var _ = framework.IngressNginxDescribe("[Service] Type ExternalName", func() {
 		framework.Sleep()
 
 		var newBody string
-		err = wait.PollUntilContextTimeout(context.Background(), 1*time.Second, 30*time.Second, true, func(ctx context.Context) (bool, error) {
+		err = wait.PollUntilContextTimeout(context.Background(), 1*time.Second, 30*time.Second, true, func(_ context.Context) (bool, error) {
 			resp := f.HTTPTestClient().
 				GET("/get").
 				WithHeader("Host", host).
