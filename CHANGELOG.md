@@ -4,6 +4,93 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.6.18](https://github.com/forkline/ingress-nginx/tree/v2026.6.18) - 2026-06-18
+
+### Fixed
+
+- Add timeouts to E2E workflow jobs (#79) (ci)([f4d2346](https://github.com/forkline/ingress-nginx/commit/f4d23469e849a05c41995faed298dac7dc21fe84))
+
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.201.1 (pre-commit)([8cbda2b](https://github.com/forkline/ingress-nginx/commit/8cbda2b81db410ef1c88791c1a44b92731e2567b))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.203.0 (pre-commit)([44e2b6e](https://github.com/forkline/ingress-nginx/commit/44e2b6e92dd8dfa5dd071f01f20499add7583ec1))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.205.0 (pre-commit)([6bb84e8](https://github.com/forkline/ingress-nginx/commit/6bb84e86b6df576bb7a7f52ffba99056bcfb7c9b))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.205.1 (#87) (pre-commit)([ef165f6](https://github.com/forkline/ingress-nginx/commit/ef165f65d5774b7d17ec0c6a514b16c3c0567e93))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.205.2 (#88) (pre-commit)([fe7364f](https://github.com/forkline/ingress-nginx/commit/fe7364f6ed2441dd0ec737a28dd59c18889ae4f7))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.209.1 (pre-commit)([f274c70](https://github.com/forkline/ingress-nginx/commit/f274c70277496fab9c85c26ede7103d1b2a11684))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.209.2 (#92) (pre-commit)([0e0b1e6](https://github.com/forkline/ingress-nginx/commit/0e0b1e656bd5a9077104ee76bf4f5721897447b4))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.209.3 (#94) (pre-commit)([e5ec324](https://github.com/forkline/ingress-nginx/commit/e5ec324f6db2ab4a6a8a525893801278138cfd2f))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.209.5 (#95) (pre-commit)([0b51a3b](https://github.com/forkline/ingress-nginx/commit/0b51a3b22e3a07669aba7ca9e03a66284102aa10))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.213.0 (pre-commit)([3d01d76](https://github.com/forkline/ingress-nginx/commit/3d01d7667c48a24ce4e0d65eeb5184daa369b530))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.213.2 (#99) (pre-commit)([388b011](https://github.com/forkline/ingress-nginx/commit/388b0115f2a07873b34f427b5438b402ad06003f))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.213.3 (#101) (pre-commit)([2332eec](https://github.com/forkline/ingress-nginx/commit/2332eec21416c52baac34491a3e8b8b113631da0))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.214.2 (pre-commit)([1589518](https://github.com/forkline/ingress-nginx/commit/1589518ffae0f978584f22b0051d183f15551e2a))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.214.3 (#104) (pre-commit)([aec2336](https://github.com/forkline/ingress-nginx/commit/aec23362527ab0e135a95c01e1074fdd9ca50978))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.214.4 (#105) (pre-commit)([d8ec1a5](https://github.com/forkline/ingress-nginx/commit/d8ec1a5917fcee4fb39f7c58d05e858f1e6bb577))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.214.5 (#106) (pre-commit)([8382012](https://github.com/forkline/ingress-nginx/commit/83820122cb79ba39679e6291dd8ccd04270609e0))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.214.6 (#107) (pre-commit)([27ff615](https://github.com/forkline/ingress-nginx/commit/27ff61591bb7f1330d549700144e1c2d3f270ebc))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.222.0 (pre-commit)([0548ce9](https://github.com/forkline/ingress-nginx/commit/0548ce90bb1d39edb2bfe0e402a9f22858b4e435))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.222.1 (#113) (pre-commit)([1687954](https://github.com/forkline/ingress-nginx/commit/1687954563d4ddece37f5d5f006900f05f3843cd))
+
+
+### Build
+
+- Update google.golang.org/grpc/examples digest to 18a8d3d (#80) (deps)([9f1e9ca](https://github.com/forkline/ingress-nginx/commit/9f1e9ca950db1de4bed77f7086603c13f2e4d5f4))
+
+- Update google.golang.org/grpc/examples digest to 761e655 (#81) (deps)([5593f47](https://github.com/forkline/ingress-nginx/commit/5593f471744f207ee2e53b1c277f79c260e6043c))
+
+- Update google.golang.org/grpc/examples digest to b58f32d (#82) (deps)([0959a22](https://github.com/forkline/ingress-nginx/commit/0959a22ad2fd5fcf44f75b747a0279f40265af95))
+
+- Update module github.com/prometheus/common to v0.68.0 (deps)([70f42ba](https://github.com/forkline/ingress-nginx/commit/70f42baa75e798751c554c3e859f2788d6e95fc3))
+
+- Update google.golang.org/grpc/examples digest to 57c9ff1 (#89) (deps)([18cb882](https://github.com/forkline/ingress-nginx/commit/18cb8826110b145d3b5acaef94937af375cf5ff5))
+
+- Update google.golang.org/grpc/examples digest to adc97de (#91) (deps)([9b17d81](https://github.com/forkline/ingress-nginx/commit/9b17d8170f4bbe6d190d8d62e51309e6ee4cb821))
+
+- Update go modules to v0.68.1 (#93) (deps)([ec9aea3](https://github.com/forkline/ingress-nginx/commit/ec9aea3e15be1c9e27f99b6f22ae99d88d86017f))
+
+- Update go modules to 91dd64f (#96) (deps)([f07bd38](https://github.com/forkline/ingress-nginx/commit/f07bd38e6915ab2c22936ee13ffb2ae4deef0bff))
+
+- Update go modules to fef07fb (#98) (deps)([c7a3615](https://github.com/forkline/ingress-nginx/commit/c7a361569128329514303f7894864fdaa2bae7d4))
+
+- Update go modules to 0f3086d (#100) (deps)([0a1e9c9](https://github.com/forkline/ingress-nginx/commit/0a1e9c9cdb96650578e74e5e3b5841b5a43ea238))
+
+- Update go modules to cd25711 (#108) (deps)([6e7671d](https://github.com/forkline/ingress-nginx/commit/6e7671d22e8467e85585a776b16007869bbde0f6))
+
+- Update dependency helm to v4.2.1 (#112) (deps)([b7ef1d1](https://github.com/forkline/ingress-nginx/commit/b7ef1d15eb166e3cb6758b8c4dc1fa8a09fdd0a4))
+
+- Update github actions to v7 (deps)([f532336](https://github.com/forkline/ingress-nginx/commit/f53233660826cf925c87cfbc9fa5054a7a702f30))
+
+- Update docker images to v3.24.0 (deps)([5cb7fd8](https://github.com/forkline/ingress-nginx/commit/5cb7fd8c912aa63fc9e835d2d59601806bb25b71))
+
+- Update go modules (deps)([d886d78](https://github.com/forkline/ingress-nginx/commit/d886d789bce4126b5aef16565c05f1a094fa8a93))
+
+- Update docker images to v3.24.1 (#115) (deps)([ae57062](https://github.com/forkline/ingress-nginx/commit/ae57062959e6e2a979591580f99ea0b1362bbd6e))
+
+- Update dependency helm to v4.2.2 (#118) (deps)([5c84cfd](https://github.com/forkline/ingress-nginx/commit/5c84cfdf6e58bd4da858bc1b6c3d25d520dd296c))
+
+- Update dependency nginx/nginx to v1.31.2 (#116) (deps)([938b9a5](https://github.com/forkline/ingress-nginx/commit/938b9a56301d04c2bcd8eeebcb1e6a349e6cf676))
+
+
 ## [v2026.5.24](https://github.com/forkline/ingress-nginx/tree/v2026.5.24) - 2026-05-24
 
 ### Fixed
