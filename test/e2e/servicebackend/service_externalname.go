@@ -21,8 +21,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"k8s.io/ingress-nginx/test/e2e/framework/httpexpect"
+	"k8s.io/apimachinery/pkg/util/wait"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/stretchr/testify/assert"
@@ -320,15 +322,21 @@ var _ = framework.IngressNginxDescribe("[Service] Type ExternalName", func() {
 
 		framework.Sleep()
 
-		body = f.HTTPTestClient().
-			GET("/get").
-			WithHeader("Host", host).
-			Expect().
-			Status(http.StatusOK).
-			Body().
-			Raw()
+		var newBody string
+		err = wait.PollUntilContextTimeout(context.Background(), 1*time.Second, 30*time.Second, true, func(ctx context.Context) (bool, error) {
+			resp := f.HTTPTestClient().
+				GET("/get").
+				WithHeader("Host", host).
+				Expect()
+			if resp.Raw().StatusCode == http.StatusOK {
+				newBody = resp.Body().Raw()
+				return true, nil
+			}
+			return false, nil
+		})
+		assert.Nil(ginkgo.GinkgoT(), err, "expected request to succeed after service update")
 
-		assert.Contains(ginkgo.GinkgoT(), body, `"X-Forwarded-Host": "echo"`)
+		assert.Contains(ginkgo.GinkgoT(), newBody, `"X-Forwarded-Host": "echo"`)
 
 		ginkgo.By("checking the service is updated to use new host")
 		dbgCmd := "/dbg backends all"
