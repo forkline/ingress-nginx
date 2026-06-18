@@ -31,7 +31,7 @@ jobs:
     outputs:
       e2e: ${{ steps.filter.outputs.e2e }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2
       - uses: dorny/paths-filter@v4
@@ -58,7 +58,7 @@ jobs:
     if: always() && (github.event_name != 'pull_request' || needs.changes.outputs.e2e == 'true')
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Read Go version
         run: echo "GOLANG_VERSION=$(cat GOLANG_VERSION)" >> "$GITHUB_ENV"
@@ -213,7 +213,7 @@ jobs:
       needs.changes.outputs.e2e == 'true') && needs.build.result == 'success'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download image cache
         uses: actions/download-artifact@v8
@@ -241,7 +241,7 @@ jobs:
       needs.changes.outputs.e2e == 'true') && needs.build.result == 'success'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download image cache
         uses: actions/download-artifact@v8
@@ -307,7 +307,7 @@ jobs:
       needs.build.result == 'success'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download image cache
         uses: actions/download-artifact@v8
