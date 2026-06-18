@@ -650,6 +650,7 @@ func (n *NGINXController) testTemplate(cfg []byte) error {
 		return err
 	}
 	defer tmpfile.Close()
+	defer os.Remove(tmpfile.Name())
 	err = os.WriteFile(tmpfile.Name(), cfg, file.ReadWriteByUser)
 	if err != nil {
 		return err
@@ -667,7 +668,6 @@ Error: %v
 		return errors.New(oe)
 	}
 
-	os.Remove(tmpfile.Name())
 	return nil
 }
 
