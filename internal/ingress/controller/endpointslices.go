@@ -95,7 +95,7 @@ func getEndpointsFromSlices(s *corev1.Service, port *corev1.ServicePort, proto c
 			ports = append(ports, port.TargetPort.IntVal)
 		} else {
 			for _, epPort := range eps.Ports {
-				if !reflect.DeepEqual(*epPort.Protocol, proto) {
+				if epPort.Protocol == nil || !reflect.DeepEqual(*epPort.Protocol, proto) {
 					continue
 				}
 				var targetPort int32
