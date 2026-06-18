@@ -108,7 +108,6 @@ jobs:
               --platform linux/amd64,linux/arm64 \
               rootfs \
               --tag ${NGINX_IMAGE} \
-              --tag ingress-nginx/nginx:${TAGNGINX} \
               --cache-from type=gha \
               --cache-to type=gha,mode=max \
               --push
