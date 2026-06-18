@@ -151,6 +151,9 @@ type Configuration struct {
 
 func getIngressPodZone(svc *apiv1.Service) string {
 	svcKey := k8s.MetaNamespaceKey(svc)
+	if k8s.IngressNodeDetails == nil {
+		return emptyZone
+	}
 	if svcZoneAnnotation, ok := svc.ObjectMeta.GetAnnotations()[apiv1.AnnotationTopologyMode]; ok {
 		if strings.EqualFold(svcZoneAnnotation, "auto") {
 			if foundZone, ok := k8s.IngressNodeDetails.GetLabels()[apiv1.LabelTopologyZone]; ok {
