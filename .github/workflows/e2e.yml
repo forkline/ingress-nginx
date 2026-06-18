@@ -53,7 +53,7 @@ jobs:
   build:
     name: Build test images
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 300
     needs: [changes]
     if: always() && (github.event_name != 'pull_request' || needs.changes.outputs.e2e == 'true')
     steps:
@@ -108,7 +108,8 @@ jobs:
               --platform linux/amd64,linux/arm64 \
               rootfs \
               --tag ${NGINX_IMAGE} \
-              --tag ingress-nginx/nginx:${TAGNGINX} \
+              --cache-from type=gha \
+              --cache-to type=gha,mode=max \
               --push
             echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
           fi
