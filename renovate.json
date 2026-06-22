@@ -28,12 +28,17 @@
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["patch"],
+      "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true,
-      "ignoreTests": false,
-      "matchPackageNames": ["/.*/"]
+      "ignoreTests": false
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["nginx"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
     },
     {
       "matchManagers": ["gomod"],
