@@ -85,7 +85,9 @@ func main() {
 
 	mux := http.NewServeMux()
 	metrics.RegisterHealthz(nginx.HealthPath, mux)
-	metrics.RegisterMetrics(reg, mux)
+	if conf.EnableMetrics {
+		metrics.RegisterMetrics(reg, mux)
+	}
 
 	go metrics.StartHTTPServer(conf.HealthCheckHost, conf.ListenPorts.Health, mux)
 	go ngx.Start()
