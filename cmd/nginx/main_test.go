@@ -19,6 +19,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,6 +28,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -37,6 +40,7 @@ import (
 	"k8s.io/ingress-nginx/internal/k8s"
 	"k8s.io/ingress-nginx/internal/nginx"
 	ingressflags "k8s.io/ingress-nginx/pkg/flags"
+	"k8s.io/ingress-nginx/pkg/metrics"
 	"k8s.io/ingress-nginx/pkg/util/file"
 	"k8s.io/ingress-nginx/pkg/util/process"
 )
@@ -223,6 +227,84 @@ func TestCheckServiceErrorClassification(t *testing.T) {
 
 			if !strings.Contains(result.Error(), tt.expectMsg) {
 				t.Errorf("expected error containing %q, got %q", tt.expectMsg, result.Error())
+			}
+		})
+	}
+}
+
+func TestMetricsEndpointRegistration(t *testing.T) {
+	tests := []struct {
+		name           string
+		enableMetrics  bool
+		expectMetrics  bool
+	}{
+		{
+			name:          "metrics enabled",
+			enableMetrics: true,
+			expectMetrics: true,
+		},
+		{
+			name:          "metrics disabled",
+			enableMetrics: false,
+			expectMetrics: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			reg := prometheus.NewRegistry()
+			mux := http.NewServeMux()
+
+			metrics.RegisterHealthz(nginx.HealthPath, mux)
+			if tt.enableMetrics {
+				metrics.RegisterMetrics(reg, mux)
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/metrics", nil)
+			w := httptest.NewRecorder()
+			mux.ServeHTTP(w, req)
+
+			if tt.expectMetrics && w.Code != http.StatusOK {
+				t.Errorf("expected /metrics to be registered (status %d), got %d", http.StatusOK, w.Code)
+			}
+			if !tt.expectMetrics && w.Code != http.StatusNotFound {
+				t.Errorf("expected /metrics to NOT be registered (status %d), got %d", http.StatusNotFound, w.Code)
+			}
+		})
+	}
+}
+
+func TestHealthzEndpointAlwaysAvailable(t *testing.T) {
+	tests := []struct {
+		name          string
+		enableMetrics bool
+	}{
+		{
+			name:          "healthz available when metrics enabled",
+			enableMetrics: true,
+		},
+		{
+			name:          "healthz available when metrics disabled",
+			enableMetrics: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			reg := prometheus.NewRegistry()
+			mux := http.NewServeMux()
+
+			metrics.RegisterHealthz(nginx.HealthPath, mux)
+			if tt.enableMetrics {
+				metrics.RegisterMetrics(reg, mux)
+			}
+
+			req := httptest.NewRequest(http.MethodGet, nginx.HealthPath, nil)
+			w := httptest.NewRecorder()
+			mux.ServeHTTP(w, req)
+
+			if w.Code != http.StatusOK {
+				t.Errorf("expected /healthz to always be available (status %d), got %d", http.StatusOK, w.Code)
 			}
 		})
 	}
