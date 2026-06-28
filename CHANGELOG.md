@@ -4,6 +4,81 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.6.28](https://github.com/forkline/ingress-nginx/tree/v2026.6.28) - 2026-06-28
+
+### Fixed
+
+- Automerge minor updates, block nginx major automerge (renovate)([42151ca](https://github.com/forkline/ingress-nginx/commit/42151ca58e9ed0156916a3da8dee71752bd9710b))
+
+- Prevent metrics endpoint exposure when disabled([e50c0a4](https://github.com/forkline/ingress-nginx/commit/e50c0a4b9ae90adc8d72673009feeaf05798215c))
+
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.227.0 (pre-commit)([a33ac78](https://github.com/forkline/ingress-nginx/commit/a33ac78fd79e23f4f18b932c342a92168ce406b4))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.234.0 (pre-commit)([a4ba694](https://github.com/forkline/ingress-nginx/commit/a4ba6943d192a01b6983b179395954bbc44f1635))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.234.2 (#123) (pre-commit)([bdb74c6](https://github.com/forkline/ingress-nginx/commit/bdb74c645cf452c8857ab8ddcc7de4abaeb3cafc))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.235.1 (pre-commit)([ff93a59](https://github.com/forkline/ingress-nginx/commit/ff93a599e24fa7418d554a405ea6cb818e7c6de7))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.235.2 (#126) (pre-commit)([056f216](https://github.com/forkline/ingress-nginx/commit/056f216828088c4a9ead922dc32465f308f6efb6))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.236.0 (#127) (pre-commit)([8039f38](https://github.com/forkline/ingress-nginx/commit/8039f38547e7542464f2f8dd9f83433656c77109))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.237.1 (#128) (pre-commit)([98f934b](https://github.com/forkline/ingress-nginx/commit/98f934b17f3778fd9640ba914d58bce741a11484))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.239.0 (#129) (pre-commit)([c591b1f](https://github.com/forkline/ingress-nginx/commit/c591b1f01513fd6b94fd6a3264cfa1bd1f87a534))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.240.0 (#132) (pre-commit)([a7187d2](https://github.com/forkline/ingress-nginx/commit/a7187d222d8db639c1864f88a7745e1b62ab9915))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.241.2 (#133) (pre-commit)([ff5f229](https://github.com/forkline/ingress-nginx/commit/ff5f2290093eb5a6282726d795c0676229e7ba27))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.242.0 (#134) (pre-commit)([40c2c45](https://github.com/forkline/ingress-nginx/commit/40c2c4537ed79c106e0f83ed6ed1dae2496f1476))
+
+- Update pre-commit hook alessandrojcm/commitlint-pre-commit-hook to v9.26.0 (#136) (pre-commit)([8511621](https://github.com/forkline/ingress-nginx/commit/8511621fe14e512052b4f1e3738227be9d8d9cf3))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.242.2 (#137) (pre-commit)([81277eb](https://github.com/forkline/ingress-nginx/commit/81277eb53b230607b5af576e8b91b02bae1dc3ca))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.243.1 (#139) (pre-commit)([a762cba](https://github.com/forkline/ingress-nginx/commit/a762cba341947ab7205a18f0862e4892751a1086))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.243.2 (#141) (pre-commit)([9566ad9](https://github.com/forkline/ingress-nginx/commit/9566ad95c6f240496e5cda24cee763a5034c67a5))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.244.1 (#143) (pre-commit)([67fceeb](https://github.com/forkline/ingress-nginx/commit/67fceeba8863977d66baf22268772a6906a0b69a))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.244.2 (#144) (pre-commit)([a002808](https://github.com/forkline/ingress-nginx/commit/a0028087ff9931a5f46de4225e9103ffc7f1158e))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.244.3 (#145) (pre-commit)([a451916](https://github.com/forkline/ingress-nginx/commit/a4519166aba9e814144e8e7ed90f7f868713d56f))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.244.4 (#146) (pre-commit)([43d5600](https://github.com/forkline/ingress-nginx/commit/43d56001ec15a2f007906f656303c91d7c0ab5f6))
+
+- Update pre-commit hook renovatebot/pre-commit-hooks to v43.245.0 (#147) (pre-commit)([4004b91](https://github.com/forkline/ingress-nginx/commit/4004b9195e77d9f54ff662c229ce3e0d54537d6e))
+
+
+### Build
+
+- Update github actions to v7 (deps)([16ff6cb](https://github.com/forkline/ingress-nginx/commit/16ff6cb0d7369e686c1373e0176de4fad6bc77b7))
+
+- Update go modules (deps)([2fa2ebf](https://github.com/forkline/ingress-nginx/commit/2fa2ebff4a21671e62d200d772fcb01d2215a568))
+
+- Update go modules to 8d66cfc (#122) (deps)([48ba59d](https://github.com/forkline/ingress-nginx/commit/48ba59d053dbdffd27f908b604b096f4baf645b5))
+
+- Update go modules (deps)([a8c83e5](https://github.com/forkline/ingress-nginx/commit/a8c83e55d3e8a97094404114a6d4c087b7289167))
+
+- Update github actions (deps)([60f714c](https://github.com/forkline/ingress-nginx/commit/60f714c377260ff570386e98b1cc815eb4bad61f))
+
+- Update github actions (#131) (deps)([20831fb](https://github.com/forkline/ingress-nginx/commit/20831fbc2051a95a198f5317a236e52fcb5b7afc))
+
+- Update go modules (#135) (deps)([ca935cc](https://github.com/forkline/ingress-nginx/commit/ca935cc9b58268f0b7af69f43fc2a61dea2410eb))
+
+- Update google.golang.org/grpc/examples digest to 83728f5 (#138) (deps)([5ef777f](https://github.com/forkline/ingress-nginx/commit/5ef777f5657a5ce15012c81a04bdac83e000a1e8))
+
+- Update google.golang.org/grpc/examples digest to d74861e (#140) (deps)([dcf82a5](https://github.com/forkline/ingress-nginx/commit/dcf82a5b34b4eb0449f0146bf2c4e9e359041952))
+
+- Update k8s.io/utils digest to be93311 (deps)([3c8aeb2](https://github.com/forkline/ingress-nginx/commit/3c8aeb2ebf7a9829691b6d289a2a8ed45aa50f62))
+
+
 ## [v2026.6.18](https://github.com/forkline/ingress-nginx/tree/v2026.6.18) - 2026-06-18
 
 ### Fixed
