@@ -147,7 +147,9 @@ func main() {
 
 	mux := http.NewServeMux()
 	metrics.RegisterHealthz(nginx.HealthPath, mux, ngx)
-	metrics.RegisterMetrics(reg, mux)
+	if conf.EnableMetrics {
+		metrics.RegisterMetrics(reg, mux)
+	}
 
 	_, errExists := os.Stat("/chroot")
 	if errExists == nil {
