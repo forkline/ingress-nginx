@@ -67,7 +67,7 @@ var _ = framework.DescribeAnnotation("from-to-www-redirect", func() {
 
 		ginkgo.By("setting up server for redirect from www")
 
-		fromHost := fmt.Sprintf("%s.nip.io", f.GetNginxIP())
+		fromHost := fmt.Sprintf("%s.sslip.io", f.GetNginxIP())
 		toHost := fmt.Sprintf("www.%s", fromHost)
 
 		annotations := map[string]string{
