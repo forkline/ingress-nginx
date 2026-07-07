@@ -40,7 +40,7 @@ const SlowEchoService = "slow-echo"
 // HTTPBunService name of the deployment for the httpbun app
 const HTTPBunService = "httpbun"
 
-// NipService name of external service using nip.io
+// NipService name of external service using sslip.io
 const NIPService = "external-nip"
 
 // HTTPBunImage is the default image that is used to deploy HTTPBun with the framework
@@ -160,7 +160,7 @@ func (f *Framework) NewEchoDeployment(opts ...func(*deploymentOptions)) {
 
 // BuildNIPHost used to generate a nip host for DNS resolving
 func BuildNIPHost(ip string) string {
-	return fmt.Sprintf("%s.nip.io", ip)
+	return fmt.Sprintf("%s.sslip.io", ip)
 }
 
 // GetNipHost used to generate a nip host for external DNS resolving
@@ -169,7 +169,7 @@ func (f *Framework) GetNIPHost() string {
 	return BuildNIPHost(f.HTTPBunIP)
 }
 
-// BuildNIPExternalNameService used to generate a service pointing to nip.io to
+// BuildNIPExternalNameService used to generate a service pointing to sslip.io to
 // help resolve to an IP address
 func BuildNIPExternalNameService(f *Framework, ip, portName string) *corev1.Service {
 	return &corev1.Service{
