@@ -135,7 +135,7 @@ jobs:
 
       - name: Set up Go
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version: ${{ env.GOLANG_VERSION }}
           check-latest: true
