@@ -54,7 +54,7 @@ jobs:
           git --no-pager log --pretty=format:%H "${BASE_REF}..HEAD" | \
             while read commit; do
             MSG=$(git show --no-patch --format=%B "$commit")
-            if [[ "$MSG" =~ ^pre-commit: ]]; then
+            if [[ "$MSG" =~ ^chore\(pre-commit\): ]]; then
               echo "Skipping commitlint for Renovate pre-commit update: $commit"
               continue
             fi
