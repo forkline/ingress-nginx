@@ -438,11 +438,25 @@ Include /etc/nginx/owasp-modsecurity-crs/rules/RESPONSE-980-CORRELATION.conf
 Include /etc/nginx/owasp-modsecurity-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
 " > /etc/nginx/owasp-modsecurity-crs/nginx-modsecurity.conf
 
+# apply patches to third-party modules
+for PATCH in `ls /patches`;do
+  if [[ "$PATCH" == 35_ngx_devel_kit* ]]; then
+    echo "Applying NDK patch: $PATCH"
+    cd "$BUILD_PATH/ngx_devel_kit" && patch -p1 < /patches/$PATCH
+  elif [[ "$PATCH" == 36_set-misc* ]]; then
+    echo "Applying set-misc patch: $PATCH"
+    cd "$BUILD_PATH/set-misc-nginx-module" && patch -p1 < /patches/$PATCH
+  fi
+done
+
 # build nginx
 cd "$BUILD_PATH/nginx-$NGINX_VERSION"
 
 # apply nginx patches
 for PATCH in `ls /patches`;do
+  if [[ "$PATCH" == 35_ngx_devel_kit* || "$PATCH" == 36_set-misc* ]]; then
+    continue
+  fi
   echo "Patch: $PATCH"
   if [[ "$PATCH" == *.txt ]]; then
     patch -p0 < /patches/$PATCH
