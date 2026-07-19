@@ -23,6 +23,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -32,6 +33,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	networking "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 
 	"k8s.io/ingress-nginx/test/e2e/framework"
 )
@@ -429,6 +431,8 @@ http {
 				//nolint:goconst //server_name is a constant
 				return strings.Contains(server, fmt.Sprintf(`server_name "%v"`, host))
 			})
+
+			waitForAuthEndpoint(f, host)
 		})
 
 		ginkgo.It("user retains cookie by default", func() {
@@ -490,6 +494,8 @@ http {
 			f.WaitForNginxServer(host, func(server string) bool {
 				return strings.Contains(server, `server_name "auth"`)
 			})
+
+			waitForAuthEndpoint(f, host)
 		})
 
 		ginkgo.It("should return status code 200 when signed in", func() {
@@ -789,6 +795,8 @@ http {
 			}
 
 			framework.Sleep()
+
+			waitForAuthEndpoint(f, thisHost)
 		})
 
 		ginkgo.It("should return status code 200 when signed in after auth backend is deleted ", func() {
@@ -953,4 +961,26 @@ func buildMapSecret(username, password, name, namespace string) *corev1.Secret {
 		},
 		Type: corev1.SecretTypeOpaque,
 	}
+}
+
+// waitForAuthEndpoint polls the given host until the ingress returns a valid HTTP response.
+// This helps reduce flakiness from auth backend readiness timing.
+func waitForAuthEndpoint(f *framework.Framework, host string) {
+	nginxURL := f.GetURL(framework.HTTP)
+	//nolint:staticcheck // TODO: will replace it since wait.Poll is deprecated
+	err := wait.Poll(framework.Poll, framework.DefaultTimeout, func() (bool, error) {
+		req, reqErr := http.NewRequest(http.MethodGet, nginxURL+"/", nil)
+		if reqErr != nil {
+			return false, nil
+		}
+		req.Host = host
+		resp, doErr := http.DefaultClient.Do(req)
+		if doErr != nil {
+			return false, nil
+		}
+		defer resp.Body.Close()
+		return true, nil
+	})
+	assert.Nil(ginkgo.GinkgoT(), err, "waiting for auth endpoint to be reachable")
+	time.Sleep(1 * time.Second)
 }
