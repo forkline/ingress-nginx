@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -29,6 +30,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 // EchoService name of the deployment for the echo app
@@ -281,6 +283,18 @@ func (f *Framework) NewHttpbunDeployment(opts ...func(*deploymentOptions)) strin
 		}
 	}
 	assert.NotEmpty(ginkgo.GinkgoT(), httpbunIP, "expected at least one ready address in httpbun endpoint slice")
+
+	// Wait for HTTPBun to be actually serving HTTP before returning
+	//nolint:staticcheck // TODO: will replace it since wait.Poll is deprecated
+	err = wait.Poll(Poll, DefaultTimeout, func() (bool, error) {
+		resp, reqErr := http.Get(fmt.Sprintf("http://%s/", httpbunIP))
+		if reqErr != nil {
+			return false, nil
+		}
+		defer resp.Body.Close()
+		return resp.StatusCode == http.StatusOK, nil
+	})
+	assert.Nil(ginkgo.GinkgoT(), err, "waiting for httpbun to be ready")
 
 	return httpbunIP
 }
