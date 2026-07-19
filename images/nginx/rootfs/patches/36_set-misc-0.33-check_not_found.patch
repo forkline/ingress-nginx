@@ -1,0 +1,11 @@
+--- a/src/ngx_http_set_escape_uri.c	2021-09-06 10:25:52.000000000 +0200
++++ b/src/ngx_http_set_escape_uri.c	2026-07-19 22:19:28.347268309 +0200
+@@ -20,7 +20,7 @@
+     uintptr_t        escape;
+     u_char          *src, *dst;
+
+-    if (v->len == 0) {
++    if (v->not_found || v->len == 0) {
+         res->len = 0;
+         res->data = NULL;
+         return NGX_OK;
