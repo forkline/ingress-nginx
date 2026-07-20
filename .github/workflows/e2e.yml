@@ -91,6 +91,10 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # NOTE: This caches the image by NGINX_VERSION. When patches in images/nginx/rootfs/patches/
+      # are added or modified, you must force a rebuild by either:
+      #   - Bumping NGINX_VERSION in build.sh, OR
+      #   - Manually deleting the old image from ghcr.io
       - name: Pull or build nginx base image
         working-directory: images/nginx
         run: |
