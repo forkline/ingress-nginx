@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Force nginx base image rebuild to include patch fixes([09aeb3e](https://github.com/forkline/ingress-nginx/commit/09aeb3e4a433da446d41c57521a81405ac6294c1))
 
+- Fix crash with nginx 1.31.3: add NDK complex_value_end_code + set-misc not_found guard([1b0241c](https://github.com/forkline/ingress-nginx/commit/1b0241c9b860ff2a243f2adbdb7fc8ee9152de52))
+
 
 ### Chore
 
