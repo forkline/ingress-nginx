@@ -17,7 +17,6 @@ limitations under the License.
 package settings
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -26,7 +25,6 @@ import (
 	"github.com/onsi/ginkgo/v2"
 	"github.com/stretchr/testify/assert"
 	networking "k8s.io/api/networking/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"k8s.io/ingress-nginx/test/e2e/framework"
 )
@@ -298,27 +296,12 @@ http {
 		ginkgo.BeforeEach(func() {
 			f.NGINXWithConfigDeployment("http-cookie-with-error", cfg)
 
-			endpointSlices, err := f.KubeClientSet.DiscoveryV1().EndpointSlices(f.Namespace).List(context.TODO(), metav1.ListOptions{
-				LabelSelector: "kubernetes.io/service-name=http-cookie-with-error",
-			})
-			assert.Nil(ginkgo.GinkgoT(), err)
-
-			assert.GreaterOrEqual(ginkgo.GinkgoT(), len(endpointSlices.Items), 1, "expected at least one endpoint slice")
-			var nginxIP string
-			for _, slice := range endpointSlices.Items {
-				for _, endpoint := range slice.Endpoints {
-					if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
-						if len(endpoint.Addresses) > 0 {
-							nginxIP = endpoint.Addresses[0]
-							break
-						}
-					}
-				}
-				if nginxIP != "" {
-					break
-				}
-			}
+			// Wait for the NGINX deployment to be HTTP-ready
+			nginxIP := framework.GetReadyEndpointIP(f, "http-cookie-with-error")
 			assert.NotEmpty(ginkgo.GinkgoT(), nginxIP, "expected at least one ready address in the endpoint slice")
+
+			err := framework.WaitForHTTPReady(nginxIP, 80, "/", framework.DefaultTimeout)
+			assert.Nil(ginkgo.GinkgoT(), err, "waiting for http-cookie-with-error NGINX to become HTTP-ready")
 
 			f.UpdateNginxConfigMapData(globalExternalAuthURLSetting, fmt.Sprintf("http://%s/cookies/set/alma/armud", nginxIP))
 
