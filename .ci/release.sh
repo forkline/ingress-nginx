@@ -88,6 +88,9 @@ make update-version
 
 make update-changelog
 
+echo "Squashing repetitive changelog entries..."
+python3 .ci/squash-changelog.py
+
 echo "Running helm-docs to update chart README..."
 helm-docs --chart-search-root charts
 
