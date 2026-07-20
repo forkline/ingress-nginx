@@ -1,7 +1,7 @@
 ---
 annotations:
   artifacthub.io/changes: |
-    - Unify all image versions to date-based versioning (v2026.5.2)
+    - Force nginx base image rebuild to include patch fixes
   artifacthub.io/prerelease: "false"
 apiVersion: v2
 appVersion: 2026.7.20
