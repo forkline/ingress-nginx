@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"time"
@@ -272,7 +273,7 @@ func (f *Framework) NewHttpbunDeployment(opts ...func(*deploymentOptions)) strin
 
 // WaitForHTTPReady polls an HTTP endpoint until it returns a success status (2xx or 3xx).
 func WaitForHTTPReady(ip string, port int, path string, timeout time.Duration) error {
-	url := fmt.Sprintf("http://%s:%d%s", ip, port, path)
+	url := fmt.Sprintf("http://%s%s", net.JoinHostPort(ip, fmt.Sprintf("%d", port)), path)
 	client := &http.Client{Timeout: 2 * time.Second}
 
 	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, timeout, true, func(_ context.Context) (bool, error) {
