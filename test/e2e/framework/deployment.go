@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -29,6 +30,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 // EchoService name of the deployment for the echo app
@@ -258,31 +260,51 @@ func (f *Framework) NewHttpbunDeployment(opts ...func(*deploymentOptions)) strin
 	assert.Nil(ginkgo.GinkgoT(), err, "waiting for endpoints to become ready")
 
 	// Get cluster ip for HTTPBun to be used in tests
+	httpbunIP := GetReadyEndpointIP(f, HTTPBunService)
+	assert.NotEmpty(ginkgo.GinkgoT(), httpbunIP, "expected at least one ready address in httpbun endpoint slice")
+
+	// Wait for httpbun to actually serve HTTP requests
+	err = WaitForHTTPReady(httpbunIP, 80, "/status/200", DefaultTimeout)
+	assert.Nil(ginkgo.GinkgoT(), err, "waiting for httpbun to become HTTP-ready")
+
+	return httpbunIP
+}
+
+// WaitForHTTPReady polls an HTTP endpoint until it returns a success status (2xx or 3xx).
+func WaitForHTTPReady(ip string, port int, path string, timeout time.Duration) error {
+	url := fmt.Sprintf("http://%s:%d%s", ip, port, path)
+	client := &http.Client{Timeout: 2 * time.Second}
+
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, timeout, true, func(_ context.Context) (bool, error) {
+		resp, err := client.Get(url)
+		if err != nil {
+			return false, nil
+		}
+		defer resp.Body.Close()
+		return resp.StatusCode >= 200 && resp.StatusCode < 400, nil
+	})
+}
+
+// GetReadyEndpointIP extracts the IP address of a ready endpoint for the given service.
+func GetReadyEndpointIP(f *Framework, serviceName string) string {
 	endpointSlices, err := f.KubeClientSet.
 		DiscoveryV1().
 		EndpointSlices(f.Namespace).
 		List(context.TODO(), metav1.ListOptions{
-			LabelSelector: "kubernetes.io/service-name=" + HTTPBunService,
+			LabelSelector: "kubernetes.io/service-name=" + serviceName,
 		})
-	assert.Nil(ginkgo.GinkgoT(), err, "failed to get httpbun endpoint slices")
+	assert.Nil(ginkgo.GinkgoT(), err, "failed to get endpoint slices for "+serviceName)
 
-	var httpbunIP string
 	for i := range endpointSlices.Items {
 		for _, endpoint := range endpointSlices.Items[i].Endpoints {
 			if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
 				if len(endpoint.Addresses) > 0 {
-					httpbunIP = endpoint.Addresses[0]
-					break
+					return endpoint.Addresses[0]
 				}
 			}
 		}
-		if httpbunIP != "" {
-			break
-		}
 	}
-	assert.NotEmpty(ginkgo.GinkgoT(), httpbunIP, "expected at least one ready address in httpbun endpoint slice")
-
-	return httpbunIP
+	return ""
 }
 
 // NewSlowEchoDeployment creates a new deployment of the slow echo server image in a particular namespace.

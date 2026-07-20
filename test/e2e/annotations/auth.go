@@ -17,7 +17,6 @@ limitations under the License.
 package annotations
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -392,27 +391,12 @@ http {
 		ginkgo.BeforeEach(func() {
 			f.NGINXWithConfigDeployment("http-cookie-with-error", cfg)
 
-			endpointSlices, err := f.KubeClientSet.DiscoveryV1().EndpointSlices(f.Namespace).List(context.TODO(), metav1.ListOptions{
-				LabelSelector: "kubernetes.io/service-name=http-cookie-with-error",
-			})
-			assert.Nil(ginkgo.GinkgoT(), err)
-
-			assert.GreaterOrEqual(ginkgo.GinkgoT(), len(endpointSlices.Items), 1, "expected at least one endpoint slice")
-			var nginxIP string
-			for _, slice := range endpointSlices.Items {
-				for _, endpoint := range slice.Endpoints {
-					if endpoint.Conditions.Ready != nil && *endpoint.Conditions.Ready {
-						if len(endpoint.Addresses) > 0 {
-							nginxIP = endpoint.Addresses[0]
-							break
-						}
-					}
-				}
-				if nginxIP != "" {
-					break
-				}
-			}
+			// Wait for the NGINX deployment to be HTTP-ready
+			nginxIP := framework.GetReadyEndpointIP(f, "http-cookie-with-error")
 			assert.NotEmpty(ginkgo.GinkgoT(), nginxIP, "expected at least one ready address in the endpoint slice")
+
+			err := framework.WaitForHTTPReady(nginxIP, 80, "/", framework.DefaultTimeout)
+			assert.Nil(ginkgo.GinkgoT(), err, "waiting for http-cookie-with-error NGINX to become HTTP-ready")
 
 			annotations = map[string]string{
 				"nginx.ingress.kubernetes.io/auth-url":    fmt.Sprintf("http://%s/cookies/set/alma/armud", nginxIP),
