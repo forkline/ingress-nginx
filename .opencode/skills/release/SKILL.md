@@ -64,8 +64,9 @@ This script **automatically**:
 5. Updates `NGINX_BASE` reference
 6. Runs `make update-version` (Chart.yaml, values.yaml)
 7. Runs `make update-changelog` (git-cliff from conventional commits)
-8. Updates helm-docs and README Supported Versions table
-9. Creates commit: `release: prepare <version>`
+8. Squashes repetitive changelog entries (pre-commit hooks, digest updates, go modules, etc.)
+9. Updates helm-docs and README Supported Versions table
+10. Creates commit: `release: prepare <version>`
 
 ### Step 2: Push to main
 
@@ -191,6 +192,7 @@ Ensure:
 | File | Role |
 |------|------|
 | `.ci/release.sh` | Main release script — runs everything |
+| `.ci/squash-changelog.py` | Post-processes CHANGELOG to squash repetitive entries |
 | `TAG` | Current version file |
 | `images/*/TAG` | Per-image version tags |
 | `NGINX_BASE` | Base nginx image reference |
