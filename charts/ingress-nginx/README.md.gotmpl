@@ -9,20 +9,21 @@ This chart bootstraps an ingress-nginx deployment on a [Kubernetes](http://kuber
 
 {{ template "chart.requirementsSection" . }}
 
-## Get Repo Info
-
-```console
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-```
-
 ## Install Chart
 
 **Important:** only helm3 is supported
 
 ```console
-helm install [RELEASE_NAME] ingress-nginx/ingress-nginx
+helm upgrade --install [RELEASE_NAME] oci://ghcr.io/forkline/helm-charts/ingress-nginx --version [VERSION]
 ```
+
+To install the latest version:
+
+```console
+helm upgrade --install [RELEASE_NAME] oci://ghcr.io/forkline/helm-charts/ingress-nginx
+```
+
+This chart uses date-based versioning (e.g. `2026.7.20`). The chart version matches the release tag.
 
 The command deploys ingress-nginx on the Kubernetes cluster in the default configuration.
 
@@ -66,7 +67,7 @@ Note that there are some different and upgraded configurations between the two c
 See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing). To see all configurable options with detailed comments, visit the chart's [values.yaml](./values.yaml), or run these configuration commands:
 
 ```console
-helm show values ingress-nginx/ingress-nginx
+helm show values oci://ghcr.io/forkline/helm-charts/ingress-nginx
 ```
 
 ### PodDisruptionBudget
