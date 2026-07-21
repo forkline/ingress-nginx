@@ -25,23 +25,10 @@ You can install them in different namespaces.
 
 - Use Helm to install the additional instance of the ingress controller
 - Ensure you have Helm working (refer to the [Helm documentation](https://helm.sh/docs/))
-- We have to assume that you have the helm repo for the ingress-nginx controller already added to your Helm config.
-  But, if you have not added the helm repo then you can do this to add the repo to your helm config;
+- Install an additional instance of the ingress-nginx controller like this:
 
   ```
-  helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-  ```
-
-- Make sure you have updated the helm repo data;
-
-  ```
-  helm repo update
-  ```
-
-- Now, install an additional instance of the ingress-nginx controller like this:
-
-  ```
-  helm install ingress-nginx-2 ingress-nginx/ingress-nginx  \
+  helm install ingress-nginx-2 oci://ghcr.io/forkline/helm-charts/ingress-nginx \
   --namespace ingress-nginx-2 \
   --set controller.ingressClassResource.name=nginx-two \
   --set controller.ingressClass=nginx-two \
@@ -61,7 +48,7 @@ The first is to create the IngressClass object and the other is to modify the de
 If you need to install all instances in the same namespace, then you need to specify a different **election id**, like this:
 
 ```
-helm install ingress-nginx-2 ingress-nginx/ingress-nginx  \
+helm install ingress-nginx-2 oci://ghcr.io/forkline/helm-charts/ingress-nginx \
 --namespace kube-system \
 --set controller.electionID=nginx-two-leader \
 --set controller.ingressClassResource.name=nginx-two \
