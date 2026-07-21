@@ -2,7 +2,7 @@
 
 There are multiple ways to install the Ingress-Nginx Controller:
 
-- with [Helm](https://helm.sh), using the project repository chart;
+- with [Helm](https://helm.sh), using the OCI chart published to GHCR;
 - with `kubectl apply`, using YAML manifests;
 - with specific addons (e.g. for [minikube](#minikube) or [MicroK8s](#microk8s)).
 
@@ -46,8 +46,7 @@ free to use those subdirectories and get the manifest(s) related to their K8S ve
 **If you have Helm,** you can deploy the ingress controller with the following command:
 
 ```console
-helm upgrade --install ingress-nginx ingress-nginx \
-  --repo https://kubernetes.github.io/ingress-nginx \
+helm upgrade --install ingress-nginx oci://ghcr.io/forkline/helm-charts/ingress-nginx \
   --namespace ingress-nginx --create-namespace
 ```
 
@@ -59,10 +58,20 @@ It will install the controller in the `ingress-nginx` namespace, creating that n
     - if the ingress controller is not installed, it will install it,
     - if the ingress controller is already installed, it will upgrade it.
 
+!!! tip "Versioning"
+    This fork uses **date-based versioning** (e.g. `2026.7.20`). The chart version matches the release tag.
+    To install a specific version, add `--version <version>`:
+
+    ```console
+    helm upgrade --install ingress-nginx oci://ghcr.io/forkline/helm-charts/ingress-nginx \
+      --version 2026.7.20 \
+      --namespace ingress-nginx --create-namespace
+    ```
+
 **If you want a full list of values that you can set, while installing with Helm,** then run:
 
 ```console
-helm show values ingress-nginx --repo https://kubernetes.github.io/ingress-nginx
+helm show values oci://ghcr.io/forkline/helm-charts/ingress-nginx
 ```
 
 !!! attention "Helm install on AWS/GCP/Azure/Other providers"
@@ -197,6 +206,17 @@ kubectl create ingress demo --class=nginx \
 
 You should then be able to see the "It works!" page when you connect to <http://www.demo.io/>. Congratulations,
 you are serving a public website hosted on a Kubernetes cluster! 🎉
+
+## Container images
+
+All container images for this fork are published to GitHub Container Registry:
+
+| Image | Location |
+|-------|----------|
+| Controller | `ghcr.io/forkline/ingress-nginx/controller:<version>` |
+| Webhook certgen | `ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:<version>` |
+
+The Helm chart defaults to pulling from `ghcr.io/forkline` as the registry. The chart version matches the release tag (e.g. `2026.7.20`), using date-based versioning.
 
 ## Environment-specific instructions
 
@@ -397,9 +417,7 @@ can be found in the [OCI Cloud Controller Manager](https://github.com/oracle/oci
 #### OVHcloud
 
 ```console
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm -n ingress-nginx install ingress-nginx ingress-nginx/ingress-nginx --create-namespace
+helm -n ingress-nginx upgrade --install ingress-nginx oci://ghcr.io/forkline/helm-charts/ingress-nginx --create-namespace
 ```
 
 You can find the [complete tutorial](https://docs.ovh.com/gb/en/kubernetes/installing-nginx-ingress/).
