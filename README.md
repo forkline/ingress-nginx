@@ -90,25 +90,6 @@ All images use unified date-based versioning. The version indicates when the sof
 |    🔄     | **v2026.4.3-1**       | 1.35, 1.34, 1.33, 1.32, 1.31 | 3.23.4         | 1.27.1        | 2026.4.3-1         |
 |    🔄     | **v2026.4.3**         | 1.35, 1.34, 1.33, 1.32, 1.31 | 3.23.3         | 1.27.1        | 2026.4.3           |
 
-## Get Involved
-
-Thanks for taking the time to join our community and start contributing!
-
-- This project adheres to the [Kubernetes Community Code of Conduct](https://git.k8s.io/community/code-of-conduct.md).
-  By participating in this project, you agree to abide by its terms.
-- **Contributing**: Documentation contributions are welcome.
-
-  - Read [`CONTRIBUTING.md`](CONTRIBUTING.md) for information about the workflow that we
-    expect and instructions on the developer certificate of origin that we require.
-  - Join our Kubernetes Slack channel for developer discussion : [#ingress-nginx-dev](https://kubernetes.slack.com/archives/C021E147ZA4).
-  - Submit GitHub issues for documentation problems.
-    - Please make sure to read the [Issue Reporting Checklist](https://github.com/kubernetes/ingress-nginx/blob/main/CONTRIBUTING.md#issue-reporting-guidelines) before opening an issue. Issues not conforming to the guidelines **may be closed immediately**.
-
-- **Support**:
-
-  - Join the [#ingress-nginx-users](https://kubernetes.slack.com/messages/CANQGM8BA/) channel inside the [Kubernetes Slack](http://slack.kubernetes.io/) to ask questions or get support from the maintainers and other users.
-  - The [GitHub issues](https://github.com/kubernetes/ingress-nginx/issues) in the repository are **exclusively** for bug reports and feature requests.
-
 ## License
 
 [Apache License 2.0](https://github.com/kubernetes/ingress-nginx/blob/main/LICENSE)
