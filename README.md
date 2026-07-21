@@ -29,6 +29,32 @@ balancer.
 
 [Learn more about Ingress on the Kubernetes documentation site](https://kubernetes.io/docs/concepts/services-networking/ingress/).
 
+## Installation
+
+The Helm chart is distributed as an OCI package via GitHub Container Registry:
+
+```console
+helm upgrade --install ingress-nginx oci://ghcr.io/forkline/helm-charts/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+```
+
+To install a specific version (chart version matches the release tag, e.g. `2026.7.20`):
+
+```console
+helm upgrade --install ingress-nginx oci://ghcr.io/forkline/helm-charts/ingress-nginx \
+  --version 2026.7.20 \
+  --namespace ingress-nginx --create-namespace
+```
+
+Container images are published to `ghcr.io/forkline/ingress-nginx/`:
+
+| Image | Location |
+|-------|----------|
+| Controller | `ghcr.io/forkline/ingress-nginx/controller:<version>` |
+| Webhook certgen | `ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:<version>` |
+
+See the [full installation guide](docs/deploy/index.md) for more options.
+
 ## Usage warnings
 
 Do not use in multi-tenant Kubernetes production installations. This project assumes that users that can create Ingress objects are administrators of the cluster. See the [FAQ](https://kubernetes.github.io/ingress-nginx/faq/#faq) for more.
