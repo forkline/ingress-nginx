@@ -136,5 +136,7 @@ google.golang.org/grpc/examples v0.0.0-20260717170606-75f3c0bb2866 h1:74f28e8Wmy
 google.golang.org/grpc/examples v0.0.0-20260717170606-75f3c0bb2866/go.mod h1:Fgm3Q0MFOx7KB6YbgprLb5U+9lMSZum5Da71E+6V67c=
 google.golang.org/grpc/examples v0.0.0-20260721174856-506edc46b7a4 h1:rwRaNPHdaN6ngQj1iJ7bmLvXjjHpg+JaVYEg2BUna48=
 google.golang.org/grpc/examples v0.0.0-20260721174856-506edc46b7a4/go.mod h1:Fgm3Q0MFOx7KB6YbgprLb5U+9lMSZum5Da71E+6V67c=
+google.golang.org/grpc/examples v0.0.0-20260722052243-081051cebab0 h1:PDI6/EmvGtBZvrExoB4RWiP6lJH9GtIFt7WCB0kPsME=
+google.golang.org/grpc/examples v0.0.0-20260722052243-081051cebab0/go.mod h1:Fgm3Q0MFOx7KB6YbgprLb5U+9lMSZum5Da71E+6V67c=
 google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
 google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
