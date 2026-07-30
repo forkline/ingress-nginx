@@ -68,6 +68,8 @@ google.golang.org/grpc v1.82.0 h1:vguDnZUPjE26w09A63VoxZPnvPjB5Riyc0mkXPFmAIU=
 google.golang.org/grpc v1.82.0/go.mod h1:yzTZ1TB1Z3SG+LIYaI+WiE8D5+PZ3ArnrSp8zF3+/ZA=
 google.golang.org/grpc v1.82.1 h1:NnAxzGRA0677vCa4BUkOAnO5+FfQqVl9iUXeD0IqcGE=
 google.golang.org/grpc v1.82.1/go.mod h1:yzTZ1TB1Z3SG+LIYaI+WiE8D5+PZ3ArnrSp8zF3+/ZA=
+google.golang.org/grpc v1.83.0 h1:JeNZEKJFbQxArAMl+hiytHauacDNqJUllNfmIMmpqnQ=
+google.golang.org/grpc v1.83.0/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
 google.golang.org/grpc/examples v0.0.0-20260318074645-12e91ddb6df6 h1:T2BRvEuhGb8xbZd+QoV/hJ10tyclSbzVaRnxWJVqLvk=
 google.golang.org/grpc/examples v0.0.0-20260318074645-12e91ddb6df6/go.mod h1:j/6+OA1GHt8bu2ZkJxLWufKDhhYor5yjGCLKBDUf9GI=
 google.golang.org/grpc/examples v0.0.0-20260403000845-aa4d281834e2 h1:Kys61sTPaQ0ySKMOr7oh+UNzKARNuAdhRXEHF0c+GZg=
@@ -166,5 +168,7 @@ google.golang.org/grpc/examples v0.0.0-20260727215517-622a41d35dcb h1:XYr4h7nckZ
 google.golang.org/grpc/examples v0.0.0-20260727215517-622a41d35dcb/go.mod h1:Ql7sxJY5VnLpfPM7Insx9uuyf0DTiD9CnMO3WTSU3Dc=
 google.golang.org/grpc/examples v0.0.0-20260728054707-89d4d61eef38 h1:D80tkXMCcmJMPrLEf8T2JpUXpeI0jU0McDW055lH+7s=
 google.golang.org/grpc/examples v0.0.0-20260728054707-89d4d61eef38/go.mod h1:Ql7sxJY5VnLpfPM7Insx9uuyf0DTiD9CnMO3WTSU3Dc=
+google.golang.org/grpc/examples v0.0.0-20260730060707-ff0b87f86bc6 h1:UBrgvYL/Q1wU/WoRwYztgnbOgsnfzQ2IFJluZElKQPU=
+google.golang.org/grpc/examples v0.0.0-20260730060707-ff0b87f86bc6/go.mod h1:Ql7sxJY5VnLpfPM7Insx9uuyf0DTiD9CnMO3WTSU3Dc=
 google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
 google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
