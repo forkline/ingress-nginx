@@ -9,7 +9,6 @@ require (
 	github.com/eapache/channels v1.1.0
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/google/go-github/v90 v90.0.0
-	github.com/google/go-github/v90 v90.0.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kylelemons/godebug v1.1.0
 	github.com/magefile/mage v1.17.2
