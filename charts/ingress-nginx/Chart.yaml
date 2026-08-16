@@ -1,9 +1,9 @@
 ---
 annotations:
   artifacthub.io/changes: |
-    - "Update NGINX to 1.31.3 (security release)"
-    - "Fix crash with nginx 1.31.3: add NDK complex_value_end_code + set-misc not_found guard"
-    - "Force nginx base image rebuild to include patch fixes"
+    - "Update go-github import paths from v89 to v90"
+    - "Replace upstream helm repo references with OCI chart"
+    - "Multiple dependency updates"
   artifacthub.io/prerelease: "false"
 apiVersion: v2
 appVersion: 2026.8.16
