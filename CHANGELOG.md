@@ -4,6 +4,46 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.8.16](https://github.com/forkline/ingress-nginx/tree/v2026.8.16) - 2026-08-16
+
+### Fixed
+
+- Update go-github import paths from v89 to v90([c2fffcd](https://github.com/forkline/ingress-nginx/commit/c2fffcd0d23bfa37ab96dcdc7736c83b9191a11e))
+
+### Documentation
+
+- Replace upstream helm repo references with OCI chart in deploy guide([9dcf958](https://github.com/forkline/ingress-nginx/commit/9dcf958efe276d32e2e04105f77e4edba8593c2c))
+
+- Replace upstream helm repo with OCI chart in chart README (chart)([ec8d4c8](https://github.com/forkline/ingress-nginx/commit/ec8d4c82f15d7359b9c06702d20d900014c122b0))
+
+- Add installation section with OCI chart and image locations([e5d02bf](https://github.com/forkline/ingress-nginx/commit/e5d02bfe3363b1e894baaf8df85deb264eb59f62))
+
+- Fix remaining helm repo references missed in OCI migration([cf3a8bf](https://github.com/forkline/ingress-nginx/commit/cf3a8bfbd208fdf1f813e814b00240b1789af0d7))
+
+- Remove obsolete Get Involved section from README([0a7f3fb](https://github.com/forkline/ingress-nginx/commit/0a7f3fb3ad95d5886bb78798f77fb9f5ea535517))
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks (v43.272.6 → v44.30.4)
+
+### Build
+
+- Update module github.com/opencontainers/cgroups to v0.0.8 (#239) (deps)([8039345](https://github.com/forkline/ingress-nginx/commit/8039345df193c4812b470972b083c669c6ba5751))
+
+- Update google.golang.org/grpc/examples digest (17 updates)
+
+- Update module github.com/prometheus/common to v0.70.1 (#248) (deps)([f813063](https://github.com/forkline/ingress-nginx/commit/f813063c6028163b193f00951bfac287225cfdb1))
+
+- Update go modules (5 updates)
+
+- Update ossf/scorecard-action action to v2.4.4 (#259) (deps)([4a442bf](https://github.com/forkline/ingress-nginx/commit/4a442bf0f63673c017039d900e1c6b99bba7924e))
+
+- Update module go.yaml.in/yaml/v3 to v3.0.5 (#271) (deps)([2401f26](https://github.com/forkline/ingress-nginx/commit/2401f266741c97d5b3774d52d499294fe9c2ea79))
+
+- Update dependency helm to v4.2.4 (#317) (deps)([5f59268](https://github.com/forkline/ingress-nginx/commit/5f5926892626a6c74f3894888e9c9f2e128115d6))
+
+- Update module github.com/google/go-github/v89 to v90 (deps)([4974b16](https://github.com/forkline/ingress-nginx/commit/4974b1685185173bbafa03083d8d6d02dbdb2b32))
+
 ## [v2026.7.20](https://github.com/forkline/ingress-nginx/tree/v2026.7.20) - 2026-07-20
 
 ### Fixed
