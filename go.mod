@@ -18,7 +18,7 @@ require (
 	github.com/moul/pb v0.0.0-20220425114252-bca18df4138c
 	github.com/ncabatoff/process-exporter v0.8.7
 	github.com/onsi/ginkgo/v2 v2.32.1
-	github.com/opencontainers/cgroups v0.0.9
+	github.com/opencontainers/cgroups v0.1.0
 	github.com/pires/go-proxyproto v0.15.0
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
 	github.com/prometheus/client_golang v1.24.1
