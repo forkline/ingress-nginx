@@ -80,24 +80,34 @@ diff -u -r -p -Naur nginx-1.27.1/src/stream/ngx_stream_proxy_module.c nginx-1.27
  }
 
 
-@@ -1030,6 +1030,7 @@ ngx_stream_proxy_send_proxy_protocol(ngx
-     ngx_connection_t             *c, *pc;
-     ngx_stream_upstream_t        *u;
-     ngx_stream_proxy_srv_conf_t  *pscf;
-+    ngx_stream_proxy_ctx_t       *ctx;
-     static u_char                 buf[NGX_PROXY_PROTOCOL_MAX_HEADER];
+@@ -957,12 +957,14 @@ ngx_stream_proxy_init_upstream(ngx_stream_session_t *s)
+ static ngx_int_t
+ ngx_stream_proxy_send_proxy_protocol(ngx_stream_session_t *s)
+ {
+-    u_char                       *p;
+-    ssize_t                       n, size;
+-    ngx_connection_t             *c, *pc;
+-    ngx_stream_upstream_t        *u;
+-    ngx_stream_proxy_srv_conf_t  *pscf;
+-    u_char                        buf[NGX_PROXY_PROTOCOL_V1_MAX_HEADER];
++    u_char                  *p;
++    u_char                   buf[NGX_PROXY_PROTOCOL_V1_MAX_HEADER];
++    ssize_t                  n, size;
++    ngx_connection_t        *c, *pc;
++    ngx_stream_upstream_t   *u;
++    ngx_stream_proxy_ctx_t  *ctx;
++
++    ctx = ngx_stream_get_module_ctx(s, ngx_stream_proxy_module);
 
      c = s->connection;
 
-@@ -1072,9 +1072,9 @@ ngx_stream_proxy_send_proxy_protocol(ngx
+@@ -976,9 +993,7 @@ ngx_stream_proxy_send_proxy_protocol(ngx
              return NGX_ERROR;
          }
 
 -        pscf = ngx_stream_get_module_srv_conf(s, ngx_stream_proxy_module);
 -
 -        ngx_add_timer(pc->write, pscf->timeout);
-+        ctx = ngx_stream_get_module_ctx(s, ngx_stream_proxy_module);
-+
 +        ngx_add_timer(pc->write, ctx->timeout);
 
          pc->write->handler = ngx_stream_proxy_connect_handler;
