@@ -77,7 +77,7 @@ jobs:
 
       - name: Prepare kubectl
         run: |
-          curl -LO https://dl.k8s.io/release/v1.35.3/bin/linux/amd64/kubectl
+          curl -LO https://dl.k8s.io/release/v1.35.1/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
 
@@ -260,6 +260,7 @@ jobs:
         with:
           version: v0.31.0
           install_only: true
+          kubectl_version: v1.35.1
 
       - name: Run e2e tests
         env:
@@ -326,6 +327,7 @@ jobs:
         with:
           version: v0.31.0
           install_only: true
+          kubectl_version: v1.35.1
 
       - name: Run chroot e2e tests
         env:
