@@ -38,11 +38,11 @@ helm upgrade --install ingress-nginx oci://ghcr.io/forkline/helm-charts/ingress-
   --namespace ingress-nginx --create-namespace
 ```
 
-To install a specific version (chart version matches the release tag, e.g. `2026.8.16`):
+To install a specific version (chart version matches the release tag, e.g. `2026.8.21`):
 
 ```console
 helm upgrade --install ingress-nginx oci://ghcr.io/forkline/helm-charts/ingress-nginx \
-  --version 2026.8.16 \
+  --version 2026.8.21 \
   --namespace ingress-nginx --create-namespace
 ```
 

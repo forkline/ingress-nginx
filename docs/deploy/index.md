@@ -59,12 +59,12 @@ It will install the controller in the `ingress-nginx` namespace, creating that n
     - if the ingress controller is already installed, it will upgrade it.
 
 !!! tip "Versioning"
-    This fork uses **date-based versioning** (e.g. `2026.8.16`). The chart version matches the release tag.
+    This fork uses **date-based versioning** (e.g. `2026.8.21`). The chart version matches the release tag.
     To install a specific version, add `--version <version>`:
 
     ```console
     helm upgrade --install ingress-nginx oci://ghcr.io/forkline/helm-charts/ingress-nginx \
-      --version 2026.8.16 \
+      --version 2026.8.21 \
       --namespace ingress-nginx --create-namespace
     ```
 
@@ -216,7 +216,7 @@ All container images for this fork are published to GitHub Container Registry:
 | Controller | `ghcr.io/forkline/ingress-nginx/controller:<version>` |
 | Webhook certgen | `ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:<version>` |
 
-The Helm chart defaults to pulling from `ghcr.io/forkline` as the registry. The chart version matches the release tag (e.g. `2026.8.16`), using date-based versioning.
+The Helm chart defaults to pulling from `ghcr.io/forkline` as the registry. The chart version matches the release tag (e.g. `2026.8.21`), using date-based versioning.
 
 ## Environment-specific instructions
 

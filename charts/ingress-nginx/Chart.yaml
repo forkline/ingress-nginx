@@ -1,9 +1,11 @@
 ---
 annotations:
   artifacthub.io/changes: |
-    - "Update go-github import paths from v89 to v90"
-    - "Replace upstream helm repo references with OCI chart"
-    - "Multiple dependency updates"
+    - "Update patches for NGINX 1.31.4 compatibility"
+    - "Upgrade nginx to 1.31.4"
+    - "Update module github.com/stretchr/testify to v1.12.0"
+    - "Update module github.com/opencontainers/cgroups to v0.1.0"
+    - "Update pre-commit hook renovatebot/pre-commit-hooks"
   artifacthub.io/prerelease: "false"
 apiVersion: v2
 appVersion: 2026.8.21
