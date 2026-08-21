@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.8.21](https://github.com/forkline/ingress-nginx/tree/v2026.8.21) - 2026-08-21
+
+### Fixed
+
+- Update patches for NGINX 1.31.4 compatibility (nginx)([7803f4c](https://github.com/forkline/ingress-nginx/commit/7803f4c7e732c189192d6c3c9f33d8043af86751))
+
+- Remove .orig artifacts from consolidated patch (nginx)([ab8fd0f](https://github.com/forkline/ingress-nginx/commit/ab8fd0f56e01dd79e6cd0a74d5234b10bf361419))
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks (v44.31.0 → v44.37.1)
+
+- Upgrade nginx to 1.31.4 (nginx)([c203ac4](https://github.com/forkline/ingress-nginx/commit/c203ac432ab04eddad322dfac9b7d7e5c4c492ec))
+
+### Build
+
+- Update module github.com/stretchr/testify to v1.12.0 (#327) (deps)([8905228](https://github.com/forkline/ingress-nginx/commit/890522859b00652fd12b1c4a26566d7a92f36828))
+
+- Update google.golang.org/grpc/examples digest (5 updates)
+
+- Update module github.com/opencontainers/cgroups to v0.1.0 (#336) (deps)([5646dfb](https://github.com/forkline/ingress-nginx/commit/5646dfbf5b5572185334b1a3a3e2b82fba8a6816))
+
+- Update go modules (3 updates)
+
+- Update dependency nginx/nginx to v1.31.4 (#339) (deps)([6a4001f](https://github.com/forkline/ingress-nginx/commit/6a4001f3fa63a8ee29994ca909566a28894a74cc))
+
+### Styling
+
+- Fix trailing whitespace in consolidated patch([04d6188](https://github.com/forkline/ingress-nginx/commit/04d6188552336d4c1e97aaa894aa04afe508b0fe))
+
 ## [v2026.8.16](https://github.com/forkline/ingress-nginx/tree/v2026.8.16) - 2026-08-16
 
 ### Fixed
