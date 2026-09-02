@@ -19,7 +19,7 @@ set -o nounset
 set -o pipefail
 
 # renovate: datasource=github-releases depName=nginx/nginx extractVersion=^release-(?<version>.*)$ versioning=semver
-export NGINX_VERSION=1.31.4
+export NGINX_VERSION=1.31.5
 
 # Check for recent changes: https://github.com/vision5/ngx_devel_kit/compare/v0.3.3...master
 export NDK_VERSION=v0.3.3
