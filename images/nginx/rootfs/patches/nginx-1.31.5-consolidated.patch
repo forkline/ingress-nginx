@@ -1,6 +1,6 @@
-diff -urN nginx-1.31.4/auto/cc/clang nginx-1.31.4/auto/cc/clang
---- nginx-1.31.4/auto/cc/clang	2026-08-20 18:25:06.242214766 +0000
-+++ nginx-1.31.4/auto/cc/clang	2026-08-20 18:27:15.285187448 +0000
+diff -urN nginx-1.31.5/auto/cc/clang nginx-1.31.5/auto/cc/clang
+--- nginx-1.31.5/auto/cc/clang	2026-08-20 18:25:06.242214766 +0000
++++ nginx-1.31.5/auto/cc/clang	2026-08-20 18:27:15.285187448 +0000
 @@ -80,7 +80,7 @@
  fi
 
@@ -10,9 +10,9 @@ diff -urN nginx-1.31.4/auto/cc/clang nginx-1.31.4/auto/cc/clang
 
  # debug
  CFLAGS="$CFLAGS -g"
-diff -urN nginx-1.31.4/auto/cc/conf nginx-1.31.4/auto/cc/conf
---- nginx-1.31.4/auto/cc/conf	2026-08-20 18:25:06.246066256 +0000
-+++ nginx-1.31.4/auto/cc/conf	2026-08-20 18:27:15.409065091 +0000
+diff -urN nginx-1.31.5/auto/cc/conf nginx-1.31.5/auto/cc/conf
+--- nginx-1.31.5/auto/cc/conf	2026-08-20 18:25:06.246066256 +0000
++++ nginx-1.31.5/auto/cc/conf	2026-08-20 18:27:15.409065091 +0000
 @@ -144,7 +144,7 @@
  CFLAGS="$CFLAGS $NGX_CC_OPT"
  NGX_TEST_LD_OPT="$NGX_LD_OPT"
@@ -22,9 +22,9 @@ diff -urN nginx-1.31.4/auto/cc/conf nginx-1.31.4/auto/cc/conf
 
      if test -n "$NGX_LD_OPT"; then
          ngx_feature=--with-ld-opt=\"$NGX_LD_OPT\"
-diff -urN nginx-1.31.4/auto/cc/gcc nginx-1.31.4/auto/cc/gcc
---- nginx-1.31.4/auto/cc/gcc	2026-08-20 18:25:06.243183851 +0000
-+++ nginx-1.31.4/auto/cc/gcc	2026-08-20 18:27:15.285934630 +0000
+diff -urN nginx-1.31.5/auto/cc/gcc nginx-1.31.5/auto/cc/gcc
+--- nginx-1.31.5/auto/cc/gcc	2026-08-20 18:25:06.243183851 +0000
++++ nginx-1.31.5/auto/cc/gcc	2026-08-20 18:27:15.285934630 +0000
 @@ -158,7 +158,7 @@
 
 
@@ -34,9 +34,9 @@ diff -urN nginx-1.31.4/auto/cc/gcc nginx-1.31.4/auto/cc/gcc
 
  # debug
  CFLAGS="$CFLAGS -g"
-diff -urN nginx-1.31.4/auto/cc/icc nginx-1.31.4/auto/cc/icc
---- nginx-1.31.4/auto/cc/icc	2026-08-20 18:25:06.243646028 +0000
-+++ nginx-1.31.4/auto/cc/icc	2026-08-20 18:27:15.286299765 +0000
+diff -urN nginx-1.31.5/auto/cc/icc nginx-1.31.5/auto/cc/icc
+--- nginx-1.31.5/auto/cc/icc	2026-08-20 18:25:06.243646028 +0000
++++ nginx-1.31.5/auto/cc/icc	2026-08-20 18:27:15.286299765 +0000
 @@ -103,7 +103,7 @@
  esac
 
@@ -46,9 +46,9 @@ diff -urN nginx-1.31.4/auto/cc/icc nginx-1.31.4/auto/cc/icc
 
  # debug
  CFLAGS="$CFLAGS -g"
-diff -urN nginx-1.31.4/auto/options nginx-1.31.4/auto/options
---- nginx-1.31.4/auto/options	2026-08-20 18:25:06.230358292 +0000
-+++ nginx-1.31.4/auto/options	2026-08-20 18:27:15.395065833 +0000
+diff -urN nginx-1.31.5/auto/options nginx-1.31.5/auto/options
+--- nginx-1.31.5/auto/options	2026-08-20 18:25:06.230358292 +0000
++++ nginx-1.31.5/auto/options	2026-08-20 18:27:15.395065833 +0000
 @@ -384,6 +384,7 @@
          --with-pcre)                     USE_PCRE=YES               ;;
          --with-pcre=*)                   PCRE="$value"              ;;
@@ -65,9 +65,9 @@ diff -urN nginx-1.31.4/auto/options nginx-1.31.4/auto/options
    --with-pcre-jit                    build PCRE with JIT compilation support
    --without-pcre2                    do not use PCRE2 library
 
-diff -urN nginx-1.31.4/src/core/nginx.c nginx-1.31.4/src/core/nginx.c
---- nginx-1.31.4/src/core/nginx.c	2026-08-20 18:25:06.281397255 +0000
-+++ nginx-1.31.4/src/core/nginx.c	2026-08-20 18:26:34.814546860 +0000
+diff -urN nginx-1.31.5/src/core/nginx.c nginx-1.31.5/src/core/nginx.c
+--- nginx-1.31.5/src/core/nginx.c	2026-08-20 18:25:06.281397255 +0000
++++ nginx-1.31.5/src/core/nginx.c	2026-08-20 18:26:34.814546860 +0000
 @@ -188,6 +188,7 @@
  static u_char      *ngx_conf_file;
  static u_char      *ngx_conf_params;
@@ -103,9 +103,9 @@ diff -urN nginx-1.31.4/src/core/nginx.c nginx-1.31.4/src/core/nginx.c
      ngx_conf_init_msec_value(ccf->timer_resolution, 0);
      ngx_conf_init_msec_value(ccf->shutdown_timeout, 0);
 
-diff -urN nginx-1.31.4/src/core/ngx_core.h nginx-1.31.4/src/core/ngx_core.h
---- nginx-1.31.4/src/core/ngx_core.h	2026-08-20 18:25:06.271793596 +0000
-+++ nginx-1.31.4/src/core/ngx_core.h	2026-08-20 18:26:02.641199911 +0000
+diff -urN nginx-1.31.5/src/core/ngx_core.h nginx-1.31.5/src/core/ngx_core.h
+--- nginx-1.31.5/src/core/ngx_core.h	2026-08-20 18:25:06.271793596 +0000
++++ nginx-1.31.5/src/core/ngx_core.h	2026-08-20 18:26:02.641199911 +0000
 @@ -121,4 +121,6 @@
  #define NGX_DISABLE_SYMLINKS_NOTOWNER   2
  #endif
@@ -113,9 +113,9 @@ diff -urN nginx-1.31.4/src/core/ngx_core.h nginx-1.31.4/src/core/ngx_core.h
 +extern ngx_pool_t        *saved_init_cycle_pool;
 +
  #endif /* _NGX_CORE_H_INCLUDED_ */
-diff -urN nginx-1.31.4/src/core/ngx_cycle.c nginx-1.31.4/src/core/ngx_cycle.c
---- nginx-1.31.4/src/core/ngx_cycle.c	2026-08-20 18:25:06.272666639 +0000
-+++ nginx-1.31.4/src/core/ngx_cycle.c	2026-08-20 18:26:02.642222457 +0000
+diff -urN nginx-1.31.5/src/core/ngx_cycle.c nginx-1.31.5/src/core/ngx_cycle.c
+--- nginx-1.31.5/src/core/ngx_cycle.c	2026-08-20 18:25:06.272666639 +0000
++++ nginx-1.31.5/src/core/ngx_cycle.c	2026-08-20 18:26:02.642222457 +0000
 @@ -782,6 +782,10 @@
 
      if (ngx_process == NGX_PROCESS_MASTER || ngx_is_init_cycle(old_cycle)) {
@@ -127,9 +127,9 @@ diff -urN nginx-1.31.4/src/core/ngx_cycle.c nginx-1.31.4/src/core/ngx_cycle.c
          ngx_destroy_pool(old_cycle->pool);
          cycle->old_cycle = NULL;
 
-diff -urN nginx-1.31.4/src/core/ngx_cycle.h nginx-1.31.4/src/core/ngx_cycle.h
---- nginx-1.31.4/src/core/ngx_cycle.h	2026-08-20 18:25:06.261610617 +0000
-+++ nginx-1.31.4/src/core/ngx_cycle.h	2026-08-20 18:27:15.206293773 +0000
+diff -urN nginx-1.31.5/src/core/ngx_cycle.h nginx-1.31.5/src/core/ngx_cycle.h
+--- nginx-1.31.5/src/core/ngx_cycle.h	2026-08-20 18:25:06.261610617 +0000
++++ nginx-1.31.5/src/core/ngx_cycle.h	2026-08-20 18:27:15.206293773 +0000
 @@ -22,9 +22,17 @@
  #define NGX_DEBUG_POINTS_ABORT  2
 
@@ -167,9 +167,9 @@ diff -urN nginx-1.31.4/src/core/ngx_cycle.h nginx-1.31.4/src/core/ngx_cycle.h
 
      ngx_msec_t                timer_resolution;
      ngx_msec_t                shutdown_timeout;
-diff -urN nginx-1.31.4/src/core/ngx_log.c nginx-1.31.4/src/core/ngx_log.c
---- nginx-1.31.4/src/core/ngx_log.c	2026-08-20 18:25:06.260839205 +0000
-+++ nginx-1.31.4/src/core/ngx_log.c	2026-08-20 18:27:15.207448881 +0000
+diff -urN nginx-1.31.5/src/core/ngx_log.c nginx-1.31.5/src/core/ngx_log.c
+--- nginx-1.31.5/src/core/ngx_log.c	2026-08-20 18:25:06.260839205 +0000
++++ nginx-1.31.5/src/core/ngx_log.c	2026-08-20 18:27:15.207448881 +0000
 @@ -112,6 +112,8 @@
      ngx_uint_t   wrote_stderr, debug_connection;
      u_char       errstr[NGX_MAX_ERROR_STR];
@@ -196,9 +196,9 @@ diff -urN nginx-1.31.4/src/core/ngx_log.c nginx-1.31.4/src/core/ngx_log.c
      ngx_linefeed(p);
 
      wrote_stderr = 0;
-diff -urN nginx-1.31.4/src/core/ngx_log.h nginx-1.31.4/src/core/ngx_log.h
---- nginx-1.31.4/src/core/ngx_log.h	2026-08-20 18:25:06.272393985 +0000
-+++ nginx-1.31.4/src/core/ngx_log.h	2026-08-20 18:27:15.378388164 +0000
+diff -urN nginx-1.31.5/src/core/ngx_log.h nginx-1.31.5/src/core/ngx_log.h
+--- nginx-1.31.5/src/core/ngx_log.h	2026-08-20 18:25:06.272393985 +0000
++++ nginx-1.31.5/src/core/ngx_log.h	2026-08-20 18:27:15.378388164 +0000
 @@ -76,7 +76,9 @@
  };
 
@@ -210,9 +210,9 @@ diff -urN nginx-1.31.4/src/core/ngx_log.h nginx-1.31.4/src/core/ngx_log.h
 
 
  /*********************************/
-diff -urN nginx-1.31.4/src/core/ngx_resolver.c nginx-1.31.4/src/core/ngx_resolver.c
---- nginx-1.31.4/src/core/ngx_resolver.c	2026-08-20 18:25:06.268809929 +0000
-+++ nginx-1.31.4/src/core/ngx_resolver.c	2026-08-20 18:26:02.596397105 +0000
+diff -urN nginx-1.31.5/src/core/ngx_resolver.c nginx-1.31.5/src/core/ngx_resolver.c
+--- nginx-1.31.5/src/core/ngx_resolver.c	2026-08-20 18:25:06.268809929 +0000
++++ nginx-1.31.5/src/core/ngx_resolver.c	2026-08-20 18:26:02.596397105 +0000
 @@ -9,12 +9,26 @@
  #include <ngx_core.h>
  #include <ngx_event.h>
@@ -472,9 +472,9 @@ diff -urN nginx-1.31.4/src/core/ngx_resolver.c nginx-1.31.4/src/core/ngx_resolve
          }
  #endif
 
-diff -urN nginx-1.31.4/src/core/ngx_thread_pool.c nginx-1.31.4/src/core/ngx_thread_pool.c
---- nginx-1.31.4/src/core/ngx_thread_pool.c	2026-08-20 18:25:06.260158285 +0000
-+++ nginx-1.31.4/src/core/ngx_thread_pool.c	2026-08-20 18:27:15.154245516 +0000
+diff -urN nginx-1.31.5/src/core/ngx_thread_pool.c nginx-1.31.5/src/core/ngx_thread_pool.c
+--- nginx-1.31.5/src/core/ngx_thread_pool.c	2026-08-20 18:25:06.260158285 +0000
++++ nginx-1.31.5/src/core/ngx_thread_pool.c	2026-08-20 18:27:15.154245516 +0000
 @@ -587,7 +587,8 @@
      ngx_thread_pool_conf_t   *tcf;
 
@@ -485,9 +485,9 @@ diff -urN nginx-1.31.4/src/core/ngx_thread_pool.c nginx-1.31.4/src/core/ngx_thre
      {
          return NGX_OK;
      }
-diff -urN nginx-1.31.4/src/event/ngx_event.c nginx-1.31.4/src/event/ngx_event.c
---- nginx-1.31.4/src/event/ngx_event.c	2026-08-20 18:25:06.345420930 +0000
-+++ nginx-1.31.4/src/event/ngx_event.c	2026-08-20 18:26:02.693283070 +0000
+diff -urN nginx-1.31.5/src/event/ngx_event.c nginx-1.31.5/src/event/ngx_event.c
+--- nginx-1.31.5/src/event/ngx_event.c	2026-08-20 18:25:06.345420930 +0000
++++ nginx-1.31.5/src/event/ngx_event.c	2026-08-20 18:26:02.693283070 +0000
 @@ -197,6 +197,9 @@
      ngx_uint_t  flags;
      ngx_msec_t  timer, delta;
@@ -556,9 +556,9 @@ diff -urN nginx-1.31.4/src/event/ngx_event.c nginx-1.31.4/src/event/ngx_event.c
 
      if (ngx_event_timer_init(cycle->log) == NGX_ERROR) {
          return NGX_ERROR;
-diff -urN nginx-1.31.4/src/event/ngx_event_openssl.c nginx-1.31.4/src/event/ngx_event_openssl.c
---- nginx-1.31.4/src/event/ngx_event_openssl.c	2026-08-20 18:25:06.344545326 +0000
-+++ nginx-1.31.4/src/event/ngx_event_openssl.c	2026-08-20 18:28:43.040812191 +0000
+diff -urN nginx-1.31.5/src/event/ngx_event_openssl.c nginx-1.31.5/src/event/ngx_event_openssl.c
+--- nginx-1.31.5/src/event/ngx_event_openssl.c	2026-08-20 18:25:06.344545326 +0000
++++ nginx-1.31.5/src/event/ngx_event_openssl.c	2026-08-20 18:28:43.040812191 +0000
 @@ -2317,6 +2317,31 @@
          return NGX_AGAIN;
      }
@@ -647,9 +647,9 @@ diff -urN nginx-1.31.4/src/event/ngx_event_openssl.c nginx-1.31.4/src/event/ngx_
      err = (sslerr == SSL_ERROR_SYSCALL) ? ngx_errno : 0;
 
      c->ssl->no_wait_shutdown = 1;
-diff -urN nginx-1.31.4/src/event/ngx_event_posted.c nginx-1.31.4/src/event/ngx_event_posted.c
---- nginx-1.31.4/src/event/ngx_event_posted.c	2026-08-20 18:25:06.345246987 +0000
-+++ nginx-1.31.4/src/event/ngx_event_posted.c	2026-08-20 18:26:02.693789007 +0000
+diff -urN nginx-1.31.5/src/event/ngx_event_posted.c nginx-1.31.5/src/event/ngx_event_posted.c
+--- nginx-1.31.5/src/event/ngx_event_posted.c	2026-08-20 18:25:06.345246987 +0000
++++ nginx-1.31.5/src/event/ngx_event_posted.c	2026-08-20 18:26:02.693789007 +0000
 @@ -13,6 +13,7 @@
  ngx_queue_t  ngx_posted_accept_events;
  ngx_queue_t  ngx_posted_next_events;
@@ -658,9 +658,9 @@ diff -urN nginx-1.31.4/src/event/ngx_event_posted.c nginx-1.31.4/src/event/ngx_e
 
 
  void
-diff -urN nginx-1.31.4/src/event/ngx_event_posted.h nginx-1.31.4/src/event/ngx_event_posted.h
---- nginx-1.31.4/src/event/ngx_event_posted.h	2026-08-20 18:25:06.342820109 +0000
-+++ nginx-1.31.4/src/event/ngx_event_posted.h	2026-08-20 18:26:02.694161373 +0000
+diff -urN nginx-1.31.5/src/event/ngx_event_posted.h nginx-1.31.5/src/event/ngx_event_posted.h
+--- nginx-1.31.5/src/event/ngx_event_posted.h	2026-08-20 18:25:06.342820109 +0000
++++ nginx-1.31.5/src/event/ngx_event_posted.h	2026-08-20 18:26:02.694161373 +0000
 @@ -45,6 +45,9 @@
  extern ngx_queue_t  ngx_posted_accept_events;
  extern ngx_queue_t  ngx_posted_next_events;
@@ -671,9 +671,9 @@ diff -urN nginx-1.31.4/src/event/ngx_event_posted.h nginx-1.31.4/src/event/ngx_e
 
 
  #endif /* _NGX_EVENT_POSTED_H_INCLUDED_ */
-diff -urN nginx-1.31.4/src/http/modules/ngx_http_log_module.c nginx-1.31.4/src/http/modules/ngx_http_log_module.c
---- nginx-1.31.4/src/http/modules/ngx_http_log_module.c	2026-08-20 18:25:06.307399909 +0000
-+++ nginx-1.31.4/src/http/modules/ngx_http_log_module.c	2026-08-20 18:27:15.309248241 +0000
+diff -urN nginx-1.31.5/src/http/modules/ngx_http_log_module.c nginx-1.31.5/src/http/modules/ngx_http_log_module.c
+--- nginx-1.31.5/src/http/modules/ngx_http_log_module.c	2026-08-20 18:25:06.307399909 +0000
++++ nginx-1.31.5/src/http/modules/ngx_http_log_module.c	2026-08-20 18:27:15.309248241 +0000
 @@ -79,6 +79,8 @@
      time_t                      open_file_cache_valid;
      ngx_uint_t                  open_file_cache_min_uses;
@@ -797,9 +797,9 @@ diff -urN nginx-1.31.4/src/http/modules/ngx_http_log_module.c nginx-1.31.4/src/h
      if (conf->open_file_cache == NGX_CONF_UNSET_PTR) {
 
          conf->open_file_cache = prev->open_file_cache;
-diff -urN nginx-1.31.4/src/http/modules/ngx_http_proxy_module.c nginx-1.31.4/src/http/modules/ngx_http_proxy_module.c
---- nginx-1.31.4/src/http/modules/ngx_http_proxy_module.c	2026-08-20 18:25:06.322883399 +0000
-+++ nginx-1.31.4/src/http/modules/ngx_http_proxy_module.c	2026-08-20 18:27:15.337685723 +0000
+diff -urN nginx-1.31.5/src/http/modules/ngx_http_proxy_module.c nginx-1.31.5/src/http/modules/ngx_http_proxy_module.c
+--- nginx-1.31.5/src/http/modules/ngx_http_proxy_module.c	2026-08-20 18:25:06.322883399 +0000
++++ nginx-1.31.5/src/http/modules/ngx_http_proxy_module.c	2026-08-20 18:27:15.337685723 +0000
 @@ -813,13 +813,13 @@
  static ngx_http_variable_t  ngx_http_proxy_vars[] = {
 
@@ -817,9 +817,9 @@ diff -urN nginx-1.31.4/src/http/modules/ngx_http_proxy_module.c nginx-1.31.4/src
 
  #if 0
      { ngx_string("proxy_add_via"), NULL, NULL, 0, NGX_HTTP_VAR_NOHASH, 0 },
-diff -urN nginx-1.31.4/src/http/ngx_http_core_module.c nginx-1.31.4/src/http/ngx_http_core_module.c
---- nginx-1.31.4/src/http/ngx_http_core_module.c	2026-08-20 18:25:06.301997145 +0000
-+++ nginx-1.31.4/src/http/ngx_http_core_module.c	2026-08-20 18:27:15.262749710 +0000
+diff -urN nginx-1.31.5/src/http/ngx_http_core_module.c nginx-1.31.5/src/http/ngx_http_core_module.c
+--- nginx-1.31.5/src/http/ngx_http_core_module.c	2026-08-20 18:25:06.301997145 +0000
++++ nginx-1.31.5/src/http/ngx_http_core_module.c	2026-08-20 18:27:15.262749710 +0000
 @@ -55,7 +55,6 @@
      void *conf);
  static char *ngx_http_core_server_name(ngx_conf_t *cf, ngx_command_t *cmd,
@@ -1047,9 +1047,9 @@ diff -urN nginx-1.31.4/src/http/ngx_http_core_module.c nginx-1.31.4/src/http/ngx
 
 
  static char *
-diff -urN nginx-1.31.4/src/http/ngx_http_upstream.c nginx-1.31.4/src/http/ngx_http_upstream.c
---- nginx-1.31.4/src/http/ngx_http_upstream.c	2026-08-20 18:25:06.305153944 +0000
-+++ nginx-1.31.4/src/http/ngx_http_upstream.c	2026-08-20 18:27:15.237139382 +0000
+diff -urN nginx-1.31.5/src/http/ngx_http_upstream.c nginx-1.31.5/src/http/ngx_http_upstream.c
+--- nginx-1.31.5/src/http/ngx_http_upstream.c	2026-08-20 18:25:06.305153944 +0000
++++ nginx-1.31.5/src/http/ngx_http_upstream.c	2026-08-20 18:27:15.237139382 +0000
 @@ -1606,6 +1606,11 @@
          return;
      }
@@ -1071,9 +1071,9 @@ diff -urN nginx-1.31.4/src/http/ngx_http_upstream.c nginx-1.31.4/src/http/ngx_ht
          u->write_event_handler = ngx_http_upstream_dummy_handler;
 
          (void) ngx_handle_write_event(c->write, 0);
-diff -urN nginx-1.31.4/src/http/ngx_http_upstream.h nginx-1.31.4/src/http/ngx_http_upstream.h
---- nginx-1.31.4/src/http/ngx_http_upstream.h	2026-08-20 18:25:06.297042038 +0000
-+++ nginx-1.31.4/src/http/ngx_http_upstream.h	2026-08-20 18:26:02.668719378 +0000
+diff -urN nginx-1.31.5/src/http/ngx_http_upstream.h nginx-1.31.5/src/http/ngx_http_upstream.h
+--- nginx-1.31.5/src/http/ngx_http_upstream.h	2026-08-20 18:25:06.297042038 +0000
++++ nginx-1.31.5/src/http/ngx_http_upstream.h	2026-08-20 18:26:02.668719378 +0000
 @@ -467,4 +467,9 @@
  extern ngx_conf_bitmask_t  ngx_http_upstream_ignore_headers_masks[];
 
@@ -1084,9 +1084,9 @@ diff -urN nginx-1.31.4/src/http/ngx_http_upstream.h nginx-1.31.4/src/http/ngx_ht
 +
 +
  #endif /* _NGX_HTTP_UPSTREAM_H_INCLUDED_ */
-diff -urN nginx-1.31.4/src/os/unix/ngx_daemon.c nginx-1.31.4/src/os/unix/ngx_daemon.c
---- nginx-1.31.4/src/os/unix/ngx_daemon.c	2026-08-20 18:25:06.335096609 +0000
-+++ nginx-1.31.4/src/os/unix/ngx_daemon.c	2026-08-20 18:26:02.616133331 +0000
+diff -urN nginx-1.31.5/src/os/unix/ngx_daemon.c nginx-1.31.5/src/os/unix/ngx_daemon.c
+--- nginx-1.31.5/src/os/unix/ngx_daemon.c	2026-08-20 18:25:06.335096609 +0000
++++ nginx-1.31.5/src/os/unix/ngx_daemon.c	2026-08-20 18:26:02.616133331 +0000
 @@ -23,6 +23,8 @@
          break;
 
@@ -1096,9 +1096,9 @@ diff -urN nginx-1.31.4/src/os/unix/ngx_daemon.c nginx-1.31.4/src/os/unix/ngx_dae
          exit(0);
      }
 
-diff -urN nginx-1.31.4/src/os/unix/ngx_process.c nginx-1.31.4/src/os/unix/ngx_process.c
---- nginx-1.31.4/src/os/unix/ngx_process.c	2026-08-20 18:25:06.334153155 +0000
-+++ nginx-1.31.4/src/os/unix/ngx_process.c	2026-08-20 18:27:15.179015930 +0000
+diff -urN nginx-1.31.5/src/os/unix/ngx_process.c nginx-1.31.5/src/os/unix/ngx_process.c
+--- nginx-1.31.5/src/os/unix/ngx_process.c	2026-08-20 18:25:06.334153155 +0000
++++ nginx-1.31.5/src/os/unix/ngx_process.c	2026-08-20 18:27:15.179015930 +0000
 @@ -362,8 +362,15 @@
              break;
 
@@ -1117,9 +1117,9 @@ diff -urN nginx-1.31.4/src/os/unix/ngx_process.c nginx-1.31.4/src/os/unix/ngx_pr
              break;
 
          case ngx_signal_value(NGX_REOPEN_SIGNAL):
-diff -urN nginx-1.31.4/src/os/unix/ngx_process_cycle.c nginx-1.31.4/src/os/unix/ngx_process_cycle.c
---- nginx-1.31.4/src/os/unix/ngx_process_cycle.c	2026-08-20 18:25:06.334321827 +0000
-+++ nginx-1.31.4/src/os/unix/ngx_process_cycle.c	2026-08-20 18:27:15.361104636 +0000
+diff -urN nginx-1.31.5/src/os/unix/ngx_process_cycle.c nginx-1.31.5/src/os/unix/ngx_process_cycle.c
+--- nginx-1.31.5/src/os/unix/ngx_process_cycle.c	2026-08-20 18:25:06.334321827 +0000
++++ nginx-1.31.5/src/os/unix/ngx_process_cycle.c	2026-08-20 18:27:15.361104636 +0000
 @@ -15,6 +15,8 @@
      ngx_int_t type);
  static void ngx_start_cache_manager_processes(ngx_cycle_t *cycle,
@@ -1338,9 +1338,9 @@ diff -urN nginx-1.31.4/src/os/unix/ngx_process_cycle.c nginx-1.31.4/src/os/unix/
          }
 
          if (ngx_reopen) {
-diff -urN nginx-1.31.4/src/os/unix/ngx_process_cycle.h nginx-1.31.4/src/os/unix/ngx_process_cycle.h
---- nginx-1.31.4/src/os/unix/ngx_process_cycle.h	2026-08-20 18:25:06.328260863 +0000
-+++ nginx-1.31.4/src/os/unix/ngx_process_cycle.h	2026-08-20 18:26:02.716661213 +0000
+diff -urN nginx-1.31.5/src/os/unix/ngx_process_cycle.h nginx-1.31.5/src/os/unix/ngx_process_cycle.h
+--- nginx-1.31.5/src/os/unix/ngx_process_cycle.h	2026-08-20 18:25:06.328260863 +0000
++++ nginx-1.31.5/src/os/unix/ngx_process_cycle.h	2026-08-20 18:26:02.716661213 +0000
 @@ -45,6 +45,7 @@
  extern ngx_uint_t      ngx_inherited;
  extern ngx_uint_t      ngx_daemonized;
@@ -1349,9 +1349,9 @@ diff -urN nginx-1.31.4/src/os/unix/ngx_process_cycle.h nginx-1.31.4/src/os/unix/
 
  extern sig_atomic_t    ngx_reap;
  extern sig_atomic_t    ngx_sigio;
-diff -urN nginx-1.31.4/src/os/win32/ngx_event_log.c nginx-1.31.4/src/os/win32/ngx_event_log.c
---- nginx-1.31.4/src/os/win32/ngx_event_log.c	2026-08-20 18:25:06.337301223 +0000
-+++ nginx-1.31.4/src/os/win32/ngx_event_log.c	2026-08-20 18:25:11.557695096 +0000
+diff -urN nginx-1.31.5/src/os/win32/ngx_event_log.c nginx-1.31.5/src/os/win32/ngx_event_log.c
+--- nginx-1.31.5/src/os/win32/ngx_event_log.c	2026-08-20 18:25:06.337301223 +0000
++++ nginx-1.31.5/src/os/win32/ngx_event_log.c	2026-08-20 18:25:11.557695096 +0000
 @@ -8,7 +8,9 @@
  #include <ngx_core.h>
 
@@ -1363,9 +1363,9 @@ diff -urN nginx-1.31.4/src/os/win32/ngx_event_log.c nginx-1.31.4/src/os/win32/ng
 
 
  void ngx_cdecl
-diff -urN nginx-1.31.4/src/stream/ngx_stream.h nginx-1.31.4/src/stream/ngx_stream.h
---- nginx-1.31.4/src/stream/ngx_stream.h	2026-08-20 18:25:06.288942082 +0000
-+++ nginx-1.31.4/src/stream/ngx_stream.h	2026-08-20 18:26:02.669206636 +0000
+diff -urN nginx-1.31.5/src/stream/ngx_stream.h nginx-1.31.5/src/stream/ngx_stream.h
+--- nginx-1.31.5/src/stream/ngx_stream.h	2026-08-20 18:25:06.288942082 +0000
++++ nginx-1.31.5/src/stream/ngx_stream.h	2026-08-20 18:26:02.669206636 +0000
 @@ -27,6 +27,7 @@
 
 
@@ -1406,9 +1406,9 @@ diff -urN nginx-1.31.4/src/stream/ngx_stream.h nginx-1.31.4/src/stream/ngx_strea
 +
 +
  #endif /* _NGX_STREAM_H_INCLUDED_ */
-diff -urN nginx-1.31.4/src/stream/ngx_stream_proxy_module.c nginx-1.31.4/src/stream/ngx_stream_proxy_module.c
---- nginx-1.31.4/src/stream/ngx_stream_proxy_module.c	2026-08-20 18:25:06.293661195 +0000
-+++ nginx-1.31.4/src/stream/ngx_stream_proxy_module.c	2026-08-20 18:26:02.670829171 +0000
+diff -urN nginx-1.31.5/src/stream/ngx_stream_proxy_module.c nginx-1.31.5/src/stream/ngx_stream_proxy_module.c
+--- nginx-1.31.5/src/stream/ngx_stream_proxy_module.c	2026-08-20 18:25:06.293661195 +0000
++++ nginx-1.31.5/src/stream/ngx_stream_proxy_module.c	2026-08-20 18:26:02.670829171 +0000
 @@ -449,6 +449,7 @@
      ngx_stream_proxy_srv_conf_t      *pscf;
      ngx_stream_upstream_srv_conf_t   *uscf, **uscfp;
@@ -1586,9 +1586,9 @@ diff -urN nginx-1.31.4/src/stream/ngx_stream_proxy_module.c nginx-1.31.4/src/str
 +
 +    return pscf->next_upstream_tries;
 +}
-diff -urN nginx-1.31.4/src/stream/ngx_stream_ssl_preread_module.c nginx-1.31.4/src/stream/ngx_stream_ssl_preread_module.c
---- nginx-1.31.4/src/stream/ngx_stream_ssl_preread_module.c	2026-08-20 18:25:06.291364190 +0000
-+++ nginx-1.31.4/src/stream/ngx_stream_ssl_preread_module.c	2026-08-20 18:26:02.572882520 +0000
+diff -urN nginx-1.31.5/src/stream/ngx_stream_ssl_preread_module.c nginx-1.31.5/src/stream/ngx_stream_ssl_preread_module.c
+--- nginx-1.31.5/src/stream/ngx_stream_ssl_preread_module.c	2026-08-20 18:25:06.291364190 +0000
++++ nginx-1.31.5/src/stream/ngx_stream_ssl_preread_module.c	2026-08-20 18:26:02.572882520 +0000
 @@ -190,11 +190,11 @@
          }
 
@@ -1603,9 +1603,9 @@ diff -urN nginx-1.31.4/src/stream/ngx_stream_ssl_preread_module.c nginx-1.31.4/s
          }
 
          p += len;
-diff -urN nginx-1.31.4/src/stream/ngx_stream_upstream.h nginx-1.31.4/src/stream/ngx_stream_upstream.h
---- nginx-1.31.4/src/stream/ngx_stream_upstream.h	2026-08-20 18:25:06.290171871 +0000
-+++ nginx-1.31.4/src/stream/ngx_stream_upstream.h	2026-08-20 18:26:02.671362699 +0000
+diff -urN nginx-1.31.5/src/stream/ngx_stream_upstream.h nginx-1.31.5/src/stream/ngx_stream_upstream.h
+--- nginx-1.31.5/src/stream/ngx_stream_upstream.h	2026-08-20 18:25:06.290171871 +0000
++++ nginx-1.31.5/src/stream/ngx_stream_upstream.h	2026-08-20 18:26:02.671362699 +0000
 @@ -166,4 +166,9 @@
  extern ngx_module_t  ngx_stream_upstream_module;
 
@@ -1616,9 +1616,9 @@ diff -urN nginx-1.31.4/src/stream/ngx_stream_upstream.h nginx-1.31.4/src/stream/
 +
 +
  #endif /* _NGX_STREAM_UPSTREAM_H_INCLUDED_ */
-diff -urN nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.c nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.c
---- nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.c	2026-08-20 18:25:06.292993715 +0000
-+++ nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.c	2026-08-20 18:25:11.572327344 +0000
+diff -urN nginx-1.31.5/src/stream/ngx_stream_upstream_round_robin.c nginx-1.31.5/src/stream/ngx_stream_upstream_round_robin.c
+--- nginx-1.31.5/src/stream/ngx_stream_upstream_round_robin.c	2026-08-20 18:25:06.292993715 +0000
++++ nginx-1.31.5/src/stream/ngx_stream_upstream_round_robin.c	2026-08-20 18:25:11.572327344 +0000
 @@ -21,10 +21,6 @@
 
  #if (NGX_STREAM_SSL)
@@ -1648,9 +1648,9 @@ diff -urN nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.c nginx-1.31.4
  ngx_stream_upstream_save_round_robin_peer_session(ngx_peer_connection_t *pc,
      void *data)
  {
-diff -urN nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.h nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.h
---- nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.h	2026-08-20 18:25:06.288163640 +0000
-+++ nginx-1.31.4/src/stream/ngx_stream_upstream_round_robin.h	2026-08-20 18:25:11.572718310 +0000
+diff -urN nginx-1.31.5/src/stream/ngx_stream_upstream_round_robin.h nginx-1.31.5/src/stream/ngx_stream_upstream_round_robin.h
+--- nginx-1.31.5/src/stream/ngx_stream_upstream_round_robin.h	2026-08-20 18:25:06.288163640 +0000
++++ nginx-1.31.5/src/stream/ngx_stream_upstream_round_robin.h	2026-08-20 18:25:11.572718310 +0000
 @@ -146,6 +146,16 @@
          ngx_rwlock_unlock(&peer->lock);                                       \
      }
