@@ -901,7 +901,7 @@ diff -urN nginx-1.31.5/src/http/ngx_http_core_module.c nginx-1.31.5/src/http/ngx
 
      ngx_conf_merge_str_value(conf->default_type,
                                prev->default_type, "text/plain");
-@@ -4596,108 +4588,6 @@
+@@ -4596,112 +4588,6 @@
  }
 
 
@@ -983,12 +983,16 @@ diff -urN nginx-1.31.5/src/http/ngx_http_core_module.c nginx-1.31.5/src/http/ngx
 -    ngx_memzero(&sc, sizeof(ngx_http_script_compile_t));
 -    sc.variables = n;
 -
+-    if (alias
+-        && (clcf->predicate
 -#if (NGX_PCRE)
--    if (alias && clcf->regex) {
+-            || clcf->regex
+-#endif
+-           ))
+-    {
 -        clcf->alias = NGX_MAX_SIZE_T_VALUE;
 -        n = 1;
 -    }
--#endif
 -
 -    if (n) {
 -        sc.cf = cf;
