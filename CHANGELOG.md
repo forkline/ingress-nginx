@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.9.3](https://github.com/forkline/ingress-nginx/tree/v2026.9.3) - 2026-09-03
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks (v44.39.1 → v44.59.3)
+
+### Build
+
+- Update google.golang.org/grpc/examples digest (7 updates)
+
+- Update go modules (3 updates)
+
+- Update module github.com/sirupsen/logrus to v1.10.2 (#361) (deps)([3eea43d](https://github.com/forkline/ingress-nginx/commit/3eea43dfa8c189d71c3e866957da4796cda5be2f))
+
+- Update helm/kind-action action to v1.15.0 (#389) (deps)([1253e33](https://github.com/forkline/ingress-nginx/commit/1253e335ef9c8be4676c936d598e6316bce110e4))
+
+- Update dependency nginx/nginx to v1.31.5 (#388) (deps)([a652212](https://github.com/forkline/ingress-nginx/commit/a652212694663c1095cd38c201ce8674d277d157))
+
 ## [v2026.8.21](https://github.com/forkline/ingress-nginx/tree/v2026.8.21) - 2026-08-21
 
 ### Fixed
