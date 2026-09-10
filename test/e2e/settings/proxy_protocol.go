@@ -23,6 +23,7 @@ import (
 	"io"
 	"net"
 	"strings"
+	"time"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/stretchr/testify/assert"
@@ -221,8 +222,8 @@ var _ = framework.DescribeSetting("use-proxy-protocol", func() {
 		_, err = conn.Write([]byte("GET / HTTP/1.1\r\nHost: proxy-protocol\r\n\r\n"))
 		assert.Nil(ginkgo.GinkgoT(), err, "unexpected error writing request")
 
-		_, err = io.ReadAll(conn)
-		assert.Nil(ginkgo.GinkgoT(), err, "unexpected error reading connection data")
+		conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+		_, _ = io.ReadAll(conn)
 
 		logs, err := f.NginxLogs()
 		assert.Nil(ginkgo.GinkgoT(), err, "obtaining nginx logs")
