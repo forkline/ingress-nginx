@@ -222,8 +222,10 @@ var _ = framework.DescribeSetting("use-proxy-protocol", func() {
 		_, err = conn.Write([]byte("GET / HTTP/1.1\r\nHost: proxy-protocol\r\n\r\n"))
 		assert.Nil(ginkgo.GinkgoT(), err, "unexpected error writing request")
 
-		conn.SetReadDeadline(time.Now().Add(30 * time.Second))
-		_, _ = io.ReadAll(conn)
+		err = conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+		assert.Nil(ginkgo.GinkgoT(), err, "unexpected error setting read deadline")
+
+		_, _ = io.ReadAll(conn) //nolint:errcheck
 
 		logs, err := f.NginxLogs()
 		assert.Nil(ginkgo.GinkgoT(), err, "obtaining nginx logs")
