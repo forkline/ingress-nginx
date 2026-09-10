@@ -30,6 +30,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/apimachinery/pkg/util/wait"
 
 	"k8s.io/ingress-nginx/test/e2e/framework"
 )
@@ -226,8 +227,16 @@ var _ = framework.DescribeSetting("use-proxy-protocol", func() {
 		assert.Nil(ginkgo.GinkgoT(), err, "unexpected error setting read deadline")
 
 		_, _ = io.ReadAll(conn) //nolint:errcheck
+		conn.Close()
 
-		logs, err := f.NginxLogs()
+		var logs string
+		err = wait.Poll(framework.Poll, framework.DefaultTimeout, func() (bool, error) {
+			logs, err = f.NginxLogs()
+			if err != nil {
+				return false, nil
+			}
+			return strings.Contains(logs, `192.168.0.1`), nil
+		})
 		assert.Nil(ginkgo.GinkgoT(), err, "obtaining nginx logs")
 		assert.Contains(ginkgo.GinkgoT(), logs, `192.168.0.1`)
 	})
