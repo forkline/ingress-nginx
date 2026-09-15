@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.9.15](https://github.com/forkline/ingress-nginx/tree/v2026.9.15) - 2026-09-15
+
+### Fixed
+
+- Update go-github imports from v90 to v92([c75be8c](https://github.com/forkline/ingress-nginx/commit/c75be8cbd007f374463140c5e88148bb79903af7))
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks (v44.61.1 → v44.93.4)
+
+### Build
+
+- Update dependency helm to v4.3.0 (#413) (deps)([682b723](https://github.com/forkline/ingress-nginx/commit/682b7238ee21245fe8de3c7d5be72b88ce4ba295))
+
+- Update go modules (deps)([ea52b3f](https://github.com/forkline/ingress-nginx/commit/ea52b3f8256a03fe2a37dc5fcc26887918628530))
+
+- Update github actions (#433) (deps)([18b657f](https://github.com/forkline/ingress-nginx/commit/18b657f41d03e8a87ba8d2cd5eedcdf012898c14))
+
+- Update dependency nginx/nginx to v1.31.6 (#432) (deps)([e0978eb](https://github.com/forkline/ingress-nginx/commit/e0978eb8a0a41688ce115c3ccbd8ce1bd7cdf483))
+
+- Update module github.com/google/go-github/v90 to v92 (deps)([173d4f8](https://github.com/forkline/ingress-nginx/commit/173d4f82204f97f69da55a822b232d6ff27dae12))
+
 ## [v2026.9.3](https://github.com/forkline/ingress-nginx/tree/v2026.9.3) - 2026-09-03
 
 ### Chore
