@@ -258,9 +258,9 @@ jobs:
       - name: Install kind
         uses: helm/kind-action@v1.15.0
         with:
-          version: v0.31.0
+          version: v0.33.0
           install_only: true
-          kubectl_version: v1.35.1
+          kubectl_version: v1.37.0
 
       - name: Run e2e tests
         env:
@@ -325,9 +325,9 @@ jobs:
       - name: Install kind
         uses: helm/kind-action@v1.15.0
         with:
-          version: v0.31.0
+          version: v0.33.0
           install_only: true
-          kubectl_version: v1.35.1
+          kubectl_version: v1.37.0
 
       - name: Run chroot e2e tests
         env:
