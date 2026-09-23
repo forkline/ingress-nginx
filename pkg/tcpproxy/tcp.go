@@ -17,6 +17,7 @@ limitations under the License.
 package tcpproxy
 
 import (
+	"encoding/binary"
 	"fmt"
 	"io"
 	"net"
@@ -24,6 +25,12 @@ import (
 	"k8s.io/klog/v2"
 
 	"pault.ag/go/sniff/parser"
+)
+
+const (
+	tlsRecordHeaderLen = 5
+	tlsHandshakeType   = 0x16
+	maxTLSRecordLen    = 16384
 )
 
 // TCPServer describes a server that works in passthrough mode.
@@ -59,10 +66,8 @@ func (p *TCPProxy) Get(host string) *TCPServer {
 // and open a connection to the passthrough server.
 func (p *TCPProxy) Handle(conn net.Conn) {
 	defer conn.Close()
-	// See: https://www.ibm.com/docs/en/ztpf/1.1.0.15?topic=sessions-ssl-record-format
-	data := make([]byte, 16384)
 
-	length, err := conn.Read(data)
+	data, err := readClientHello(conn)
 	if err != nil {
 		klog.V(4).ErrorS(err, "Error reading data from the connection")
 		return
@@ -113,7 +118,7 @@ func (p *TCPProxy) Handle(conn net.Conn) {
 		klog.ErrorS(err, "Error writing Proxy Protocol header")
 		clientConn.Close()
 	} else {
-		_, err = clientConn.Write(data[:length])
+		_, err = clientConn.Write(data)
 		if err != nil {
 			klog.Errorf("Error writing the first 4k of proxy data: %v", err)
 			clientConn.Close()
@@ -121,6 +126,32 @@ func (p *TCPProxy) Handle(conn net.Conn) {
 	}
 
 	pipe(clientConn, conn)
+}
+
+// readClientHello reads one complete TLS record so SNI extraction works even
+// when the ClientHello is fragmented across several TCP segments.
+// See: https://www.ibm.com/docs/en/ztpf/1.1.0.15?topic=sessions-ssl-record-format
+func readClientHello(conn net.Conn) ([]byte, error) {
+	buf := make([]byte, tlsRecordHeaderLen+maxTLSRecordLen)
+
+	if _, err := io.ReadFull(conn, buf[:tlsRecordHeaderLen]); err != nil {
+		return nil, err
+	}
+
+	if buf[0] != tlsHandshakeType {
+		return buf[:tlsRecordHeaderLen], nil
+	}
+
+	recLen := int(binary.BigEndian.Uint16(buf[3:tlsRecordHeaderLen]))
+	if recLen > maxTLSRecordLen {
+		return buf[:tlsRecordHeaderLen], nil
+	}
+
+	if _, err := io.ReadFull(conn, buf[tlsRecordHeaderLen:tlsRecordHeaderLen+recLen]); err != nil {
+		return nil, err
+	}
+
+	return buf[:tlsRecordHeaderLen+recLen], nil
 }
 
 func pipe(client, server net.Conn) {
