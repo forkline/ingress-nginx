@@ -260,7 +260,7 @@ jobs:
         with:
           version: v0.33.0
           install_only: true
-          kubectl_version: v1.37.0
+          kubectl_version: v1.37.1
 
       - name: Run e2e tests
         env:
@@ -327,7 +327,7 @@ jobs:
         with:
           version: v0.33.0
           install_only: true
-          kubectl_version: v1.37.0
+          kubectl_version: v1.37.1
 
       - name: Run chroot e2e tests
         env:
