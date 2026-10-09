@@ -28,7 +28,7 @@ jobs:
       - name: Check if tag exists
         run: |
           tag=${{ steps.get_version.outputs.tag }}
-          if git ls-remote --tags origin | grep -q "refs/tags/$tag"; then
+          if git ls-remote --tags origin | grep "refs/tags/$tag" >/dev/null; then
             echo "Tag $tag already exists"
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
           else
