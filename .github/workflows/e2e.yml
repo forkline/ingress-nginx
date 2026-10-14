@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
     needs: [changes]
-    if: always() && (github.event_name != 'pull_request' || needs.changes.outputs.e2e == 'true')
+    if: !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.e2e == 'true')
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -213,7 +213,7 @@ jobs:
     timeout-minutes: 30
     needs: [changes, build]
     if: >-
-      always() && (github.event_name != 'pull_request' ||
+      !cancelled() && (github.event_name != 'pull_request' ||
       needs.changes.outputs.e2e == 'true') && needs.build.result == 'success'
     steps:
       - name: Checkout
@@ -241,7 +241,7 @@ jobs:
     timeout-minutes: 90
     needs: [changes, build]
     if: >-
-      always() && (github.event_name != 'pull_request' ||
+      !cancelled() && (github.event_name != 'pull_request' ||
       needs.changes.outputs.e2e == 'true') && needs.build.result == 'success'
     steps:
       - name: Checkout
@@ -306,7 +306,7 @@ jobs:
     timeout-minutes: 90
     needs: [changes, build]
     if: >-
-      always() && github.event_name != 'pull_request' &&
+      !cancelled() && github.event_name != 'pull_request' &&
       (needs.changes.outputs.e2e == 'true' ||
       needs.changes.result == 'skipped') &&
       needs.build.result == 'success'
@@ -392,6 +392,10 @@ jobs:
       - name: Check E2E results
         run: |
           GS="$GITHUB_STEP_SUMMARY"
+          if [[ "${{ needs.changes.result }}" != "success" ]]; then
+            echo ":x: **Status: FAILED (change detection failed)**" >> "$GS"
+            exit 1
+          fi
           if [[ "${{ needs.changes.outputs.e2e }}" == "true" ]]; then
             echo "## E2E Changes Detected" >> "$GS"
             echo "" >> "$GS"
@@ -410,10 +414,13 @@ jobs:
               echo ":x: **Status: FAILED**" >> "$GS"
               exit 1
             fi
-          else
+          elif [[ "${{ needs.changes.outputs.e2e }}" == "false" ]]; then
             echo "## E2E Checks Appropriately Skipped" >> "$GS"
             echo "" >> "$GS"
             echo "No E2E-related files changed in PR." >> "$GS"
             echo "" >> "$GS"
             echo ":white_check_mark: **Status: PASSED (Skipped)**" >> "$GS"
+          else
+            echo ":x: **Status: FAILED (invalid change detection result)**" >> "$GS"
+            exit 1
           fi
