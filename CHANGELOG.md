@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.10.14](https://github.com/forkline/ingress-nginx/tree/v2026.10.14) - 2026-10-14
+
+### Fixed
+
+- Revert invalid helm-docs version update (pre-commit)([b884012](https://github.com/forkline/ingress-nginx/commit/b8840123831bcce2371a8527a6ae81c80f15b519))
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks (v44.93.7 → v44.159.0)
+
+- Update pre-commit hook alessandrojcm/commitlint-pre-commit-hook to v9.27.0 (#454) (pre-commit)([4237857](https://github.com/forkline/ingress-nginx/commit/423785721af2733c3734cd55bcc1c1718c5a06fa))
+
+- Update pre-commit hook norwoodj/helm-docs to v19 (pre-commit)([c5f4a89](https://github.com/forkline/ingress-nginx/commit/c5f4a892e3460cc960f4860fbe72bce1870c769d))
+
+### Build
+
+- Update go modules (6 updates)
+
+- Update alpine Docker tag to v3.24.2 (#445) (deps)([f5d1d58](https://github.com/forkline/ingress-nginx/commit/f5d1d585f8c660de5841c0ed674ba78fd43c7410))
+
+- Update google.golang.org/grpc/examples digest (14 updates)
+
+- Update dependency kubernetes/kubernetes to v1.37.1 (#466) (deps)([3e926f2](https://github.com/forkline/ingress-nginx/commit/3e926f2ffef7dd335afda8b271cb04b2b93fdfba))
+
+- Update dependency kustomize (v5.8.2 → v5.8.3)
+
+- Update github actions (#504) (deps)([a2ce52e](https://github.com/forkline/ingress-nginx/commit/a2ce52e4c1eaef6e71853bc043be2a7d5266dc22))
+
+- Update dependency chart-testing to v3.15.0 (#506) (deps)([3a33b8b](https://github.com/forkline/ingress-nginx/commit/3a33b8ba17b942890b70899d8d3d09caa960b306))
+
+- Update helm/chart-testing-action action to v2.9.0 (#518) (deps)([f0cd511](https://github.com/forkline/ingress-nginx/commit/f0cd51139481bd5620df093b4ca4a06da9318317))
+
+- Update dependency nginx/nginx to v1.31.7 (#529) (deps)([3b38e7e](https://github.com/forkline/ingress-nginx/commit/3b38e7e1a5d04e29a19f090988c8a3563a0bc04e))
+
 ## [v2026.9.15](https://github.com/forkline/ingress-nginx/tree/v2026.9.15) - 2026-09-15
 
 ### Fixed
