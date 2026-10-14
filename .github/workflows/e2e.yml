@@ -19,7 +19,8 @@ permissions:
   packages: write
 
 concurrency:
-  group: e2e-${{ github.ref }}
+  # Workflow-scoped group avoids legacy runs whose always() jobs resisted cancellation.
+  group: ingress-nginx-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
