@@ -60,6 +60,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Verify NGINX base version
+        shell: bash
+        run: |
+          set -euo pipefail
+          NGINX_VERSION=$(sed -n 's/^export NGINX_VERSION=//p' images/nginx/rootfs/build.sh)
+          test -n "${NGINX_VERSION}"
+          EXPECTED_IMAGE="ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}"
+          ACTUAL_IMAGE=$(cat NGINX_BASE)
+          if [[ "${ACTUAL_IMAGE}" != "${EXPECTED_IMAGE}" ]]; then
+            echo "::error file=NGINX_BASE::NGINX_BASE (${ACTUAL_IMAGE}) must match ${EXPECTED_IMAGE}"
+            exit 1
+          fi
+
       - name: Read Go version
         run: echo "GOLANG_VERSION=$(cat GOLANG_VERSION)" >> "$GITHUB_ENV"
 

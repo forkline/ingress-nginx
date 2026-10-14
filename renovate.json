@@ -24,6 +24,20 @@
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
       "extractVersionTemplate": "{{#if extractVersion}}{{{extractVersion}}}{{/if}}"
+    },
+    {
+      "customType": "regex",
+      "description": "Track NGINX_BASE with the same nginx/nginx release dependency as build.sh",
+      "managerFilePatterns": [
+        "/^NGINX_BASE$/"
+      ],
+      "matchStrings": [
+        "ghcr\\.io/forkline/ingress-nginx/nginx:(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "nginx/nginx",
+      "extractVersionTemplate": "^release-(?<version>.*)$",
+      "versioningTemplate": "semver"
     }
   ],
   "packageRules": [
@@ -71,6 +85,16 @@
       "automergeType": "pr",
       "platformAutomerge": true,
       "ignoreTests": false
+    },
+    {
+      "matchDatasources": [
+        "github-releases"
+      ],
+      "matchPackageNames": [
+        "nginx/nginx"
+      ],
+      "groupName": "NGINX source",
+      "groupSlug": "nginx-source"
     }
   ]
 }
