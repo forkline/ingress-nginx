@@ -16,15 +16,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Build
 
-- Update dependency helm to v4.3.1 (#535) (deps)([c89f2f5](https://github.com/forkline/ingress-nginx/commit/c89f2f57c43e5ad3f2b57e7092658f8da360be90))
+- Update dependency helm to v4.3.1 (deps)([c89f2f5](https://github.com/forkline/ingress-nginx/commit/c89f2f57c43e5ad3f2b57e7092658f8da360be90))
 
 - Update go modules (2 updates)
 
-- Update google.golang.org/grpc/examples digest to 40e956b (#539) (deps)([a5b66fe](https://github.com/forkline/ingress-nginx/commit/a5b66fe2f6c406d9d5dfe9db09f38582c65973a3))
+- Update google.golang.org/grpc/examples digest (2 updates)
 
-- Update dependency nginx/nginx to v1.31.8 (#559) (deps)([8a65770](https://github.com/forkline/ingress-nginx/commit/8a65770850db8bc96b8cb028607cdefd85182e2e))
+- Update dependency nginx/nginx to v1.31.8 (deps)([8a65770](https://github.com/forkline/ingress-nginx/commit/8a65770850db8bc96b8cb028607cdefd85182e2e))
 
-- Update alpine Docker tag to v3.24.3 (#563) (deps)([dc3fed8](https://github.com/forkline/ingress-nginx/commit/dc3fed8793810a875c0bd3eb5ba859d98eb4989e))
+- Update alpine Docker tag to v3.24.3 (deps)([dc3fed8](https://github.com/forkline/ingress-nginx/commit/dc3fed8793810a875c0bd3eb5ba859d98eb4989e))
 
 - Update module github.com/google/go-github/v92 to v93 (deps)([80cab2f](https://github.com/forkline/ingress-nginx/commit/80cab2f1b60fc55179f0ed293047b237ea7cd951))
 

@@ -32,8 +32,8 @@ split_commits = false
 commit_preprocessors = [
     { pattern = "^release\\(release\\): prepare ", replace = "release: prepare" },
     { pattern = "^release: prepare v[0-9]+.*", skip = true },
-    { pattern = " \\(#\\d+\\)$", replace = "" },
     { pattern = "(?s)\\n\\n.*", replace = "" },
+    { pattern = " \\(#\\d+\\)$", replace = "" },
 ]
 commit_parsers = [
     { message = "^feat", group = "<!-- 0 -->Added" },
