@@ -271,7 +271,7 @@ jobs:
         run: gzip --decompress --stdout docker.tar.gz | docker load
 
       - name: Install kind
-        uses: helm/kind-action@v1.15.1
+        uses: helm/kind-action@v1.15.2
         with:
           version: v0.33.0
           install_only: true
@@ -338,7 +338,7 @@ jobs:
         run: gzip --decompress --stdout docker.tar.gz | docker load
 
       - name: Install kind
-        uses: helm/kind-action@v1.15.1
+        uses: helm/kind-action@v1.15.2
         with:
           version: v0.33.0
           install_only: true
