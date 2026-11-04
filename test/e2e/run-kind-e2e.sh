@@ -115,7 +115,7 @@ load_image_to_kind() {
   local image="$1"
   local nodes="$2"
   local cluster_name="$3"
-  
+
   for node in $(echo "$nodes" | tr ',' ' '); do
     docker save "$image" | docker exec -i "$node" ctr --namespace=k8s.io images import --snapshotter=overlayfs -
   done
