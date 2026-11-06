@@ -212,7 +212,7 @@ jobs:
             nginx-ingress-controller:e2e \
             ingress-controller/controller:1.0.0-dev \
             ingress-controller/controller-chroot:1.0.0-dev \
-            ${NGINX_BASE_IMAGE} \
+            ingress-nginx/nginx:${TAGNGINX} \
             ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG} \
             | gzip > docker.tar.gz
 
@@ -241,7 +241,11 @@ jobs:
           name: docker.tar.gz
 
       - name: Load image cache
-        run: gzip --decompress --stdout docker.tar.gz | docker load
+        run: |
+          gzip --decompress --stdout docker.tar.gz | docker load
+          TAGNGINX=$(cat images/nginx/TAG)
+          NGINX_BASE_IMAGE=$(cat NGINX_BASE)
+          docker tag ingress-nginx/nginx:${TAGNGINX} ${NGINX_BASE_IMAGE}
 
       - name: Run chart tests
         env:
@@ -269,7 +273,11 @@ jobs:
           name: docker.tar.gz
 
       - name: Load image cache
-        run: gzip --decompress --stdout docker.tar.gz | docker load
+        run: |
+          gzip --decompress --stdout docker.tar.gz | docker load
+          TAGNGINX=$(cat images/nginx/TAG)
+          NGINX_BASE_IMAGE=$(cat NGINX_BASE)
+          docker tag ingress-nginx/nginx:${TAGNGINX} ${NGINX_BASE_IMAGE}
 
       - name: Install kind
         uses: helm/kind-action@v1.15.2
@@ -336,7 +344,11 @@ jobs:
           name: docker.tar.gz
 
       - name: Load image cache
-        run: gzip --decompress --stdout docker.tar.gz | docker load
+        run: |
+          gzip --decompress --stdout docker.tar.gz | docker load
+          TAGNGINX=$(cat images/nginx/TAG)
+          NGINX_BASE_IMAGE=$(cat NGINX_BASE)
+          docker tag ingress-nginx/nginx:${TAGNGINX} ${NGINX_BASE_IMAGE}
 
       - name: Install kind
         uses: helm/kind-action@v1.15.2
