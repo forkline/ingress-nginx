@@ -207,6 +207,7 @@ jobs:
             --build-arg E2E_BASE_IMAGE=${E2E_BASE_IMAGE} \
             --tag nginx-ingress-controller:e2e \
             test/e2e-image
+          TAGNGINX=$(cat images/nginx/TAG)
           CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
           docker save \
             nginx-ingress-controller:e2e \
