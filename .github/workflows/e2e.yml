@@ -132,6 +132,7 @@ jobs:
               --push
             echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
           fi
+          docker rmi ${NGINX_IMAGE} || true
           docker pull --platform linux/amd64 ${NGINX_IMAGE}
           docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
 
