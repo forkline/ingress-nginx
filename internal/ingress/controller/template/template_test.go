@@ -206,6 +206,7 @@ const (
 	defaultBackend = "upstream-name"
 	defaultHost    = "example.com"
 	fooAuthHost    = "foo.com/auth"
+	mirrorTestPath = "/api"
 )
 
 func getTestDataDir() (string, error) {
@@ -2474,12 +2475,33 @@ func TestBuildMirrorLocations(t *testing.T) {
 			expected: "",
 		},
 		{
+			name: "loopback mirror target is explicitly marked",
+			locations: []*ingress.Location{
+				{
+					Path: mirrorTestPath,
+					Mirror: mirror.Config{
+						Source: "/_mirror-test",
+						Target: "http://127.0.0.1:10246/configuration/backends",
+						Host:   "127.0.0.1",
+					},
+				},
+			},
+			expected: `location = "/_mirror-test" {
+internal;
+proxy_set_header Host "127.0.0.1";
+proxy_set_header X-Ingress-Nginx-Mirror "1";
+proxy_pass "http://127.0.0.1:10246/configuration/backends";
+}
+
+`,
+		},
+		{
 			name: "single mirror location",
 			locations: []*ingress.Location{
 				{
-					Path: "/api",
+					Path: mirrorTestPath,
 					Mirror: mirror.Config{
-						Source: "/api",
+						Source: mirrorTestPath,
 						Target: "http://mirror-svc:8080/api",
 						Host:   "mirror.example.com",
 					},
@@ -2488,6 +2510,7 @@ func TestBuildMirrorLocations(t *testing.T) {
 			expected: `location = "/api" {
 internal;
 proxy_set_header Host "mirror.example.com";
+proxy_set_header X-Ingress-Nginx-Mirror "1";
 proxy_pass "http://mirror-svc:8080/api";
 }
 
@@ -2497,9 +2520,9 @@ proxy_pass "http://mirror-svc:8080/api";
 			name: "duplicate mirror sources are deduplicated",
 			locations: []*ingress.Location{
 				{
-					Path: "/api",
+					Path: mirrorTestPath,
 					Mirror: mirror.Config{
-						Source: "/api",
+						Source: mirrorTestPath,
 						Target: "http://mirror-svc:8080/api",
 						Host:   "mirror.example.com",
 					},
@@ -2507,7 +2530,7 @@ proxy_pass "http://mirror-svc:8080/api";
 				{
 					Path: "/api/v2",
 					Mirror: mirror.Config{
-						Source: "/api",
+						Source: mirrorTestPath,
 						Target: "http://other-svc:8080/api",
 						Host:   "other.example.com",
 					},
@@ -2516,6 +2539,7 @@ proxy_pass "http://mirror-svc:8080/api";
 			expected: `location = "/api" {
 internal;
 proxy_set_header Host "mirror.example.com";
+proxy_set_header X-Ingress-Nginx-Mirror "1";
 proxy_pass "http://mirror-svc:8080/api";
 }
 
@@ -2544,6 +2568,7 @@ proxy_pass "http://mirror-svc:8080/api";
 			expected: `location = "/valid" {
 internal;
 proxy_set_header Host "mirror.host";
+proxy_set_header X-Ingress-Nginx-Mirror "1";
 proxy_pass "http://mirror:80/valid";
 }
 

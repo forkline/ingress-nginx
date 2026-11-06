@@ -133,17 +133,18 @@ jobs:
             echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
           fi
           docker pull --platform linux/amd64 ${NGINX_IMAGE}
-          docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
+          NGINX_IMAGE_ID=$(docker inspect --format='{{.Id}}' ${NGINX_IMAGE})
+          docker rmi ${NGINX_IMAGE} 2>/dev/null || true
+          docker tag ${NGINX_IMAGE_ID} ${NGINX_IMAGE}
+          docker tag ${NGINX_IMAGE_ID} ingress-nginx/nginx:${TAGNGINX}
 
       - name: Pull or build kube-webhook-certgen image
         working-directory: images
         run: |
           CERTGEN_TAG=$(cat kube-webhook-certgen/TAG)
-          if docker pull \
-              ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:latest; then
-            docker tag \
-              ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:latest \
-              ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG}
+          CERTGEN_IMAGE="ghcr.io/forkline/ingress-nginx/kube-webhook-certgen"
+          if docker pull ${CERTGEN_IMAGE}:latest; then
+            docker tag ${CERTGEN_IMAGE}:latest ${CERTGEN_IMAGE}:${CERTGEN_TAG}
             echo "Reused kube-webhook-certgen from registry"
           else
             echo "Image not in registry, building locally..."
@@ -155,7 +156,7 @@ jobs:
               --tag kube-webhook-certgen:${CERTGEN_TAG} \
               --load
             docker tag kube-webhook-certgen:${CERTGEN_TAG} \
-              ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG}
+              ${CERTGEN_IMAGE}:${CERTGEN_TAG}
           fi
 
       - name: Build controller and e2e images

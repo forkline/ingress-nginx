@@ -111,13 +111,15 @@ echo "[dev-env] copying docker images to cluster..."
 
 kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes="${KIND_WORKERS}" nginx-ingress-controller:e2e
 kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes="${KIND_WORKERS}" "${REGISTRY}"/controller:"${TAG}"
-kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes="${KIND_WORKERS}" "${NGINX_BASE_IMAGE}"
+# Import only the node platform: Docker's containerd store may leave other
+# platforms in the manifest index without the corresponding blobs.
+bash "${DIR}/load-kind-image.sh" "${NGINX_BASE_IMAGE}" "${KIND_CLUSTER_NAME}" "${KIND_WORKERS}"
 
 CERTGEN_TAG=$(cat "${DIR}"/../../images/kube-webhook-certgen/TAG)
 CERTGEN_IMAGE="ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG}"
 if docker image inspect ${CERTGEN_IMAGE} >/dev/null 2>&1; then
   echo "[dev-env] loading webhook-certgen image into kind..."
-  kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes="${KIND_WORKERS}" ${CERTGEN_IMAGE}
+  bash "${DIR}/load-kind-image.sh" "${CERTGEN_IMAGE}" "${KIND_CLUSTER_NAME}" "${KIND_WORKERS}"
 fi
 
 echo "[dev-env] running e2e tests..."
