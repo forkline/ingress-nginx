@@ -144,10 +144,7 @@ jobs:
           CERTGEN_TAG=$(cat kube-webhook-certgen/TAG)
           CERTGEN_IMAGE="ghcr.io/forkline/ingress-nginx/kube-webhook-certgen"
           if docker pull ${CERTGEN_IMAGE}:latest; then
-            CERTGEN_IMAGE_ID=$(docker inspect --format='{{.Id}}' ${CERTGEN_IMAGE}:latest)
-            docker rmi ${CERTGEN_IMAGE}:latest 2>/dev/null || true
-            docker tag ${CERTGEN_IMAGE_ID} ${CERTGEN_IMAGE}:latest
-            docker tag ${CERTGEN_IMAGE_ID} ${CERTGEN_IMAGE}:${CERTGEN_TAG}
+            docker tag ${CERTGEN_IMAGE}:latest ${CERTGEN_IMAGE}:${CERTGEN_TAG}
             echo "Reused kube-webhook-certgen from registry"
           else
             echo "Image not in registry, building locally..."
