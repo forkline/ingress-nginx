@@ -4,6 +4,48 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.11.6](https://github.com/forkline/ingress-nginx/tree/v2026.11.6) - 2026-11-06
+
+### Fixed
+
+- Backport SUSE mirror configuration hardening (CVE-2026-116472) (security)([d25cf0b](https://github.com/forkline/ingress-nginx/commit/d25cf0bbcff04394df1adba862fc0818c34cc466))
+
+- Extract /api string to constant to satisfy goconst linter([4fa436c](https://github.com/forkline/ingress-nginx/commit/4fa436c27dd1e95c5851a76649bddfcf5baf6812))
+
+- Fix kube-webhook-certgen image tagging in E2E workflow (ci)([a077707](https://github.com/forkline/ingress-nginx/commit/a077707fd86c45fee089dcde05bca2b6295449c7))
+
+- Ensure docker save produces single-platform image tarballs (ci)([d5b71ca](https://github.com/forkline/ingress-nginx/commit/d5b71caaf79f94364611e772c9412432d0104e79))
+
+- Add platform-scoped kind image loader for Docker containerd store (ci)([a073fac](https://github.com/forkline/ingress-nginx/commit/a073fac81fc5b511f6b5a37e85a73c27f3ac7d27))
+
+- Load single-platform base and certgen images into kind (ci)([87b2fab](https://github.com/forkline/ingress-nginx/commit/87b2fab849893716018ac1accee4f4b81bc40897))
+
+- Mark kind image loader executable (ci)([4fda6d1](https://github.com/forkline/ingress-nginx/commit/4fda6d1075b8e5938449db65205c09e5b6b47f08))
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks (v44.178.3 → v44.221.4)
+
+### Build
+
+- Update google.golang.org/grpc/examples digest (10 updates)
+
+- Update dependency mkdocs-material to v9.8.0 (deps)([b2498f0](https://github.com/forkline/ingress-nginx/commit/b2498f0523733570a335c99627b1bb1d68084152))
+
+- Update squidfunk/mkdocs-material Docker tag to v9.8.0 (deps)([00fc0c4](https://github.com/forkline/ingress-nginx/commit/00fc0c472440b52ec67b95f9f3c85638baa3763b))
+
+- Update go modules (3 updates)
+
+- Update module google.golang.org/grpc to v1.85.0 (deps)([650559d](https://github.com/forkline/ingress-nginx/commit/650559d29d1defe5ab826cf4166c3c64beaabd6d))
+
+- Update dependency kubernetes/kubernetes to v1.37.2 (deps)([2c24c6c](https://github.com/forkline/ingress-nginx/commit/2c24c6c5d5a8c12c0ad0319066e6c491bb6a8f38))
+
+- Update module github.com/prometheus/common to v0.73.1 (deps)([27df7b8](https://github.com/forkline/ingress-nginx/commit/27df7b8352f6f5879c2ff1dcb66bcc508b91694c))
+
+- Update module go.yaml.in/yaml/v3 to v3.0.6 (deps)([ada8b60](https://github.com/forkline/ingress-nginx/commit/ada8b60ce394a66d1bec587c66206547dda58f4c))
+
+- Update helm/kind-action action to v1.15.2 (deps)([6c388dc](https://github.com/forkline/ingress-nginx/commit/6c388dc1a76caabc45aa7715c9f43780f46caacd))
+
 ## [v2026.10.22](https://github.com/forkline/ingress-nginx/tree/v2026.10.22) - 2026-10-22
 
 ### Fixed
