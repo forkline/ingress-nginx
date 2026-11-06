@@ -109,27 +109,17 @@ KIND_WORKERS=$(kind get nodes --name="${KIND_CLUSTER_NAME}" | grep worker | awk 
 
 echo "[dev-env] copying docker images to cluster..."
 
-# Load images using docker save and ctr import to avoid kind's strict --digests flag
-# which fails when images have references to content not included in docker save
-load_image_to_kind() {
-  local image="$1"
-  local nodes="$2"
-  local cluster_name="$3"
-
-  for node in $(echo "$nodes" | tr ',' ' '); do
-    docker save "$image" | docker exec -i "$node" ctr --namespace=k8s.io images import --snapshotter=overlayfs -
-  done
-}
-
-load_image_to_kind nginx-ingress-controller:e2e "${KIND_WORKERS}" "${KIND_CLUSTER_NAME}"
-load_image_to_kind "${REGISTRY}"/controller:"${TAG}" "${KIND_WORKERS}" "${KIND_CLUSTER_NAME}"
-load_image_to_kind "${NGINX_BASE_IMAGE}" "${KIND_WORKERS}" "${KIND_CLUSTER_NAME}"
+kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes="${KIND_WORKERS}" nginx-ingress-controller:e2e
+kind load docker-image --name="${KIND_CLUSTER_NAME}" --nodes="${KIND_WORKERS}" "${REGISTRY}"/controller:"${TAG}"
+# Import only the node platform: Docker's containerd store may leave other
+# platforms in the manifest index without the corresponding blobs.
+bash "${DIR}/load-kind-image.sh" "${NGINX_BASE_IMAGE}" "${KIND_CLUSTER_NAME}" "${KIND_WORKERS}"
 
 CERTGEN_TAG=$(cat "${DIR}"/../../images/kube-webhook-certgen/TAG)
 CERTGEN_IMAGE="ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG}"
 if docker image inspect ${CERTGEN_IMAGE} >/dev/null 2>&1; then
   echo "[dev-env] loading webhook-certgen image into kind..."
-  load_image_to_kind ${CERTGEN_IMAGE} "${KIND_WORKERS}" "${KIND_CLUSTER_NAME}"
+  bash "${DIR}/load-kind-image.sh" "${CERTGEN_IMAGE}" "${KIND_CLUSTER_NAME}" "${KIND_WORKERS}"
 fi
 
 echo "[dev-env] running e2e tests..."
