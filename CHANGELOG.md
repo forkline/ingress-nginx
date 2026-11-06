@@ -10,21 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Backport SUSE mirror configuration hardening (CVE-2026-116472) (security)([d25cf0b](https://github.com/forkline/ingress-nginx/commit/d25cf0bbcff04394df1adba862fc0818c34cc466))
 
-- Backport SUSE mirror configuration hardening (CVE-2026-116472) (security)([b86c68b](https://github.com/forkline/ingress-nginx/commit/b86c68bc21a44e8eb89c301d75ef446a8f569b18))
-
-- Backport SUSE mirror configuration hardening (CVE-2026-116472) (security)([a3fe76b](https://github.com/forkline/ingress-nginx/commit/a3fe76b5a4e4c087ae303a6c255574042573b4d7))
-
-- Backport SUSE mirror configuration hardening (CVE-2026-116472) (security)([7fe1e6e](https://github.com/forkline/ingress-nginx/commit/7fe1e6e7eb12d857a748415c472a805f8211fabc))
-
 - Extract /api string to constant to satisfy goconst linter([4fa436c](https://github.com/forkline/ingress-nginx/commit/4fa436c27dd1e95c5851a76649bddfcf5baf6812))
+
+- Fix kube-webhook-certgen image tagging in E2E workflow (ci)([a077707](https://github.com/forkline/ingress-nginx/commit/a077707fd86c45fee089dcde05bca2b6295449c7))
 
 - Ensure docker save produces single-platform image tarballs (ci)([d5b71ca](https://github.com/forkline/ingress-nginx/commit/d5b71caaf79f94364611e772c9412432d0104e79))
 
 - Add platform-scoped kind image loader for Docker containerd store (ci)([a073fac](https://github.com/forkline/ingress-nginx/commit/a073fac81fc5b511f6b5a37e85a73c27f3ac7d27))
 
 - Load single-platform base and certgen images into kind (ci)([87b2fab](https://github.com/forkline/ingress-nginx/commit/87b2fab849893716018ac1accee4f4b81bc40897))
-
-- Load single-platform base and certgen images into kind (ci)([037d46b](https://github.com/forkline/ingress-nginx/commit/037d46be633b8e64c253da9edb2720335a5d3b3f))
 
 - Mark kind image loader executable (ci)([4fda6d1](https://github.com/forkline/ingress-nginx/commit/4fda6d1075b8e5938449db65205c09e5b6b47f08))
 
