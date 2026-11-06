@@ -208,11 +208,12 @@ jobs:
             --tag nginx-ingress-controller:e2e \
             test/e2e-image
           CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
+          TAGNGINX=$(cat images/nginx/TAG)
           docker save \
             nginx-ingress-controller:e2e \
             ingress-controller/controller:1.0.0-dev \
             ingress-controller/controller-chroot:1.0.0-dev \
-            ${NGINX_BASE_IMAGE} \
+            ingress-nginx/nginx:${TAGNGINX} \
             ghcr.io/forkline/ingress-nginx/kube-webhook-certgen:${CERTGEN_TAG} \
             | gzip > docker.tar.gz
 
@@ -243,6 +244,12 @@ jobs:
       - name: Load image cache
         run: gzip --decompress --stdout docker.tar.gz | docker load
 
+      - name: Tag nginx base image for e2e
+        run: |
+          NGINX_VERSION=$(grep 'export NGINX_VERSION=' images/nginx/rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
+          TAGNGINX=$(cat images/nginx/TAG)
+          docker tag ingress-nginx/nginx:${TAGNGINX} ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}
+
       - name: Run chart tests
         env:
           K8S_VERSION: v1.35.1
@@ -270,6 +277,12 @@ jobs:
 
       - name: Load image cache
         run: gzip --decompress --stdout docker.tar.gz | docker load
+
+      - name: Tag nginx base image for e2e
+        run: |
+          NGINX_VERSION=$(grep 'export NGINX_VERSION=' images/nginx/rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
+          TAGNGINX=$(cat images/nginx/TAG)
+          docker tag ingress-nginx/nginx:${TAGNGINX} ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}
 
       - name: Install kind
         uses: helm/kind-action@v1.15.2
@@ -337,6 +350,12 @@ jobs:
 
       - name: Load image cache
         run: gzip --decompress --stdout docker.tar.gz | docker load
+
+      - name: Tag nginx base image for e2e
+        run: |
+          NGINX_VERSION=$(grep 'export NGINX_VERSION=' images/nginx/rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
+          TAGNGINX=$(cat images/nginx/TAG)
+          docker tag ingress-nginx/nginx:${TAGNGINX} ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}
 
       - name: Install kind
         uses: helm/kind-action@v1.15.2
