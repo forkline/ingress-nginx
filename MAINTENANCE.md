@@ -22,6 +22,31 @@ Renovate for dependency updates.
 - Dependency automation: Renovate.
 - CI style baseline: `kaniop`.
 
+## How this repository is maintained
+
+Dependency updates, security fixes and routine upkeep are handled by two kinds of
+automation, with the maintainer in the loop for every decision that matters:
+
+- **Renovate** opens dependency pull requests. Only low-risk lanes are merged
+  automatically, and only once every check is green: pre-commit hooks, Go module
+  patch and minor updates, the test image and docs tooling. Major versions, GitHub
+  Actions and workflow tool pins, NGINX and the Go toolchain always wait for a
+  review.
+- **Forkline routines** (the `forkline` GitHub App) fix failing CI, resolve merge
+  conflicts, open stand-alone `fix(security)` pull requests, answer easy issues,
+  prepare release pull requests and publish a weekly maintenance digest. Their
+  playbooks are the skills in `.opencode/skills/` (`maintenance`, `merge-gate`,
+  `release-readiness`, `issue-response`). Automated merges start in an observe mode
+  that only posts a verdict comment ("would merge" or "would escalate") and are
+  promoted to real merges after a track record.
+- **Escalation.** When automation is not confident, it labels the item
+  `needs-maintainer`, assigns the maintainer and leaves one comment with what it
+  tried, the options and the decision it needs. It never closes issues or pull
+  requests, never pushes to `main`, never tags a release and never merges a release
+  pull request.
+- **The maintainer** merges release pull requests, decides scope questions and CVE
+  backports, and owns NGINX patch changes, controller code and CI definitions.
+
 ## Target Workflow Set
 
 The repository should converge on this workflow layout:

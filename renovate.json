@@ -42,11 +42,18 @@
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["patch", "minor"],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true,
-      "ignoreTests": false
+      "description": "Known-bad updates: non-semver tag (helm-docs 19.0614), +incompatible version (client-go v11), unsupported major (yaml v4)",
+      "matchPackageNames": ["norwoodj/helm-docs", "/helm-docs/"],
+      "allowedVersions": "!/^v?19\\./"
+    },
+    {
+      "matchPackageNames": ["k8s.io/client-go"],
+      "allowedVersions": "/^v0\\./"
+    },
+    {
+      "matchPackageNames": ["go.yaml.in/yaml/v3"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
     {
       "matchDatasources": ["docker"],
@@ -104,6 +111,48 @@
       "platformAutomerge": true,
       "ignoreTests": false,
       "schedule": ["after 4am and before 10am on the first day of the month"]
+    },
+    {
+      "description": "Automerge is opt-in per low-risk lane; the lanes mirror the merge-gate skill. Pre-commit hook patch and minor updates",
+      "matchManagers": ["pre-commit"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "ignoreTests": false
+    },
+    {
+      "description": "Go modules patch and minor: Renovate itself merges and waits for every check, not only the required ones (a Helm failure merged in #506)",
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": false,
+      "ignoreTests": false
+    },
+    {
+      "description": "Docs and tooling files only",
+      "matchFileNames": ["hack/.tool-versions", "docs/requirements.txt", ".github/actions/mkdocs/Dockerfile"],
+      "matchUpdateTypes": ["patch", "minor", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": false,
+      "ignoreTests": false
+    },
+    {
+      "description": "Never automerge: majors (except the test image and the renovatebot hook, 0 incidents), GitHub Actions and workflow tool pins (not low risk, #506 and #622), NGINX, the Go toolchain. A maintainer or the merge-gate routine decides",
+      "matchPackageNames": ["!google.golang.org/grpc/examples", "!renovatebot/pre-commit-hooks"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "matchManagers": ["github-actions", "custom.regex"],
+      "matchFileNames": [".github/workflows/**"],
+      "automerge": false
+    },
+    {
+      "matchPackageNames": ["nginx/nginx", "ghcr.io/forkline/ingress-nginx/nginx", "go", "golang"],
+      "automerge": false
     }
   ]
 }
