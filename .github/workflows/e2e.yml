@@ -167,10 +167,14 @@ jobs:
               echo "NGINX ${NGINX_VERSION} not in registry, building..."
             fi
             docker buildx create --name ingress-nginx --bootstrap || :
+            BUILD_ARGS="--builder ingress-nginx --platform linux/amd64,linux/arm64"
+            if [[ "${FORCE_REBUILD}" == "true" ]]; then
+              BUILD_ARGS="${BUILD_ARGS} --no-cache"
+            else
+              BUILD_ARGS="${BUILD_ARGS} --cache-from type=gha --cache-to type=gha,mode=max"
+            fi
             docker buildx build \
-              --builder ingress-nginx \
-              --platform linux/amd64,linux/arm64 \
-              --no-cache \
+              ${BUILD_ARGS} \
               rootfs \
               --tag ${NGINX_IMAGE} \
               --push
