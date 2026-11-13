@@ -106,7 +106,7 @@ export OPENTELEMETRY_CPP_VERSION=v1.19.0
 export OPENTELEMETRY_PROTO_VERSION=v1.5.0
 
 # Check for recent changes: https://github.com/nginx/njs/compare/0.9.0...master
-export NJS_VERSION=0.9.0
+export NJS_VERSION=1.0.2
 
 export BUILD_PATH=/tmp/build
 
