@@ -8,6 +8,12 @@ name: Release images
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      force-rebuild-nginx:
+        description: Force rebuild of the nginx base image (skip registry cache)
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -55,14 +61,33 @@ jobs:
           fi
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
 
+      - name: Determine nginx rebuild mode
+        id: nginx-rebuild
+        run: |
+          FORCE_REBUILD="${{ inputs.force-rebuild-nginx }}"
+          IS_TAG="${{ startsWith(github.ref, 'refs/tags/') }}"
+          if [[ "${IS_TAG}" == "true" ]] || [[ "${FORCE_REBUILD}" == "true" ]]; then
+            echo "force=true" >> "$GITHUB_OUTPUT"
+            echo "Force-rebuilding nginx base image (tag=${IS_TAG}, input=${FORCE_REBUILD})"
+          else
+            echo "force=false" >> "$GITHUB_OUTPUT"
+            echo "Using registry cache for nginx base image (tag=${IS_TAG}, input=${FORCE_REBUILD})"
+          fi
+
       - name: Publish nginx base image
         timeout-minutes: 360
         working-directory: images/nginx
         run: |
           NGINX_VERSION=$(grep 'export NGINX_VERSION=' rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
-          if docker manifest inspect "${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_VERSION}" >/dev/null 2>&1; then
+          FORCE_REBUILD="${{ steps.nginx-rebuild.outputs.force }}"
+          if [[ "${FORCE_REBUILD}" != "true" ]] && docker manifest inspect "${{ env.IMAGE_REGISTRY }}/nginx:${NGINX_VERSION}" >/dev/null 2>&1; then
             echo "nginx ${NGINX_VERSION} already published, skipping build"
           else
+            if [[ "${FORCE_REBUILD}" == "true" ]]; then
+              echo "Force-rebuilding nginx base image (NGINX ${NGINX_VERSION})..."
+            else
+              echo "nginx ${NGINX_VERSION} not in registry, building..."
+            fi
             make \
               REGISTRY="${{ env.IMAGE_REGISTRY }}" \
               PLATFORMS="${{ env.IMAGE_PLATFORMS }}" \

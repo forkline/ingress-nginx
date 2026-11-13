@@ -12,6 +12,11 @@ name: E2E
         description: Optional ginkgo focus pattern
         required: false
         type: string
+      force-rebuild-nginx:
+        description: Force rebuild of the nginx base image (skip registry cache)
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   actions: write
@@ -30,13 +35,24 @@ jobs:
     timeout-minutes: 5
     if: github.event_name == 'pull_request'
     outputs:
-      e2e: ${{ steps.filter.outputs.e2e }}
+      e2e: ${{ steps.set-output.outputs.e2e }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 2
+      - name: Check if release PR
+        id: release-check
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          if [[ "${BRANCH}" == release/* ]]; then
+            echo "is_release_pr=true" >> "$GITHUB_OUTPUT"
+            echo "Release PR detected, forcing E2E"
+          else
+            echo "is_release_pr=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: dorny/paths-filter@v4
         id: filter
+        if: steps.release-check.outputs.is_release_pr != 'true'
         with:
           filters: |
             e2e:
@@ -50,6 +66,14 @@ jobs:
               - 'charts/**'
               - 'NGINX_BASE'
               - '.github/workflows/e2e.yml'
+      - name: Set E2E output
+        id: set-output
+        run: |
+          if [[ "${{ steps.release-check.outputs.is_release_pr }}" == "true" ]]; then
+            echo "e2e=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "e2e=${{ steps.filter.outputs.e2e }}" >> "$GITHUB_OUTPUT"
+          fi
 
   build:
     name: Build test images
@@ -109,26 +133,46 @@ jobs:
       # NOTE: This caches the image by NGINX_VERSION. When patches in images/nginx/rootfs/patches/
       # are added or modified, you must force a rebuild by either:
       #   - Bumping NGINX_VERSION in build.sh, OR
-      #   - Manually deleting the old image from ghcr.io
+      #   - Manually deleting the old image from ghcr.io, OR
+      #   - Using the force-rebuild-nginx workflow_dispatch input, OR
+      #   - Opening a release PR (branch name starts with release/)
+      # Release PRs always force a rebuild to ensure the image contains current patches/CRS/njs/ModSecurity.
+      - name: Determine nginx rebuild mode
+        id: nginx-rebuild
+        run: |
+          FORCE_REBUILD="${{ inputs.force-rebuild-nginx }}"
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          if [[ "${FORCE_REBUILD}" == "true" ]] || [[ "${BRANCH}" == release/* ]]; then
+            echo "force=true" >> "$GITHUB_OUTPUT"
+            echo "Force-rebuilding nginx base image (branch=${BRANCH}, input=${FORCE_REBUILD})"
+          else
+            echo "force=false" >> "$GITHUB_OUTPUT"
+            echo "Using registry cache for nginx base image (branch=${BRANCH}, input=${FORCE_REBUILD})"
+          fi
+
       - name: Pull or build nginx base image
         working-directory: images/nginx
         run: |
           TAGNGINX=$(cat TAG)
           NGINX_VERSION=$(grep 'export NGINX_VERSION=' rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
           NGINX_IMAGE="ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}"
-          if docker pull ${NGINX_IMAGE}; then
+          FORCE_REBUILD="${{ steps.nginx-rebuild.outputs.force }}"
+          if [[ "${FORCE_REBUILD}" != "true" ]] && docker pull ${NGINX_IMAGE}; then
             docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
             echo "Reused nginx base image (NGINX ${NGINX_VERSION}) from registry"
           else
-            echo "NGINX ${NGINX_VERSION} not in registry, building..."
+            if [[ "${FORCE_REBUILD}" == "true" ]]; then
+              echo "Force-rebuilding nginx base image (NGINX ${NGINX_VERSION})..."
+            else
+              echo "NGINX ${NGINX_VERSION} not in registry, building..."
+            fi
             docker buildx create --name ingress-nginx --bootstrap || :
             docker buildx build \
               --builder ingress-nginx \
               --platform linux/amd64,linux/arm64 \
+              --no-cache \
               rootfs \
               --tag ${NGINX_IMAGE} \
-              --cache-from type=gha \
-              --cache-to type=gha,mode=max \
               --push
             echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
           fi
