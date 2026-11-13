@@ -1,0 +1,28 @@
+name: govulncheck-main
+description: When the Security workflow fails on main because of govulncheck, open exactly one Go toolchain or module bump pull request
+on:
+  events: [ci.failed]
+repositories:
+  include:
+    - name: "forkline/ingress-nginx"
+filters:
+  branches:
+    include: [main]
+  when: ci.name == "Security"
+agent:
+  model: isidoro/advanced
+  runnerSize: advanced
+  timeoutMinutes: 60
+  ref: main
+  prompt: |
+    The "{{ ci.name }}" workflow failed on {{ ci.branch }} of {{ repository.fullName }} (run {{ ci.runId }}, {{ ci.url }}, commit {{ ci.headSha }}). It runs govulncheck, dependency review and Scorecards. Open at most ONE fix pull request for a govulncheck finding. Load the `maintenance` skill (.opencode/skills/maintenance/SKILL.md) first.
+
+    1. `git-api logs fetch {{ ci.runId }}`. If the failed job is not govulncheck (Scorecards, dependency review), stop and post nothing. List each vulnerability ID (GO-YYYY-NNNN), module or standard-library package, symbol and "Fixed in" version.
+    2. Still true? `git fetch origin`, check out origin/main (it may already contain the fix), read GOLANG_VERSION, run `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` with that Go version. Clean now: stop, post nothing.
+    3. DEDUPE (the point of this routine: #645 and #646 were two pull requests for GO-2026-6859). For every ID: `git-api pr list --state all`, `git-api issue search "<ID>"`, `git ls-remote --heads origin 'fix/*<id lowercase>*'`. If an open pull request or branch already addresses it, open nothing: comment once on it that main's Security workflow fails because of it (first line `<!-- forkline-govulncheck:<ID> -->`, none if it exists) and stop. A Renovate pull request bumping the module or Go counts the same way.
+    4. One pull request for all open findings, branch `fix/govulncheck-<first id lowercase>`. Standard library: set GOLANG_VERSION and the `go` directive in go.mod to the lowest fixed patch release (as #645: only those two), and check that Dockerfiles and workflows pinning Go read GOLANG_VERSION. Module: `go get <module>@<fixed>` then `go mod tidy`; stay on the fixed minor, never take a major bump (that is a human decision: escalate). Verify `go build ./...`, `go test` for the packages that import the module, govulncheck clean.
+    5. Open the pull request titled `fix(security): <subject> (<ID>)` (release-prep matches that title when it merges), body with the IDs, pkg.go.dev/vuln links, the failing run {{ ci.url }}, files changed and verification. If you cannot produce a fix, escalate per the protocol on a single issue (search first, never a second one).
+concurrency:
+  group: repository
+  onConflict: skip
+  maxActive: 1

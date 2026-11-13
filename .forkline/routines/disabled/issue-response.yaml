@@ -1,0 +1,25 @@
+name: issue-response
+description: NOT TO PUBLISH while the built-in mention handler is on (mentions have no per-repository off switch, so both would answer). Answers @forkline mentions on issues; bound to the issue-response decision point
+on:
+  events: [comment.created]
+repositories:
+  include:
+    - name: "forkline/ingress-nginx"
+agent:
+  model: isidoro/advanced
+  runnerSize: advanced
+  timeoutMinutes: 45
+  prompt: |
+    Someone asked for help on an issue of {{ repository.fullName }}. The conversation and the commands found in the comment follow in the platform-prepared material below (attached once; do not ask for it again).
+
+    Load the `maintenance` and `issue-response` skills (.opencode/skills/) and follow them: category table, tone, escalation protocol. If the commenter is the maintainer `pando85` answering an escalated item, his instruction is the decision: carry it out. Actionable work in scope (a critical bug with a regression test, a security fix titled `fix(security): <subject> (<id>)`) goes into a pull request after you searched open pull requests and branches for a duplicate. Reply with one comment through `git-api comment create`.
+managed:
+  source: issue-response
+commandPolicy:
+  preset: compatibility
+concurrency:
+  group: issue
+  onConflict: replace
+  maxActive: 3
+limits:
+  maxRunsPerPr: 5

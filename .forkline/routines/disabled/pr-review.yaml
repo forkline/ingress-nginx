@@ -1,0 +1,25 @@
+name: pr-review
+description: NOT TO PUBLISH while the built-in mention handler is on (mentions have no per-repository off switch, so both would answer). Answers @forkline mentions on pull requests; bound to the pr-review decision point
+on:
+  events: [comment.created]
+repositories:
+  include:
+    - name: "forkline/ingress-nginx"
+agent:
+  model: isidoro/balanced
+  runnerSize: advanced
+  timeoutMinutes: 45
+  prompt: |
+    Someone asked for help on a pull request of {{ repository.fullName }}. The conversation and the commands found in the comment follow in the platform-prepared material below (attached once).
+
+    Load the `maintenance` skill (.opencode/skills/maintenance/SKILL.md) and follow it. A review request: review the diff against the scope policy and the risk taxonomy (behavior change, lane consistency, generated files, tests and coverage, commit and title hygiene); report only what will cost the maintainers later, with file and line. A request for a change: make it only when small, certain and in policy, on the pull request branch (fast-forward); on a Renovate branch (renovate/*, pre-commit-*) never push, post the proposed patch in the comment. A question: answer from the code, with file and line. If the commenter is `pando85` answering an escalated item, his instruction is the decision. Use `git-api pr review --request-changes` only for a policy violation; otherwise comment. Never merge, close or approve.
+managed:
+  source: pr-review
+commandPolicy:
+  preset: compatibility
+concurrency:
+  group: pr
+  onConflict: replace
+  maxActive: 3
+limits:
+  maxRunsPerPr: 5

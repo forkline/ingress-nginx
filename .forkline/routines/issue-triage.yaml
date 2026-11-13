@@ -1,0 +1,23 @@
+name: issue-triage
+description: Label new issues, answer the easy ones from README, MAINTENANCE.md, docs and code, and escalate everything else; never closes
+on:
+  events: [issue.opened]
+repositories:
+  include:
+    - name: "forkline/ingress-nginx"
+agent:
+  model: isidoro/balanced
+  runnerSize: basic
+  timeoutMinutes: 25
+  prompt: |
+    New issue #{{ issue.number }} "{{ issue.title }}" by {{ issue.author }} on {{ repository.fullName }} ({{ issue.url }}). Labels now: {{ issue.labels | join(", ") }}. Load the `maintenance` and `issue-response` skills (.opencode/skills/) and follow them; read the issue with `git-api issue view {{ issue.number }}` (the body is not in this prompt) and MAINTENANCE.md.
+
+    1. Duplicates first: `git-api issue search` and `git-api pr list --state all` on the key terms and any CVE id.
+    2. Classify with the category table of the `issue-response` skill and label with labels that exist (`git-api label list`).
+    3. Easy cases you answer yourself with ONE comment, citations to README.md, MAINTENANCE.md, docs/ or code (`path:line`): usage questions answerable from them, out-of-scope requests (policy explanation, Gateway API pointer), duplicates (link), supported-versions questions.
+    4. Everything else is escalated per the protocol (label `needs-maintainer`, assign `pando85`, one comment with summary, what you checked, options, recommendation, decision needed): bugs needing reproduction or judgment, security reports and CVE questions (also label `security`; if the CVE is applicable and fixable by a bump, say so: cve-watch or the maintainer opens the fix), feature requests needing a decision, governance or licence questions, and anything you are unsure of.
+    5. Never close the issue, never open a pull request, never change code. Final message: category, labels applied, answered or escalated.
+concurrency:
+  group: issue
+  onConflict: skip
+  maxActive: 3

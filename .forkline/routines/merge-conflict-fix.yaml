@@ -1,0 +1,34 @@
+name: merge-conflict-fix
+description: Resolve merge conflicts on forkline/ingress-nginx pull requests; leaves Renovate branches to Renovate; bound to the merge-conflict decision point
+on:
+  events: [pr.updated]
+repositories:
+  include:
+    - name: "forkline/ingress-nginx"
+agent:
+  model: isidoro/balanced
+  runnerSize: advanced
+  timeoutMinutes: 45
+  prompt: |
+    Pull request #{{ managed.prNumber }} on {{ repository.fullName }} (branch `{{ managed.ref }}`, head {{ managed.headSha }}) no longer merges into main. The conflicting files and both sides follow in the platform-prepared material below.
+
+    First load the `maintenance` skill (.opencode/skills/maintenance/SKILL.md) and follow it. The platform posts no status comments for this routine.
+
+    {% if managed.ref is startingwith("renovate/") or managed.ref is startingwith("pre-commit-") %}
+    Renovate branch: never push to `{{ managed.ref }}`; Renovate resolves conflicts itself by rebasing.
+    1. `git log origin/main..origin/{{ managed.ref }} --format='%an %s'`. If every commit is by renovate[bot], add the label `rebase` (`git-api label add --issue {{ managed.prNumber }} --labels rebase`) and stop; no comment.
+    2. If someone else committed on it, Renovate will not rebase ("Edited/Blocked"). Post ONE comment (first line `<!-- forkline-conflict-diagnosis:{{ managed.headSha }} -->`, none if it exists): it conflicts, which commits are foreign, and that the rebase box or the `rebase` label discards them and recreates the branch. Do not do it yourself: it destroys work. Escalate per protocol if the foreign commits look valuable.
+    {% else %}
+    1. Check out `{{ managed.ref }}` and merge origin/main into it (a merge commit, no rebase). Settle every conflicting file so both intents survive: the pull request's and what landed on main since.
+    2. Known recipes: CHANGELOG.md, TAG, images/*/TAG, NGINX_BASE, Chart.yaml and the README version table on a release PR are generated: reset them to origin/main and regenerate with `.ci/release.sh` on a clean branch (see the `release-readiness` skill) instead of hand-merging. Patches under images/nginx/rootfs/patches/ follow the NGINX version main uses: re-derive the hunks. go.mod and go.sum: take main's, re-apply this PR's change, `go mod tidy`.
+    3. Run the smallest check that proves the merge (`go build ./...`, `go test` for the touched package, `pre-commit run --files <files>`), push to `{{ managed.ref }}`, and post ONE short comment (first line `<!-- forkline-conflict-status:{{ managed.headSha }} -->`, none if it exists) listing what you resolved and how.
+    4. Never delete one side's change to make a conflict disappear. If both intents cannot survive, push nothing and escalate per the protocol with what conflicts and why.
+    {% endif %}
+managed:
+  source: merge-conflict-fix
+concurrency:
+  group: pr
+  onConflict: skip
+  maxActive: 3
+limits:
+  maxRunsPerPr: 3
