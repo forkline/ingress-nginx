@@ -140,8 +140,8 @@
       "ignoreTests": false
     },
     {
-      "description": "Never automerge: majors, GitHub Actions and workflow tool pins (not low risk, #506 and #622), NGINX, the Go toolchain. A maintainer or the merge-gate routine decides",
-      "matchPackageNames": ["!google.golang.org/grpc/examples"],
+      "description": "Never automerge: majors (except the test image and the renovatebot hook, 0 incidents), GitHub Actions and workflow tool pins (not low risk, #506 and #622), NGINX, the Go toolchain. A maintainer or the merge-gate routine decides",
+      "matchPackageNames": ["!google.golang.org/grpc/examples", "!renovatebot/pre-commit-hooks"],
       "matchUpdateTypes": ["major"],
       "automerge": false
     },
