@@ -36,8 +36,8 @@ export NGINX_DIGEST_AUTH=v1.0.0
 # Check for recent changes: https://github.com/owasp-modsecurity/ModSecurity-nginx/compare/v1.0.4...master
 export MODSECURITY_VERSION=v1.0.4
 
-# Check for recent changes: https://github.com/owasp-modsecurity/ModSecurity/compare/v3.0.14...v3/master
-export MODSECURITY_LIB_VERSION=v3.0.14
+# Check for recent changes: https://github.com/owasp-modsecurity/ModSecurity/compare/v3.0.17...v3/master
+export MODSECURITY_LIB_VERSION=v3.0.17
 
 # Check for recent changes: https://github.com/coreruleset/coreruleset/compare/v4.30.0...main
 export OWASP_MODSECURITY_CRS_VERSION=v4.30.0
