@@ -8,7 +8,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	k8s.io/api v0.37.2
 	k8s.io/apimachinery v0.37.2
-	k8s.io/client-go v0.37.2
+	k8s.io/client-go v11.0.0+incompatible
 	k8s.io/kube-aggregator v0.37.2
 )
 
