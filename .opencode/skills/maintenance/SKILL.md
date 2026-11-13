@@ -20,6 +20,7 @@ Never: new features, new annotations or options, behavior changes, refactors "fo
 - Never force-push, except your own bot-created release branch (`release-readiness` skill).
 - Commit messages and PR titles follow `.commitlintrc.json`: `type(scope): subject`; types build, chore, ci, docs, feat, fix, merge, perf, refactor, release, revert, style, test; scopes admission, api, chart, ci, commitlint, config, controller, coverage, deps, docs, e2e, helm, image, lint, lua, nginx, pre-commit, release, security, template, test, tests, webhook. PR titles feed the release notes: make them descriptive. No @-mentions in commit or PR text.
 - Security fixes are titled `fix(security): <subject> (<CVE or GO id>)`; the `release-prep` routine matches that title when the pull request merges.
+- Bot reviews are plain comments (`git-api comment create`), not review threads: main requires every conversation resolved, so an open thread blocks merging. Use `git-api pr review --request-changes` only for a policy violation a human must see.
 - Build and test the smallest thing that answers the question (`go test ./path/...`, `make golint-check`, `pre-commit run --files <files>`); the full e2e suite and the image build are CI's job.
 
 ## Risk taxonomy
@@ -43,7 +44,7 @@ A CVE raises urgency, not trust: a critical CVE fix still gets the review its ri
 
 ## Tools and their limits
 
-Use `git-api` for forge operations: `pr list|view|create|ready|review|merge|close`, `issue list|search|view|create|edit`, `comment list|create`, `label list|add|remove`, `checks list|wait`, `status get`, `logs fetch <run id>`, `run rerun`, `actions list`, `release list`. It has no command for assignees, pinning, creating labels, editing PR descriptions or security alerts. For those use `gh` or the GitHub REST API if a token is available in the runner; when neither works, say so in the run's final message instead of failing. Only apply labels that exist (`git-api label list`); if a needed label is missing, continue without it and mention that in the final message.
+Use `git-api` for forge operations: `pr list|view|create|ready|review|merge|close`, `issue list|search|view|create|edit`, `comment list|create`, `label list|add|remove`, `checks list|wait`, `status get`, `logs fetch <run id>`, `run rerun`, `actions list`, `release list`. It has no command for assignees, pinning, creating labels, editing PR descriptions or security alerts. For those use `gh` or the GitHub REST API if a token is available in the runner (the Forkline GitHub App can merge, rerun workflows, read Dependabot and code-scanning alerts, write issues and pull requests); when neither works, say so in the run's final message instead of failing. Only apply labels that exist (`git-api label list`); if a needed label is missing, continue without it and mention that in the final message.
 
 ## Idempotency
 

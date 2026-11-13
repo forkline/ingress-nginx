@@ -36,7 +36,7 @@ Not confident: label `needs-maintainer`, assign `pando85`, ONE comment (summary,
 
 Create once on GitHub; routines apply only labels that exist and mention it in their final message otherwise.
 
-`needs-maintainer`, `security`, `no-auto-review`, `rebase` (Renovate's rebase label), `maintenance-digest`. Existing ones are used as is: `bug`, `documentation`, `question`, `enhancement`, `duplicate`, `wontfix`, `area/dependency`.
+`needs-maintainer` (exists), `security`, `no-auto-review`, `rebase` (Renovate's rebase label), `maintenance-digest`. Existing ones are used as is: `bug`, `documentation`, `question`, `enhancement`, `duplicate`, `wontfix`, `area/dependency`.
 
 ## Rollout
 
@@ -52,4 +52,5 @@ Create once on GitHub; routines apply only labels that exist and mention it in t
 - No per-routine rate limit for events without a PR (`maxRunsPerPr` does not apply): deduplication is in the prompts.
 - Schedule runs have nowhere to post their result (F9): the prompts post through `git-api` and end with a final message; the digest cannot see Forkline's own run history.
 - `git-api` cannot assign, pin, create labels, edit PR descriptions or read security alerts: prompts use `gh` or the REST API when a token allows it and say so when it does not.
-- Merging a bot PR as the bot cannot be approved by the same bot account.
+- Branch protection on main requires 4 checks, 0 approvals and all conversations resolved: the gate merges without approval and bot reviews are plain comments. Helm and Lua are not required checks, so the release checklist and the gate check them explicitly.
+- The GitHub App can read Dependabot and code-scanning alerts: `cve-watch` uses them.
