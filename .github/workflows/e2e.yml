@@ -28,9 +28,9 @@ jobs:
     name: Detect E2E changes
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: github.event_name == 'pull_request'
     outputs:
       e2e: ${{ steps.filter.outputs.e2e }}
+      nginx: ${{ steps.filter.outputs.nginx }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -50,6 +50,8 @@ jobs:
               - 'charts/**'
               - 'NGINX_BASE'
               - '.github/workflows/e2e.yml'
+            nginx:
+              - 'images/nginx/**'
 
   build:
     name: Build test images
@@ -57,7 +59,8 @@ jobs:
     timeout-minutes: 300
     needs: [changes]
     if: >-
-      !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.e2e == 'true')
+      !cancelled() && needs.changes.result == 'success'
+      && (github.event_name != 'pull_request' || needs.changes.outputs.e2e == 'true')
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -106,29 +109,40 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # NOTE: This caches the image by NGINX_VERSION. When patches in images/nginx/rootfs/patches/
-      # are added or modified, you must force a rebuild by either:
-      #   - Bumping NGINX_VERSION in build.sh, OR
-      #   - Manually deleting the old image from ghcr.io
+      # When images/nginx/** changes (patches, build.sh, CRS, njs, ModSecurity),
+      # always rebuild the base image instead of reusing the registry cache.
+      # This ensures security fixes reach the image even when NGINX_VERSION is unchanged.
       - name: Pull or build nginx base image
         working-directory: images/nginx
+        env:
+          NGINX_CHANGED: ${{ needs.changes.outputs.nginx }}
         run: |
           TAGNGINX=$(cat TAG)
           NGINX_VERSION=$(grep 'export NGINX_VERSION=' rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
           NGINX_IMAGE="ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}"
-          if docker pull ${NGINX_IMAGE}; then
+          FORCE_BUILD=false
+          if [[ "${NGINX_CHANGED}" == "true" ]]; then
+            echo "nginx build context changed, forcing rebuild..."
+            FORCE_BUILD=true
+          fi
+          if [[ "${FORCE_BUILD}" == "false" ]] && docker pull ${NGINX_IMAGE}; then
             docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
             echo "Reused nginx base image (NGINX ${NGINX_VERSION}) from registry"
           else
-            echo "NGINX ${NGINX_VERSION} not in registry, building..."
+            echo "Building nginx base image for NGINX ${NGINX_VERSION}..."
             docker buildx create --name ingress-nginx --bootstrap || :
+            BUILDX_ARGS=""
+            if [[ "${FORCE_BUILD}" == "true" ]]; then
+              BUILDX_ARGS="--no-cache"
+            else
+              BUILDX_ARGS="--cache-from type=gha --cache-to type=gha,mode=max"
+            fi
             docker buildx build \
               --builder ingress-nginx \
               --platform linux/amd64,linux/arm64 \
               rootfs \
               --tag ${NGINX_IMAGE} \
-              --cache-from type=gha \
-              --cache-to type=gha,mode=max \
+              ${BUILDX_ARGS} \
               --push
             echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
           fi
@@ -336,8 +350,6 @@ jobs:
     needs: [changes, build]
     if: >-
       !cancelled() && github.event_name != 'pull_request' &&
-      (needs.changes.outputs.e2e == 'true' ||
-      needs.changes.result == 'skipped') &&
       needs.build.result == 'success'
     steps:
       - name: Checkout
