@@ -39,6 +39,10 @@ automation, with the maintainer in the loop for every decision that matters:
   `release-readiness`, `issue-response`). Automated merges start in an observe mode
   that only posts a verdict comment ("would merge" or "would escalate") and are
   promoted to real merges after a track record.
+- **main-health.** On 2026-11-16 the old routines were removed. `main-health` is the first
+  owner routine: it owns the invariant that every workflow on `main` is green or a fix
+  is moving and visible (skill `main-health`). Its routine spec lives in
+  `multivara/automations`.
 - **Escalation.** When automation is not confident, it labels the item
   `needs-maintainer`, assigns the maintainer and leaves one comment with what it
   tried, the options and the decision it needs. It never closes issues or pull
