@@ -4,6 +4,70 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.11.17](https://github.com/forkline/ingress-nginx/tree/v2026.11.17) - 2026-11-17
+
+### Fixed
+
+- Save single-platform nginx image to avoid kind load failure (ci)([8adf3a7](https://github.com/forkline/ingress-nginx/commit/8adf3a7bde687831b6e34d78f77c8e5290fb937f))
+
+- Bypass kind strict image import to avoid digest verification failure (ci)([01b82ae](https://github.com/forkline/ingress-nginx/commit/01b82aea1545e581a7c4c3f82827a2966cb4607b))
+
+- Remove trailing whitespace in test/e2e/run-kind-e2e.sh([a2a8276](https://github.com/forkline/ingress-nginx/commit/a2a82768d4d9fb20bbf17de9a97512e28568b018))
+
+- Run go mod tidy to sync dependencies([d4cdccd](https://github.com/forkline/ingress-nginx/commit/d4cdccd165ce33f542b732ef1b60d8987ce3103a))
+
+- Update Go to 1.26.11 to fix GO-2026-6859 (security)([c0179f5](https://github.com/forkline/ingress-nginx/commit/c0179f58a7e703c6353be4bf06be4abe22059e75))
+
+- Update OWASP CRS to 4.30.0 (CVE-2026-61619) (security)([d6bce2a](https://github.com/forkline/ingress-nginx/commit/d6bce2ab826bdf1aceef3824b3608aadb91a33af))
+
+- Update njs to 1.0.2 (CVE-2026-78689) (security)([a756ce9](https://github.com/forkline/ingress-nginx/commit/a756ce9c140507dc18c4f46739532e7afc447b56))
+
+- Update ModSecurity to 3.0.17 (CVE-2026-73856) (security)([120a1a7](https://github.com/forkline/ingress-nginx/commit/120a1a79d8dfd05515e0992e451f84a1dfd39ff1))
+
+- Force nginx base image rebuild for release PRs and tags (ci)([5594a7c](https://github.com/forkline/ingress-nginx/commit/5594a7cb8f8199bb32027f4dbc7156a508b97785))
+
+- Retain nginx image when tagging and test pull/build paths (ci)([4673f23](https://github.com/forkline/ingress-nginx/commit/4673f2393c3af07a322ef156b6403d474bdda5ca))
+
+- Build ModSecurity 3.0.17 with recursive submodules and PCRE2 (nginx)([b34f579](https://github.com/forkline/ingress-nginx/commit/b34f5798d173d798e2eff9607a44e0143aedf108))
+
+### Chore
+
+- Update pre-commit hook renovatebot/pre-commit-hooks (v44.221.5 → v44.227.4)
+
+- Automerge renovatebot/pre-commit-hooks monthly (renovate)([7254c01](https://github.com/forkline/ingress-nginx/commit/7254c01de5e5ff5686f5bb8ea5227acb1ba6405d))
+
+- Bump Go to 1.26.11 to fix GO-2026-6859 (net/http MaxBytesReader header race)([40be0e5](https://github.com/forkline/ingress-nginx/commit/40be0e561e0fcc7660c56dc01da7e96393e861c7))
+
+### CI
+
+- Add maintenance skills and restrict Renovate automerge (config)([604a249](https://github.com/forkline/ingress-nginx/commit/604a2494b93d42e6b5ad8753861922e2bfaf77fd))
+
+- Rebuild base image when build context changes (nginx)([0ee0e41](https://github.com/forkline/ingress-nginx/commit/0ee0e41db2d4122fc1216d204768c4b7401cdafa))
+
+### Build
+
+- Update go modules (5 updates)
+
+- Update module go.yaml.in/yaml/v3 to v4 (deps)([5f8f8bb](https://github.com/forkline/ingress-nginx/commit/5f8f8bb5970f6448347bf15b8b5bd1aa1f4c2042))
+
+- Update docker images (deps)([8f33d46](https://github.com/forkline/ingress-nginx/commit/8f33d46b250c44542c494571fc58cb751d564bce))
+
+- Update azure/setup-helm action to v5.1.0 (deps)([1a2f29f](https://github.com/forkline/ingress-nginx/commit/1a2f29fbf415684ed746c0b80740f04d61ae810c))
+
+- Update dependency mkdocs-material to v9.8.1 (deps)([7e49b02](https://github.com/forkline/ingress-nginx/commit/7e49b022222f7664982f254baa063ba66961b679))
+
+- Update dependency helm to v4.3.2 (deps)([1134f09](https://github.com/forkline/ingress-nginx/commit/1134f09236cc6a0d5437e77f3e7492dcc8378aad))
+
+- Update module go.opentelemetry.io/otel/trace (2 updates)
+
+- Update module sigs.k8s.io/controller-runtime to v0.25.3 (deps)([acbfa24](https://github.com/forkline/ingress-nginx/commit/acbfa24140bd3f40f220a4797904ea135f3c70ef))
+
+- Migrate config renovate.json (deps)([7245095](https://github.com/forkline/ingress-nginx/commit/7245095e0eefd2dfa03b53cd0bf1218155853a91))
+
+### Revert
+
+- Back to 120a1a79d (before go module and CI changes from #642, #656, #658, #659)([6ad0314](https://github.com/forkline/ingress-nginx/commit/6ad03149cd7c4e5bbcd96af3994a783aba043fbf))
+
 ## [v2026.11.6](https://github.com/forkline/ingress-nginx/tree/v2026.11.6) - 2026-11-06
 
 ### Fixed
