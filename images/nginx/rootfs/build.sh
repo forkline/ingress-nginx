@@ -161,6 +161,7 @@ apk add \
   automake \
   openssl-dev \
   pcre-dev \
+  pcre2-dev \
   zlib-dev \
   linux-headers \
   libxslt-dev \
@@ -357,8 +358,9 @@ cd "$BUILD_PATH"
 git clone -n https://github.com/owasp-modsecurity/ModSecurity
 cd ModSecurity/
 git checkout $MODSECURITY_LIB_VERSION
-git submodule init
-git submodule update
+# Since v3.0.17 others/mbedtls is Mbed TLS 4.x, which itself has a nested
+# tf-psa-crypto submodule that configure requires, so update recursively.
+git submodule update --init --recursive
 
 sh build.sh
 
@@ -468,6 +470,7 @@ done
 WITH_FLAGS="--with-debug \
   --with-compat \
   --with-pcre-jit \
+  --without-pcre2 \
   --with-http_ssl_module \
   --with-http_stub_status_module \
   --with-http_realip_module \
