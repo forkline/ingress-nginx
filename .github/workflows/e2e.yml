@@ -49,6 +49,8 @@ jobs:
               - 'test/e2e-image/**'
               - 'charts/**'
               - 'NGINX_BASE'
+              - '.ci/prepare-nginx-base-image.sh'
+              - '.ci/test-prepare-nginx-base-image.sh'
               - '.github/workflows/e2e.yml'
             nginx:
               - 'images/nginx/**'
@@ -64,6 +66,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
+      - name: Test nginx image handoff (registry hit, rebuild, registry miss)
+        run: bash .ci/test-prepare-nginx-base-image.sh
 
       - name: Verify NGINX base version
         shell: bash
@@ -117,40 +122,10 @@ jobs:
         env:
           NGINX_CHANGED: ${{ needs.changes.outputs.nginx }}
         run: |
-          TAGNGINX=$(cat TAG)
-          NGINX_VERSION=$(grep 'export NGINX_VERSION=' rootfs/build.sh | sed 's/.*NGINX_VERSION=//')
-          NGINX_IMAGE="ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}"
-          FORCE_BUILD=false
-          if [[ "${NGINX_CHANGED}" == "true" ]]; then
-            echo "nginx build context changed, forcing rebuild..."
-            FORCE_BUILD=true
-          fi
-          if [[ "${FORCE_BUILD}" == "false" ]] && docker pull ${NGINX_IMAGE}; then
-            docker tag ${NGINX_IMAGE} ingress-nginx/nginx:${TAGNGINX}
-            echo "Reused nginx base image (NGINX ${NGINX_VERSION}) from registry"
-          else
-            echo "Building nginx base image for NGINX ${NGINX_VERSION}..."
-            docker buildx create --name ingress-nginx --bootstrap || :
-            BUILDX_ARGS=""
-            if [[ "${FORCE_BUILD}" == "true" ]]; then
-              BUILDX_ARGS="--no-cache"
-            else
-              BUILDX_ARGS="--cache-from type=gha --cache-to type=gha,mode=max"
-            fi
-            docker buildx build \
-              --builder ingress-nginx \
-              --platform linux/amd64,linux/arm64 \
-              rootfs \
-              --tag ${NGINX_IMAGE} \
-              ${BUILDX_ARGS} \
-              --push
-            echo "Built and pushed nginx base image for NGINX ${NGINX_VERSION}"
-          fi
-          docker pull --platform linux/amd64 ${NGINX_IMAGE}
-          NGINX_IMAGE_ID=$(docker inspect --format='{{.Id}}' ${NGINX_IMAGE})
-          docker rmi ${NGINX_IMAGE} 2>/dev/null || true
-          docker tag ${NGINX_IMAGE_ID} ${NGINX_IMAGE}
-          docker tag ${NGINX_IMAGE_ID} ingress-nginx/nginx:${TAGNGINX}
+          export TAGNGINX="$(cat TAG)"
+          NGINX_VERSION=$(sed -n 's/^export NGINX_VERSION=//p' rootfs/build.sh)
+          export NGINX_IMAGE="ghcr.io/forkline/ingress-nginx/nginx:${NGINX_VERSION}"
+          bash ../../.ci/prepare-nginx-base-image.sh
 
       - name: Pull or build kube-webhook-certgen image
         working-directory: images
@@ -223,7 +198,7 @@ jobs:
             test/e2e-image
           CERTGEN_TAG=$(cat images/kube-webhook-certgen/TAG)
           TAGNGINX=$(cat images/nginx/TAG)
-          docker save \
+          docker save --platform linux/amd64 \
             nginx-ingress-controller:e2e \
             ingress-controller/controller:1.0.0-dev \
             ingress-controller/controller-chroot:1.0.0-dev \
