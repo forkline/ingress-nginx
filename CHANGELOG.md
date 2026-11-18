@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.11.18](https://github.com/forkline/ingress-nginx/tree/v2026.11.18) - 2026-11-18
+
+### Fixed
+
+- Upgrade NGINX to 1.31.9 for critical HTTP/2 RCEs (security)([e4fb3a5](https://github.com/forkline/ingress-nginx/commit/e4fb3a55fcbae0be9749bdec6c2fc51a378c5c0d))
+
+### Build
+
+- Update google.golang.org/grpc/examples digest to 70d9d2f (deps)([35e1737](https://github.com/forkline/ingress-nginx/commit/35e17376ef6035b785e3debadf440c1c74aa83d8))
+
+- Update actions/dependency-review-action action to v5.0.1 (deps)([1dc575d](https://github.com/forkline/ingress-nginx/commit/1dc575ddaa76a3b2ec84befd7ba23423a0c16578))
+
 ## [v2026.11.17](https://github.com/forkline/ingress-nginx/tree/v2026.11.17) - 2026-11-17
 
 ### Fixed
