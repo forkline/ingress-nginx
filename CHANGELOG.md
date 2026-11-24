@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v2026.11.23](https://github.com/forkline/ingress-nginx/tree/v2026.11.23) - 2026-11-23
+
+### Build
+
+- Update module github.com/opencontainers/cgroups to v0.1.1 (deps)([b4f6dc3](https://github.com/forkline/ingress-nginx/commit/b4f6dc3b0706f4a2b2ac5965cec6caee9818c034))
+
+- Update google.golang.org/grpc/examples digest (7 updates)
+
+- Update ossf/scorecard-action action to v2.6.0 (deps)([caa9c78](https://github.com/forkline/ingress-nginx/commit/caa9c78efda47cfdd74fe4a16f6f5dd7984df714))
+
+- Update dependency mkdocs-material to v9.8.2 (deps)([f22aa5c](https://github.com/forkline/ingress-nginx/commit/f22aa5c48b45cddc502f704d44a0f05bb230dd7e))
+
+- Update squidfunk/mkdocs-material Docker tag to v9.8.2 (deps)([aaec0eb](https://github.com/forkline/ingress-nginx/commit/aaec0eb2858720f7d74e996af59a7f24ff276431))
+
+- Update dependency nginx/nginx to v1.31.10 (deps)([4114522](https://github.com/forkline/ingress-nginx/commit/4114522dc3356e46cbdd2591d3c2a0384be5fce5))
+
 ## [v2026.11.18](https://github.com/forkline/ingress-nginx/tree/v2026.11.18) - 2026-11-18
 
 ### Fixed
