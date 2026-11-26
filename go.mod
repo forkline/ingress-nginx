@@ -18,7 +18,7 @@ require (
 	github.com/moul/pb v0.0.0-20220425114252-bca18df4138c
 	github.com/ncabatoff/process-exporter v0.8.7
 	github.com/onsi/ginkgo/v2 v2.34.0
-	github.com/opencontainers/cgroups v0.1.1
+	github.com/opencontainers/cgroups v0.1.2
 	github.com/pires/go-proxyproto v0.16.0
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
 	github.com/prometheus/client_golang v1.25.0
@@ -36,14 +36,14 @@ require (
 	gopkg.in/go-playground/pool.v3 v3.1.1
 	gopkg.in/mcuadros/go-syslog.v2 v2.3.0
 	helm.sh/helm/v4 v4.3.2
-	k8s.io/api v0.37.2
-	k8s.io/apiextensions-apiserver v0.37.2
-	k8s.io/apimachinery v0.37.2
-	k8s.io/apiserver v0.37.2
-	k8s.io/cli-runtime v0.37.2
-	k8s.io/client-go v0.37.2
-	k8s.io/code-generator v0.37.2
-	k8s.io/component-base v0.37.2
+	k8s.io/api v0.37.3
+	k8s.io/apiextensions-apiserver v0.37.3
+	k8s.io/apimachinery v0.37.3
+	k8s.io/apiserver v0.37.3
+	k8s.io/cli-runtime v0.37.3
+	k8s.io/client-go v0.37.3
+	k8s.io/code-generator v0.37.3
+	k8s.io/component-base v0.37.3
 	k8s.io/klog/v2 v2.140.0
 	k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab
 	pault.ag/go/sniff v0.0.0-20200207005214-cf7e4d167732
